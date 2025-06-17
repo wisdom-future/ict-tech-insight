@@ -927,6 +927,9 @@ jobs:
     - name: 创建GitHub模板
       run: |
         echo "🐙 创建GitHub模板..."
+
+        # 确保目录存在
+        mkdir -p .github/ISSUE_TEMPLATE
         
         # Bug报告模板
         cat > .github/ISSUE_TEMPLATE/bug_report.md << 'EOF'
