@@ -76,7 +76,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -1256,7 +1256,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -2169,7 +2169,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -2611,7 +2611,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
