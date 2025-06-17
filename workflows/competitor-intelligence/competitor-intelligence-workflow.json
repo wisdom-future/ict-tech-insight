@@ -82,7 +82,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -445,7 +445,7 @@
                 "headers": [
                     {
                         "name": "X-API-Key",
-                        "value": "d9d824a543f74bf79493b6772fd42c83"
+                        "value": "${XAI_CONNECTION_ID}"
                     }
                 ],
                 "timeout": "30",
@@ -1636,7 +1636,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -2001,7 +2001,7 @@
                                 "scoped": "true",
                                 "connection": "google-restricted"
                             },
-                            "label": "Gmail-Connection (hello.junjie.duan@gmail.com)"
+                            "label": "Gmail-Connection (${GMAIL_USER})"
                         },
                         "saveAfterSent": {
                             "label": "No"
@@ -2385,7 +2385,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
