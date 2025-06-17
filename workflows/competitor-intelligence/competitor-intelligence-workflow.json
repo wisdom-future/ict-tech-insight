@@ -1,0 +1,2698 @@
+{
+    "name": "Competitor_Intelligence_Collection",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 3737372
+            },
+            "mapper": {
+                "from": "drive",
+                "filter": [
+                    [
+                        {
+                            "a": "G",
+                            "b": "ACTIVE",
+                            "o": "text:equal"
+                        }
+                    ]
+                ],
+                "orderBy": "F",
+                "sheetId": "Competitor_Registry ",
+                "fieldType": "string",
+                "sortOrder": "desc",
+                "spreadsheetId": "1IOdMJd27XylcVLr7Q4NFV6rTkSyEe5EfTeMZsfcC004",
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "获取竞争对手列表"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "orderBy": {
+                            "mode": "chose",
+                            "label": "monitoring_priority (F)"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Competitor_Registry "
+                        },
+                        "fieldType": {
+                            "mode": "chose",
+                            "label": "String"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Descending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Competitor_Registry"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-Z"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fieldType",
+                        "type": "select",
+                        "label": "Field Type",
+                        "validate": {
+                            "enum": [
+                                "string",
+                                "number",
+                                "date"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "competitor_id (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "company_name (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "industry_category (C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "github_org (D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "tech_focus_areas (E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "monitoring_priority (F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "status (G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "last_updated (H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "website_url (I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "headquarters (J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "founded_year (K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "employee_count (L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "annual_revenue (M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "market_cap (N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "stock_symbol (O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "builtin:BasicFeeder",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "array": "1"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "竞争对手迭代器"
+                },
+                "restore": {
+                    "expect": {
+                        "array": {
+                            "mode": "edit"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "mode": "edit",
+                        "name": "array",
+                        "spec": [],
+                        "type": "array",
+                        "label": "Array"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": true,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "ca": "",
+                "qs": [
+                    {
+                        "name": "q",
+                        "value": "{{1.`1`}}"
+                    },
+                    {
+                        "name": "language",
+                        "value": "en"
+                    },
+                    {
+                        "name": "sortBy",
+                        "value": "publishedAt"
+                    },
+                    {
+                        "name": "pageSize",
+                        "value": "20"
+                    },
+                    {
+                        "name": "from",
+                        "value": "{{formatDate(addDays(now; -7); \"YYYY-MM-DD\")}}"
+                    }
+                ],
+                "url": "https://newsapi.org/v2/everything",
+                "gzip": true,
+                "method": "get",
+                "headers": [
+                    {
+                        "name": "X-API-Key",
+                        "value": "d9d824a543f74bf79493b6772fd42c83"
+                    }
+                ],
+                "timeout": "30",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "新闻动态监控"
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose",
+                            "items": [
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            ]
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "bodyType": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    },
+                    {
+                        "name": "useNewZLibDeCompress",
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "bodyType",
+                        "type": "select",
+                        "label": "Body type",
+                        "validate": {
+                            "enum": [
+                                "raw",
+                                "x_www_form_urlencoded",
+                                "multipart_form_data"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "authUser",
+                        "type": "text",
+                        "label": "User name"
+                    },
+                    {
+                        "name": "authPass",
+                        "type": "password",
+                        "label": "Password"
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "ca",
+                        "type": "cert",
+                        "label": "Self-signed certificate"
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "type": "boolean",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "required": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "type": "boolean",
+                        "label": "Follow redirect",
+                        "required": true
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "type": "boolean",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "type": "boolean",
+                        "label": "Use Mutual TLS",
+                        "required": true
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": true,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "ca": "",
+                "qs": [
+                    {
+                        "name": "q",
+                        "value": "{{1.`3`}}"
+                    },
+                    {
+                        "name": "sort",
+                        "value": "updated"
+                    },
+                    {
+                        "name": "order",
+                        "value": "desc"
+                    },
+                    {
+                        "name": "per_page",
+                        "value": "10"
+                    }
+                ],
+                "url": "https://api.github.com/search/repositories",
+                "gzip": true,
+                "method": "get",
+                "headers": [
+                    {
+                        "name": "User-Agent",
+                        "value": "TechInsight-Competitor/1.0"
+                    },
+                    {
+                        "name": "Accept",
+                        "value": "application/vnd.github.v3+json"
+                    }
+                ],
+                "timeout": "30",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0,
+                    "name": "GitHub技术活动监控"
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose",
+                            "items": [
+                                null,
+                                null,
+                                null,
+                                null
+                            ]
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null,
+                                null
+                            ]
+                        },
+                        "bodyType": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    },
+                    {
+                        "name": "useNewZLibDeCompress",
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "bodyType",
+                        "type": "select",
+                        "label": "Body type",
+                        "validate": {
+                            "enum": [
+                                "raw",
+                                "x_www_form_urlencoded",
+                                "multipart_form_data"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "authUser",
+                        "type": "text",
+                        "label": "User name"
+                    },
+                    {
+                        "name": "authPass",
+                        "type": "password",
+                        "label": "Password"
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "ca",
+                        "type": "cert",
+                        "label": "Self-signed certificate"
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "type": "boolean",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "required": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "type": "boolean",
+                        "label": "Follow redirect",
+                        "required": true
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "type": "boolean",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "type": "boolean",
+                        "label": "Use Mutual TLS",
+                        "required": true
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": true,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "ca": "",
+                "qs": [
+                    {
+                        "name": "engine",
+                        "value": "google_patents"
+                    },
+                    {
+                        "name": "q",
+                        "value": "assignee:\\\"{{1.`1`}}\\\""
+                    },
+                    {
+                        "name": "api_key",
+                        "value": "36580bb2d1743e93c8c530e3dc052fcea73c2f56fae8973761ecdc5aaf8c4171"
+                    },
+                    {
+                        "name": "num",
+                        "value": "10"
+                    },
+                    {
+                        "name": "sort",
+                        "value": "new"
+                    }
+                ],
+                "url": "https://serpapi.com/search",
+                "data": "",
+                "gzip": true,
+                "method": "get",
+                "headers": [
+                    {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "name": "User-Agent",
+                        "value": "TechInsight-Competitor/1.0"
+                    }
+                ],
+                "timeout": "30",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1207,
+                    "y": -6,
+                    "name": "专利活动监控"
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose",
+                            "items": [
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            ]
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null,
+                                null
+                            ]
+                        },
+                        "bodyType": {
+                            "label": "Raw"
+                        },
+                        "contentType": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    },
+                    {
+                        "name": "useNewZLibDeCompress",
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "bodyType",
+                        "type": "select",
+                        "label": "Body type",
+                        "validate": {
+                            "enum": [
+                                "raw",
+                                "x_www_form_urlencoded",
+                                "multipart_form_data"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "authUser",
+                        "type": "text",
+                        "label": "User name"
+                    },
+                    {
+                        "name": "authPass",
+                        "type": "password",
+                        "label": "Password"
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "ca",
+                        "type": "cert",
+                        "label": "Self-signed certificate"
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "type": "boolean",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "required": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "type": "boolean",
+                        "label": "Follow redirect",
+                        "required": true
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "type": "boolean",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "type": "boolean",
+                        "label": "Use Mutual TLS",
+                        "required": true
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Content type",
+                        "validate": {
+                            "enum": [
+                                "text/plain",
+                                "application/json",
+                                "application/xml",
+                                "text/xml",
+                                "text/html",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "type": "buffer",
+                        "label": "Request content"
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "module": "util:SetVariables",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "scope": "roundtrip",
+                "variables": [
+                    {
+                        "name": "company_name",
+                        "value": "{{1.`1`}}"
+                    },
+                    {
+                        "name": "industry_category",
+                        "value": "{{1.`2`}}"
+                    },
+                    {
+                        "name": "tech_focus_areas",
+                        "value": "{{1.`4`}}"
+                    },
+                    {
+                        "name": "monitor_timestamp",
+                        "value": "{{now}}"
+                    },
+                    {
+                        "name": "recent_news_count",
+                        "value": "{{if(3.data.articles != null; length(3.data.articles); 0)}}"
+                    },
+                    {
+                        "name": "github_activity_score",
+                        "value": "{{if(4.data.items != null; sum(map(4.data.items; \"stargazers_count\")); 0)}}"
+                    },
+                    {
+                        "name": "github_repo_count",
+                        "value": "{{if(4.data.items != null; length(4.data.items); 0)}}"
+                    },
+                    {
+                        "name": "recent_patents_count",
+                        "value": "{{if(5.data.patents != null; length(5.data.patents); 0)}}"
+                    },
+                    {
+                        "name": "latest_news_title",
+                        "value": "{{if(3.data.articles[1].title != null; 3.data.articles[1].title; \"No recent news\")}}"
+                    },
+                    {
+                        "name": "latest_repo_name",
+                        "value": "{{if(4.data.items[1].name != null; 4.data.items[1].name; \"No recent repos\")}}"
+                    },
+                    {
+                        "name": "latest_patent_title",
+                        "value": "{{if(5.data.patents[1].patent_title != null; left(5.data.patents[1].patent_title; 200); \"No recent patents\")}}"
+                    },
+                    {
+                        "name": "competitive_threat_level",
+                        "value": "{{if(recent_news_count > 15; \"HIGH\"; if(recent_news_count > 8; \"MEDIUM\"; \"LOW\"))}}"
+                    },
+                    {
+                        "name": "innovation_index",
+                        "value": "{{round((github_activity_score / 1000 + recent_patents_count * 5 + recent_news_count * 2 + github_repo_count) / 4; 2)}}"
+                    },
+                    {
+                        "name": "alert_priority",
+                        "value": "{{if(competitive_threat_level = \"HIGH\"; \"URGENT\"; if(competitive_threat_level = \"MEDIUM\"; \"HIGH\"; \"NORMAL\"))}}"
+                    },
+                    {
+                        "name": "next_review_date",
+                        "value": "{{formatDate(addDays(now; if(1.`5` = \"HIGH\"; 1; if(1.`5` = \"MEDIUM\"; 3; 7))); \"YYYY-MM-DD\")}}"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0,
+                    "name": "竞争情报分析"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        },
+                        "variables": {
+                            "items": [
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            ]
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "variables",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Variable name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "any",
+                                "label": "Variable value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Variables"
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "company_name",
+                        "type": "any",
+                        "label": "company_name"
+                    },
+                    {
+                        "name": "industry_category",
+                        "type": "any",
+                        "label": "industry_category"
+                    },
+                    {
+                        "name": "tech_focus_areas",
+                        "type": "any",
+                        "label": "tech_focus_areas"
+                    },
+                    {
+                        "name": "monitor_timestamp",
+                        "type": "any",
+                        "label": "monitor_timestamp"
+                    },
+                    {
+                        "name": "recent_news_count",
+                        "type": "any",
+                        "label": "recent_news_count"
+                    },
+                    {
+                        "name": "github_activity_score",
+                        "type": "any",
+                        "label": "github_activity_score"
+                    },
+                    {
+                        "name": "github_repo_count",
+                        "type": "any",
+                        "label": "github_repo_count"
+                    },
+                    {
+                        "name": "recent_patents_count",
+                        "type": "any",
+                        "label": "recent_patents_count"
+                    },
+                    {
+                        "name": "latest_news_title",
+                        "type": "any",
+                        "label": "latest_news_title"
+                    },
+                    {
+                        "name": "latest_repo_name",
+                        "type": "any",
+                        "label": "latest_repo_name"
+                    },
+                    {
+                        "name": "latest_patent_title",
+                        "type": "any",
+                        "label": "latest_patent_title"
+                    },
+                    {
+                        "name": "competitive_threat_level",
+                        "type": "any",
+                        "label": "competitive_threat_level"
+                    },
+                    {
+                        "name": "innovation_index",
+                        "type": "any",
+                        "label": "innovation_index"
+                    },
+                    {
+                        "name": "alert_priority",
+                        "type": "any",
+                        "label": "alert_priority"
+                    },
+                    {
+                        "name": "next_review_date",
+                        "type": "any",
+                        "label": "next_review_date"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 3737372
+            },
+            "mapper": {
+                "from": "drive",
+                "mode": "select",
+                "values": {
+                    "0": "{{formatDate(6.monitor_timestamp; \"YYYY-MM-DD HH:mm:ss\")}}",
+                    "1": "{{6.company_name}}",
+                    "2": "{{6.industry_category}}",
+                    "3": "{{6.tech_focus_areas}}",
+                    "4": "{{if(1.`14` != null + AND + 1.`14` != \"\"; \"Public (\" + 1.`14` + \")\"; \"Private/Unknown\")}}",
+                    "5": "{{6.recent_news_count}}",
+                    "6": "{{6.github_activity_score}}",
+                    "7": "{{6.recent_patents_count}}",
+                    "8": "{{6.competitive_threat_level}}",
+                    "9": "{{6.innovation_index}}",
+                    "10": "{{if(1.`11` != null + AND + 1.`11` != \"\"; 1.`11`; \"Unknown\")}}",
+                    "11": "{{if(1.`10` != null + AND + 1.`10` != \"\"; 1.`10`; \"Unknown\")}}",
+                    "12": "{{if(1.`9` != null + AND + 1.`9` != \"\"; 1.`9`; \"Unknown\")}}",
+                    "13": "{{if(1.`2` = \"Networking Equipment\"; \"Hardware + Software\"; if(1.`2` = \"Cybersecurity\"; \"Security Solutions\"; if(1.`2` = \"Semiconductor\"; \"Chip Design + Manufacturing\"; \"Technology Solutions\")))}}",
+                    "14": "{{6.latest_news_title}}",
+                    "15": "{{6.latest_repo_name}}",
+                    "16": "{{6.latest_patent_title}}",
+                    "17": "{{6.next_review_date}}",
+                    "18": "{{6.alert_priority}}",
+                    "19": "V2.1",
+                    "20": "{{6.github_repo_count}}",
+                    "21": "{{if(3.data.articles[1].publishedAt != null; formatDate(parseDate(3.data.articles[1].publishedAt; \"YYYY-MM-DDTHH:mm:ssZ\"); \"YYYY-MM-DD\"); \"N/A\")}}",
+                    "22": "{{if(4.data.items[1].updated_at != null; formatDate(parseDate(4.data.items[1].updated_at; \"YYYY-MM-DDTHH:mm:ssZ\"); \"YYYY-MM-DD\"); \"N/A\")}}",
+                    "23": "{{if(5.data.patents[1].patent_date != null; 5.data.patents[1].patent_date; \"N/A\")}}",
+                    "24": "{{1.`5`}}",
+                    "25": "{{round((6.recent_news_count * 0.4 + 6.github_activity_score / 100 * 0.3 + 6.recent_patents_count * 0.3); 2)}}"
+                },
+                "sheetId": "Competitor_Intelligence ",
+                "spreadsheetId": "/1dIdj-fEEIQddqXOxl6fhrkkgAYRfxOgm/1vnrrtEWkU3PRjZ0l0aUThMAU0yphUSun/1BCXyTxZWmEhJC_GIuGxuWhK5WJWl1qzr/1Cs13mdCwZGlyptJkEwD5EpDXsCokM2Ag9ErAhCjl1qQ",
+                "includesHeaders": true,
+                "insertDataOption": "INSERT_ROWS",
+                "valueInputOption": "USER_ENTERED",
+                "insertUnformatted": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1800,
+                    "y": 0,
+                    "name": "保存竞争情报数据"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "My Drive"
+                        },
+                        "mode": {
+                            "label": "Search by path"
+                        },
+                        "sheetId": {
+                            "label": "Competitor_Intelligence "
+                        },
+                        "spreadsheetId": {
+                            "path": [
+                                "1dIdj-fEEIQddqXOxl6fhrkkgAYRfxOgm",
+                                "1vnrrtEWkU3PRjZ0l0aUThMAU0yphUSun",
+                                "1BCXyTxZWmEhJC_GIuGxuWhK5WJWl1qzr",
+                                "1Cs13mdCwZGlyptJkEwD5EpDXsCokM2Ag9ErAhCjl1qQ"
+                            ]
+                        },
+                        "includesHeaders": {
+                            "label": "Yes",
+                            "nested": [
+                                {
+                                    "name": "values",
+                                    "spec": [
+                                        {
+                                            "name": "0",
+                                            "type": "text",
+                                            "label": "collection_time (A)"
+                                        },
+                                        {
+                                            "name": "1",
+                                            "type": "text",
+                                            "label": "company_name (B)"
+                                        },
+                                        {
+                                            "name": "2",
+                                            "type": "text",
+                                            "label": "industry_category (C)"
+                                        },
+                                        {
+                                            "name": "3",
+                                            "type": "text",
+                                            "label": "tech_focus (D)"
+                                        },
+                                        {
+                                            "name": "4",
+                                            "type": "text",
+                                            "label": "funding_status (E)"
+                                        },
+                                        {
+                                            "name": "5",
+                                            "type": "text",
+                                            "label": "news_mentions (F)"
+                                        },
+                                        {
+                                            "name": "6",
+                                            "type": "text",
+                                            "label": "github_activity (G)"
+                                        },
+                                        {
+                                            "name": "7",
+                                            "type": "text",
+                                            "label": "patent_count (H)"
+                                        },
+                                        {
+                                            "name": "8",
+                                            "type": "text",
+                                            "label": "threat_level (I)"
+                                        },
+                                        {
+                                            "name": "9",
+                                            "type": "text",
+                                            "label": "innovation_index (J)"
+                                        },
+                                        {
+                                            "name": "10",
+                                            "type": "text",
+                                            "label": "employee_count (K)"
+                                        },
+                                        {
+                                            "name": "11",
+                                            "type": "text",
+                                            "label": "founded_date (L)"
+                                        },
+                                        {
+                                            "name": "12",
+                                            "type": "text",
+                                            "label": "headquarters (M)"
+                                        },
+                                        {
+                                            "name": "13",
+                                            "type": "text",
+                                            "label": "business_model (N)"
+                                        },
+                                        {
+                                            "name": "14",
+                                            "type": "text",
+                                            "label": "latest_news (O)"
+                                        },
+                                        {
+                                            "name": "15",
+                                            "type": "text",
+                                            "label": "latest_repo (P)"
+                                        },
+                                        {
+                                            "name": "16",
+                                            "type": "text",
+                                            "label": "latest_patent (Q)"
+                                        },
+                                        {
+                                            "name": "17",
+                                            "type": "text",
+                                            "label": "next_review_date (R)"
+                                        },
+                                        {
+                                            "name": "18",
+                                            "type": "text",
+                                            "label": "alert_priority (S)"
+                                        },
+                                        {
+                                            "name": "19",
+                                            "type": "text",
+                                            "label": "data_version (T)"
+                                        },
+                                        {
+                                            "name": "20",
+                                            "type": "text",
+                                            "label": "(U)"
+                                        },
+                                        {
+                                            "name": "21",
+                                            "type": "text",
+                                            "label": "(V)"
+                                        },
+                                        {
+                                            "name": "22",
+                                            "type": "text",
+                                            "label": "(W)"
+                                        },
+                                        {
+                                            "name": "23",
+                                            "type": "text",
+                                            "label": "(X)"
+                                        },
+                                        {
+                                            "name": "24",
+                                            "type": "text",
+                                            "label": "(Y)"
+                                        },
+                                        {
+                                            "name": "25",
+                                            "type": "text",
+                                            "label": "(Z)"
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Values"
+                                }
+                            ]
+                        },
+                        "insertDataOption": {
+                            "mode": "chose",
+                            "label": "Insert rows"
+                        },
+                        "valueInputOption": {
+                            "mode": "chose",
+                            "label": "User entered"
+                        },
+                        "insertUnformatted": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertUnformatted",
+                        "type": "boolean",
+                        "label": "Unformatted",
+                        "required": true
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertDataOption",
+                        "type": "select",
+                        "label": "Insert data option",
+                        "validate": {
+                            "enum": [
+                                "INSERT_ROWS",
+                                "OVERWRITE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "file",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "spec": [
+                            {
+                                "name": "0",
+                                "type": "text",
+                                "label": "collection_time (A)"
+                            },
+                            {
+                                "name": "1",
+                                "type": "text",
+                                "label": "company_name (B)"
+                            },
+                            {
+                                "name": "2",
+                                "type": "text",
+                                "label": "industry_category (C)"
+                            },
+                            {
+                                "name": "3",
+                                "type": "text",
+                                "label": "tech_focus (D)"
+                            },
+                            {
+                                "name": "4",
+                                "type": "text",
+                                "label": "funding_status (E)"
+                            },
+                            {
+                                "name": "5",
+                                "type": "text",
+                                "label": "news_mentions (F)"
+                            },
+                            {
+                                "name": "6",
+                                "type": "text",
+                                "label": "github_activity (G)"
+                            },
+                            {
+                                "name": "7",
+                                "type": "text",
+                                "label": "patent_count (H)"
+                            },
+                            {
+                                "name": "8",
+                                "type": "text",
+                                "label": "threat_level (I)"
+                            },
+                            {
+                                "name": "9",
+                                "type": "text",
+                                "label": "innovation_index (J)"
+                            },
+                            {
+                                "name": "10",
+                                "type": "text",
+                                "label": "employee_count (K)"
+                            },
+                            {
+                                "name": "11",
+                                "type": "text",
+                                "label": "founded_date (L)"
+                            },
+                            {
+                                "name": "12",
+                                "type": "text",
+                                "label": "headquarters (M)"
+                            },
+                            {
+                                "name": "13",
+                                "type": "text",
+                                "label": "business_model (N)"
+                            },
+                            {
+                                "name": "14",
+                                "type": "text",
+                                "label": "latest_news (O)"
+                            },
+                            {
+                                "name": "15",
+                                "type": "text",
+                                "label": "latest_repo (P)"
+                            },
+                            {
+                                "name": "16",
+                                "type": "text",
+                                "label": "latest_patent (Q)"
+                            },
+                            {
+                                "name": "17",
+                                "type": "text",
+                                "label": "next_review_date (R)"
+                            },
+                            {
+                                "name": "18",
+                                "type": "text",
+                                "label": "alert_priority (S)"
+                            },
+                            {
+                                "name": "19",
+                                "type": "text",
+                                "label": "data_version (T)"
+                            },
+                            {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                            },
+                            {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                            },
+                            {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                            },
+                            {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                            },
+                            {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                            },
+                            {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Values"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "alert_condition",
+                "scope": "roundtrip",
+                "value": "{{if(6.competitive_threat_level = \"HIGH\" + OR + 6.innovation_index > \"50\" + OR + 6.recent_news_count > 15; true; false)}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2100,
+                    "y": 0,
+                    "name": "预警条件判断"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "alert_condition",
+                        "type": "any",
+                        "label": "alert_condition"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "module": "email:ActionSendEmail",
+            "version": 7,
+            "parameters": {
+                "account": 3833972,
+                "saveAfterSent": false
+            },
+            "filter": {
+                "name": "高风险预警",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{8.alert_condition}}",
+                            "b": "true",
+                            "o": "boolean:equal"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "cc": [],
+                "to": [
+                    "hello.duan@foxmail.com"
+                ],
+                "bcc": [],
+                "from": "",
+                "html": "<h2>🚨 竞争对手高风险预警</h2>\n<p><strong>公司名称：</strong>{{6.company_name}}</p>\n<p><strong>行业分类：</strong>{{6.industry_category}}</p>\n<p><strong>威胁等级：</strong><span style=\"color: red; font-weight: bold;\">{{6.competitive_threat_level}}</span></p>\n<p><strong>创新指数：</strong>{{6.innovation_index}}</p>\n<p><strong>监控优先级：</strong>{{1.`5`}}</p>\n\n<h3>📊 关键指标变化</h3>\n<table border=\"1\" style=\"border-collapse: collapse; width: 100%;\">\n<tr style=\"background-color: #f2f2f2;\">\n<th>指标</th><th>数值</th><th>状态</th>\n</tr>\n<tr>\n<td>近期新闻</td>\n<td>{{6.recent_news_count}}条</td>\n<td>{{if(6.recent_news_count > 15; \"⚠️ 异常活跃\"; if(6.recent_news_count > 8; \"📈 较活跃\"; \"📊 正常\"))}}</td>\n</tr>\n<tr>\n<td>GitHub活跃度</td>\n<td>{{6.github_activity_score}} stars</td>\n<td>{{if(6.github_activity_score > 10000; \"🔥 极高\"; if(6.github_activity_score > 1000; \"📈 较高\"; \"📊 正常\"))}}</td>\n</tr>\n<tr>\n<td>专利申请</td>\n<td>{{6.recent_patents_count}}项</td>\n<td>{{if(6.recent_patents_count > 5; \"🔬 创新活跃\"; if(6.recent_patents_count > 0; \"📝 有专利\"; \"🔍 无新专利\"))}}</td>\n</tr>\n<tr>\n<td>GitHub仓库</td>\n<td>{{6.github_repo_count}}个</td>\n<td>{{if(6.github_repo_count > 5; \"💻 技术活跃\"; \"📊 正常\")}}</td>\n</tr>\n</table>\n\n<h3>📰 最新动态详情</h3>\n<div style=\"background-color: #f9f9f9; padding: 10px; margin: 10px 0; border-left: 4px solid #007cba;\">\n<p><strong>🗞️ 最新新闻：</strong><br>{{6.latest_news_title}}</p>\n</div>\n\n<div style=\"background-color: #f0f8f0; padding: 10px; margin: 10px 0; border-left: 4px solid #28a745;\">\n<p><strong>💻 最新技术项目：</strong><br>{{6.latest_repo_name}}</p>\n</div>\n\n<div style=\"background-color: #fff3cd; padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;\">\n<p><strong>🔬 最新专利：</strong><br>{{6.latest_patent_title}}</p>\n</div>\n\n<h3>⏰ 行动建议</h3>\n<ul>\n<li><strong>下次审查：</strong>{{6.next_review_date}}</li>\n<li><strong>建议行动：</strong>{{if(6.competitive_threat_level = \"HIGH\"; \"立即分析其技术动向和市场策略\"; if(6.competitive_threat_level = \"MEDIUM\"; \"密切关注其产品发布\"; \"保持常规监控\"))}}</li>\n<li><strong>关注重点：</strong>{{if(6.recent_news_count > 15; \"媒体活动异常频繁，可能有重大发布\"; if(6.github_activity_score > 10000; \"技术社区影响力强，关注开源策略\"; \"常规竞争态势\"))}}</li>\n</ul>\n\n<hr>\n<p style=\"font-size: 12px; color: #666;\"><em>本预警由ICT技术洞察竞争对手监控系统v2.1自动生成<br>监控时间: {{formatDate(6.monitor_timestamp; \"YYYY-MM-DD HH:mm:ss\")}}</em></p>",
+                "sender": "",
+                "headers": [],
+                "replyTo": "",
+                "subject": "🚨 竞争对手高风险预警 - {{6.company_name}}",
+                "priority": "high",
+                "inReplyTo": "",
+                "references": [],
+                "attachments": [],
+                "contentType": "html"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2400,
+                    "y": 0,
+                    "name": "发送预警邮件"
+                },
+                "restore": {
+                    "expect": {
+                        "cc": {
+                            "mode": "chose"
+                        },
+                        "to": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "bcc": {
+                            "mode": "chose"
+                        },
+                        "priority": {
+                            "label": "High"
+                        },
+                        "references": {
+                            "mode": "chose"
+                        },
+                        "attachments": {
+                            "mode": "chose"
+                        },
+                        "contentType": {
+                            "label": "HTML"
+                        }
+                    },
+                    "parameters": {
+                        "account": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "Gmail-Connection (hello.junjie.duan@gmail.com)"
+                        },
+                        "saveAfterSent": {
+                            "label": "No"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "account",
+                        "type": "account:smtp,google-restricted,microsoft-smtp-imap",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "saveAfterSent",
+                        "type": "select",
+                        "label": "Save message after sending",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "to",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "To",
+                        "required": true
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Content Type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "html",
+                                "text"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "attachments",
+                        "spec": [
+                            {
+                                "name": "fileName",
+                                "type": "filename",
+                                "label": "File name",
+                                "required": true,
+                                "semantic": "file:name"
+                            },
+                            {
+                                "name": "data",
+                                "type": "buffer",
+                                "label": "Data",
+                                "required": true,
+                                "semantic": "file:data"
+                            },
+                            {
+                                "name": "cid",
+                                "type": "text",
+                                "label": "Content-ID"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Attachments"
+                    },
+                    {
+                        "name": "cc",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address"
+                        },
+                        "type": "array",
+                        "label": "Copy recipient"
+                    },
+                    {
+                        "name": "bcc",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address"
+                        },
+                        "type": "array",
+                        "label": "Blind copy recipient"
+                    },
+                    {
+                        "name": "from",
+                        "type": "text",
+                        "label": "From"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "text",
+                        "label": "Sender"
+                    },
+                    {
+                        "name": "replyTo",
+                        "type": "text",
+                        "label": "Reply-To"
+                    },
+                    {
+                        "name": "inReplyTo",
+                        "type": "text",
+                        "label": "In-Reply-To"
+                    },
+                    {
+                        "name": "references",
+                        "spec": {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Reference",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "References"
+                    },
+                    {
+                        "name": "priority",
+                        "type": "select",
+                        "label": "Priority",
+                        "validate": {
+                            "enum": [
+                                "high",
+                                "normal",
+                                "low"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value",
+                                "required": true
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "html",
+                        "type": "text",
+                        "label": "Content"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 3737372
+            },
+            "mapper": {
+                "from": "drive",
+                "mode": "select",
+                "values": {
+                    "0": "{{formatDate(6.monitor_timestamp; \"YYYY-MM-DD HH:mm:ss\")}}",
+                    "1": "Competitor_Intelligence_Collection",
+                    "2": "{{6.company_name}}",
+                    "3": "{{if(8.alert_condition; \"HIGH_RISK_ALERT\"; \"NORMAL_MONITORING\")}}",
+                    "4": "威胁等级: {{6.competitive_threat_level}} | 创新指数: {{6.innovation_index}} | 新闻: {{6.recent_news_count}}条 | GitHub: {{6.github_activity_score}} | 专利: {{6.recent_patents_count}}项",
+                    "5": "{{formatDate(addMinutes(6.monitor_timestamp; 2); \"YYYY-MM-DD HH:mm:ss\")}}",
+                    "6": "AUTO_V2.1"
+                },
+                "sheetId": "Data",
+                "spreadsheetId": "/1dIdj-fEEIQddqXOxl6fhrkkgAYRfxOgm/1vnrrtEWkU3PRjZ0l0aUThMAU0yphUSun/1vN0wOpbLh7xvusyRZqGyA66z6Nvs8oFw/1UuU3ucofFNL-VGb_xk96HwaJxCqEBFWjnNdI2qj4Zh0",
+                "includesHeaders": true,
+                "insertDataOption": "INSERT_ROWS",
+                "valueInputOption": "USER_ENTERED",
+                "insertUnformatted": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2700,
+                    "y": 0,
+                    "name": "记录监控日志"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "My Drive"
+                        },
+                        "mode": {
+                            "label": "Search by path"
+                        },
+                        "sheetId": {
+                            "label": "Data"
+                        },
+                        "spreadsheetId": {
+                            "path": [
+                                "1dIdj-fEEIQddqXOxl6fhrkkgAYRfxOgm",
+                                "1vnrrtEWkU3PRjZ0l0aUThMAU0yphUSun",
+                                "1vN0wOpbLh7xvusyRZqGyA66z6Nvs8oFw",
+                                "1UuU3ucofFNL-VGb_xk96HwaJxCqEBFWjnNdI2qj4Zh0"
+                            ]
+                        },
+                        "includesHeaders": {
+                            "label": "Yes",
+                            "nested": [
+                                {
+                                    "name": "values",
+                                    "spec": [
+                                        {
+                                            "name": "0",
+                                            "type": "text",
+                                            "label": "timestamp (A)"
+                                        },
+                                        {
+                                            "name": "1",
+                                            "type": "text",
+                                            "label": "workflow_name (B)"
+                                        },
+                                        {
+                                            "name": "2",
+                                            "type": "text",
+                                            "label": "status (C)"
+                                        },
+                                        {
+                                            "name": "3",
+                                            "type": "text",
+                                            "label": "message (D)"
+                                        },
+                                        {
+                                            "name": "4",
+                                            "type": "text",
+                                            "label": "duration (E)"
+                                        },
+                                        {
+                                            "name": "5",
+                                            "type": "text",
+                                            "label": "error_details (F)"
+                                        },
+                                        {
+                                            "name": "6",
+                                            "type": "text",
+                                            "label": "(G)"
+                                        },
+                                        {
+                                            "name": "7",
+                                            "type": "text",
+                                            "label": "(H)"
+                                        },
+                                        {
+                                            "name": "8",
+                                            "type": "text",
+                                            "label": "(I)"
+                                        },
+                                        {
+                                            "name": "9",
+                                            "type": "text",
+                                            "label": "(J)"
+                                        },
+                                        {
+                                            "name": "10",
+                                            "type": "text",
+                                            "label": "(K)"
+                                        },
+                                        {
+                                            "name": "11",
+                                            "type": "text",
+                                            "label": "(L)"
+                                        },
+                                        {
+                                            "name": "12",
+                                            "type": "text",
+                                            "label": "(M)"
+                                        },
+                                        {
+                                            "name": "13",
+                                            "type": "text",
+                                            "label": "(N)"
+                                        },
+                                        {
+                                            "name": "14",
+                                            "type": "text",
+                                            "label": "(O)"
+                                        },
+                                        {
+                                            "name": "15",
+                                            "type": "text",
+                                            "label": "(P)"
+                                        },
+                                        {
+                                            "name": "16",
+                                            "type": "text",
+                                            "label": "(Q)"
+                                        },
+                                        {
+                                            "name": "17",
+                                            "type": "text",
+                                            "label": "(R)"
+                                        },
+                                        {
+                                            "name": "18",
+                                            "type": "text",
+                                            "label": "(S)"
+                                        },
+                                        {
+                                            "name": "19",
+                                            "type": "text",
+                                            "label": "(T)"
+                                        },
+                                        {
+                                            "name": "20",
+                                            "type": "text",
+                                            "label": "(U)"
+                                        },
+                                        {
+                                            "name": "21",
+                                            "type": "text",
+                                            "label": "(V)"
+                                        },
+                                        {
+                                            "name": "22",
+                                            "type": "text",
+                                            "label": "(W)"
+                                        },
+                                        {
+                                            "name": "23",
+                                            "type": "text",
+                                            "label": "(X)"
+                                        },
+                                        {
+                                            "name": "24",
+                                            "type": "text",
+                                            "label": "(Y)"
+                                        },
+                                        {
+                                            "name": "25",
+                                            "type": "text",
+                                            "label": "(Z)"
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Values"
+                                }
+                            ]
+                        },
+                        "insertDataOption": {
+                            "mode": "chose",
+                            "label": "Insert rows"
+                        },
+                        "valueInputOption": {
+                            "mode": "chose",
+                            "label": "User entered"
+                        },
+                        "insertUnformatted": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertUnformatted",
+                        "type": "boolean",
+                        "label": "Unformatted",
+                        "required": true
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertDataOption",
+                        "type": "select",
+                        "label": "Insert data option",
+                        "validate": {
+                            "enum": [
+                                "INSERT_ROWS",
+                                "OVERWRITE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "file",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "spec": [
+                            {
+                                "name": "0",
+                                "type": "text",
+                                "label": "timestamp (A)"
+                            },
+                            {
+                                "name": "1",
+                                "type": "text",
+                                "label": "workflow_name (B)"
+                            },
+                            {
+                                "name": "2",
+                                "type": "text",
+                                "label": "status (C)"
+                            },
+                            {
+                                "name": "3",
+                                "type": "text",
+                                "label": "message (D)"
+                            },
+                            {
+                                "name": "4",
+                                "type": "text",
+                                "label": "duration (E)"
+                            },
+                            {
+                                "name": "5",
+                                "type": "text",
+                                "label": "error_details (F)"
+                            },
+                            {
+                                "name": "6",
+                                "type": "text",
+                                "label": "(G)"
+                            },
+                            {
+                                "name": "7",
+                                "type": "text",
+                                "label": "(H)"
+                            },
+                            {
+                                "name": "8",
+                                "type": "text",
+                                "label": "(I)"
+                            },
+                            {
+                                "name": "9",
+                                "type": "text",
+                                "label": "(J)"
+                            },
+                            {
+                                "name": "10",
+                                "type": "text",
+                                "label": "(K)"
+                            },
+                            {
+                                "name": "11",
+                                "type": "text",
+                                "label": "(L)"
+                            },
+                            {
+                                "name": "12",
+                                "type": "text",
+                                "label": "(M)"
+                            },
+                            {
+                                "name": "13",
+                                "type": "text",
+                                "label": "(N)"
+                            },
+                            {
+                                "name": "14",
+                                "type": "text",
+                                "label": "(O)"
+                            },
+                            {
+                                "name": "15",
+                                "type": "text",
+                                "label": "(P)"
+                            },
+                            {
+                                "name": "16",
+                                "type": "text",
+                                "label": "(Q)"
+                            },
+                            {
+                                "name": "17",
+                                "type": "text",
+                                "label": "(R)"
+                            },
+                            {
+                                "name": "18",
+                                "type": "text",
+                                "label": "(S)"
+                            },
+                            {
+                                "name": "19",
+                                "type": "text",
+                                "label": "(T)"
+                            },
+                            {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                            },
+                            {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                            },
+                            {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                            },
+                            {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                            },
+                            {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                            },
+                            {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Values"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "monitoring_summary",
+                "scope": "roundtrip",
+                "value": "{{6.company_name}}监控完成 | 威胁等级: {{6.competitive_threat_level}} | 创新指数: {{6.innovation_index}} | 新闻: {{6.recent_news_count}}条 | GitHub活跃度: {{6.github_activity_score}} | 专利: {{6.recent_patents_count}}项 | 下次审查: {{6.next_review_date}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3000,
+                    "y": 0,
+                    "name": "生成监控摘要"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "monitoring_summary",
+                        "type": "any",
+                        "label": "monitoring_summary"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com",
+        "notes": []
+    }
+}
