@@ -460,6 +460,7 @@ flowchart TD
     style D1 fill:#f3e5f5
     style D2 fill:#f3e5f5
     style D3 fill:#f3e5f5
+```
 
 ### 4.2 核心工作流详细设计
 
