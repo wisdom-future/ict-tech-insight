@@ -420,34 +420,45 @@ graph LR
 
 ### 4.1 工作流架构概览
 
-```mermaid
-graph TD
-    A[技术主题注册表] --> B[技术主题迭代器]
+flowchart TD
+    A[技术主题与指标] --> B[技术主题数据收集]
     
-    B --> C1[学术研究收集<br/>Academic_Research_Collection]
-    B --> C2[开源生态收集<br/>OpenSource_Ecosystem_Collection]
-    B --> C3[专利情报收集<br/>Patent_Intelligence_Collection]
-    B --> C4[新闻动态收集<br/>News_Intelligence_Collection]
-    B --> C5[竞争对手收集<br/>Competitor_Intelligence_Collection]
+    B --> C1[学术研究数据收集<br/>Academic_Research_Collection]
+    B --> C2[开源生态数据收集<br/>OpenSource_Ecosystem_Collection]
+    B --> C3[专利情报数据收集<br/>Patent_Intelligence_Collection]
+    B --> C4[新闻情报数据收集<br/>News_Intelligence_Collection]
+    B --> C5[竞争对手数据收集<br/>Competitor_Intelligence_Collection]
     
-    C1 --> D[多模型AI分析<br/>ICT_TechInsight_MultiModel_AI_Analysis]
+    C1 --> D[数据标准化与特征工程平台<br/>Data_Standardization_Feature_Engineering_Platform]
     C2 --> D
     C3 --> D
     C4 --> D
     C5 --> D
     
-    D --> E1[技术分析<br/>xAI Grok-3]
-    D --> E2[市场分析<br/>OpenAI GPT-4]
-    D --> E3[风险评估<br/>Risk Analysis]
+    D --> D1[数据清洗与质量控制<br/>Data_Cleaning_Quality_Control]
+    D --> D2[多源数据融合<br/>Multi_Source_Data_Fusion]
+    D --> D3[特征工程与提取<br/>Feature_Engineering_Extraction]
     
-    E1 --> F[综合决策分析]
-    E2 --> F
-    E3 --> F
+    D1 --> E[多模态AI分析<br/>ICT_TechInsight_MultiModal_AI_Analysis]
+    D2 --> E
+    D3 --> E
     
-    F --> G1[分析结果存储]
-    F --> G2[邮件报告推送]
-    F --> G3[质量监控日志]
-```
+    E --> F1[技术分析<br/>XAI Grok-1]
+    E --> F2[市场分析<br/>OpenAI GPT-4]
+    E --> F3[风险分析<br/>Risk Analysis]
+    
+    F1 --> G[综合对标分析<br/>Comprehensive_Benchmarking_Analysis]
+    F2 --> G
+    F3 --> G
+    
+    G --> H1[分析策略制定<br/>Analysis_Strategy_Development]
+    G --> H2[部门协调连接<br/>Department_Coordination]
+    G --> H3[高层决策日历<br/>Executive_Decision_Calendar]
+    
+    style D fill:#e1f5fe
+    style D1 fill:#f3e5f5
+    style D2 fill:#f3e5f5
+    style D3 fill:#f3e5f5
 
 ### 4.2 核心工作流详细设计
 
