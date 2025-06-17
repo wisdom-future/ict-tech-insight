@@ -2171,10 +2171,9 @@ jobs:
     - name: 创建GitHub配置
       run: |
         echo "🐙 创建GitHub配置..."
-        
-        # CI/CD工作流
-        cat > .github/workflows/ci-cd.yml << 'EOF'
-        name: CI/CD Pipeline
+
+        cat > .github/ISSUE_TEMPLATE/bug_report.md << 'EOF'
+        EOF
         
         on:
           push:
