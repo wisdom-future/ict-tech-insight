@@ -1,0 +1,54 @@
+{
+  "_comment": "技术主题监控配置",
+  "_version": "2.0.0", 
+  "_last_updated": "2024-06-17",
+  
+  "monitoring_strategy": {
+    "update_frequency": "daily",
+    "priority_rotation": true,
+    "seasonal_adjustment": true
+  },
+  
+  "technology_categories": {
+    "artificial_intelligence": {
+      "display_name": "人工智能",
+      "priority": "HIGH",
+      "subcategories": [
+        {
+          "name": "Machine Learning",
+          "keywords": ["machine learning", "deep learning", "neural networks", "AI algorithms"],
+          "monitoring_priority": "HIGH",
+          "search_terms": ["机器学习", "深度学习", "神经网络"],
+          "competitors": ["Google", "Microsoft", "OpenAI", "Anthropic"],
+          "maturity_stage": "MATURE",
+          "market_potential": 9.5
+        },
+        {
+          "name": "Large Language Models",
+          "keywords": ["LLM", "large language model", "GPT", "transformer", "NLP"],
+          "monitoring_priority": "HIGH", 
+          "search_terms": ["大语言模型", "自然语言处理"],
+          "competitors": ["OpenAI", "Google", "Anthropic", "Meta"],
+          "maturity_stage": "GROWING",
+          "market_potential": 9.8
+        }
+      ]
+    },
+    
+    "cloud_computing": {
+      "display_name": "云计算", 
+      "priority": "HIGH",
+      "subcategories": [
+        {
+          "name": "Edge Computing",
+          "keywords": ["edge computing", "edge AI", "fog computing", "distributed computing"],
+          "monitoring_priority": "HIGH",
+          "search_terms": ["边缘计算", "雾计算"],
+          "competitors": ["AWS", "Microsoft", "Google Cloud", "Cloudflare"],
+          "maturity_stage": "GROWING",
+          "market_potential": 8.8
+        }
+      ]
+    }
+  }
+}

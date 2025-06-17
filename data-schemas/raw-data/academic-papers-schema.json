@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://ict-techinsight.com/schemas/academic-papers.json",
+  "title": "Academic Papers Schema",
+  "description": "学术论文原始数据格式定义",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "collection_time",
+    "tech_topic",
+    "paper_title",
+    "authors",
+    "journal",
+    "publish_date",
+    "doi"
+  ],
+  "properties": {
+    "collection_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "数据收集时间"
+    },
+    "tech_topic": {
+      "type": "string",
+      "description": "技术主题",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "paper_title": {
+      "type": "string",
+      "description": "论文标题",
+      "minLength": 10,
+      "maxLength": 500
+    },
+    "authors": {
+      "type": "string",
+      "description": "作者列表",
+      "minLength": 3,
+      "maxLength": 1000
+    },
+    "journal": {
+      "type": "string",
+      "description": "期刊名称",
+      "minLength": 3,
+      "maxLength": 200
+    },
+    "publish_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "发表日期 (YYYY-MM-DD)"
+    },
+    "citation_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "引用次数"
+    },
+    "doi": {
+      "type": "string",
+      "pattern": "^10\\.\\d{4,}/.*",
+      "description": "DOI标识符"
+    },
+    "abstract": {
+      "type": "string",
+      "description": "论文摘要",
+      "maxLength": 5000
+    },
+    "keywords": {
+      "type": "string",
+      "description": "关键词",
+      "maxLength": 500
+    }
+  },
+  "additionalProperties": false
+}
