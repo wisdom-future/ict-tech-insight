@@ -1341,7 +1341,7 @@ jobs:
         echo "✅ 需求文件创建完成"
         
     - name: 提交所有更改
-      uses: stefanzweifel/git-auto-commit-action@v4
+      uses: stefanzweifel/git-auto-commit-action@v6
       with:
         commit_message: |
           🚀 创建ICT TechInsight Platform完整架构
