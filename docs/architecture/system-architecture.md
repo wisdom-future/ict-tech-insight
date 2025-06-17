@@ -420,6 +420,7 @@ graph LR
 
 ### 4.1 工作流架构概览
 
+```mermaid
 flowchart TD
     A[技术主题与指标] --> B[技术主题数据收集]
     
