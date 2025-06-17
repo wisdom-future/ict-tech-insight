@@ -76,7 +76,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -797,7 +797,7 @@
                 "headers": [
                     {
                         "name": "User-Agent",
-                        "value": "TechInsight-Research/1.0 (mailto:hello.junjie.duan@gmail.com)"
+                        "value": "TechInsight-Research/1.0 (mailto:${GMAIL_USER})"
                     },
                     {
                         "name": "Accept",
@@ -1209,7 +1209,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -2116,7 +2116,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -2615,7 +2615,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
