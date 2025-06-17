@@ -11,6 +11,8 @@ on:
 
 permissions:
   contents: write
+  actions: write
+  workflows: write  # 添加这个
 
 jobs:
   create-platform-structure:
