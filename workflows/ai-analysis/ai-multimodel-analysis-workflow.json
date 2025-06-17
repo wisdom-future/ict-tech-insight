@@ -80,7 +80,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -459,7 +459,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -834,7 +834,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -1209,7 +1209,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -1589,7 +1589,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -4124,7 +4124,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -4564,7 +4564,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -5004,7 +5004,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -5444,7 +5444,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -5889,7 +5889,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
@@ -6242,7 +6242,7 @@
                                 "scoped": "true",
                                 "connection": "google-restricted"
                             },
-                            "label": "Gmail-Connection (hello.junjie.duan@gmail.com)"
+                            "label": "Gmail-Connection (${GMAIL_USER})"
                         },
                         "saveAfterSent": {
                             "label": "No"
@@ -6625,7 +6625,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "GoogleSheets (hello.junjie.duan@gmail.com)"
+                            "label": "GoogleSheets (${GMAIL_USER})"
                         }
                     }
                 },
