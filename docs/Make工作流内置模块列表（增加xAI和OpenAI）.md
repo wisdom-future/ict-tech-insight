@@ -1,10 +1,56 @@
-## Make工作流内置模块列表（增加xAI和OpenAI）
+基于最新搜集到的Google Sheets模块信息，以下是完整的Make工作流模块列表（包含Google Sheets）：
+
+## Make工作流内置模块列表（完整版）
 
 ### 流程控制模块
 - **`builtin:BasicFeeder`** - 数组迭代器，遍历数组中的每个元素
 - **`builtin:BasicAggregator`** - 数据聚合器，收集多个数据包
 - **`builtin:BasicRouter`** - 路由器，根据条件分发数据流
 - **`builtin:BasicRepeater`** - 重复器，重复执行操作
+
+### Google Sheets模块 (google-sheets)
+#### 表格管理
+- **`google-sheets:CreateSpreadsheet`** - 创建新电子表格
+- **`google-sheets:CreateSpreadsheetFromTemplate`** - 从模板创建电子表格
+- **`google-sheets:CopySheet`** - 复制工作表
+- **`google-sheets:AddSheet`** - 添加工作表
+- **`google-sheets:RenameSheet`** - 重命名工作表
+- **`google-sheets:DeleteSheet`** - 删除工作表
+- **`google-sheets:ListSheets`** - 列出所有工作表
+
+#### 数据读取
+- **`google-sheets:GetRangeValues`** - 获取范围值
+- **`google-sheets:GetCell`** - 获取单元格值
+- **`google-sheets:SearchRows`** - 搜索行
+- **`google-sheets:SearchRowsAdvanced`** - 高级搜索行
+
+#### 数据写入
+- **`google-sheets:AddRow`** - 添加行
+- **`google-sheets:BulkAddRows`** - 批量添加行
+- **`google-sheets:UpdateRow`** - 更新行
+- **`google-sheets:BulkUpdateRows`** - 批量更新行
+- **`google-sheets:UpdateCell`** - 更新单元格
+
+#### 数据删除/清空
+- **`google-sheets:DeleteRow`** - 删除行
+- **`google-sheets:ClearRow`** - 清空行
+- **`google-sheets:ClearCell`** - 清空单元格
+- **`google-sheets:ClearValuesFromRange`** - 清空范围值
+
+#### 触发器
+- **`google-sheets:WatchNewRows`** - 监听新行
+- **`google-sheets:WatchChanges`** - 监听单元格变化
+
+#### 条件格式
+- **`google-sheets:AddConditionalFormatRule`** - 添加条件格式规则
+- **`google-sheets:DeleteConditionalFormatRule`** - 删除条件格式规则
+
+#### 自定义函数
+- **`google-sheets:PerformFunction`** - 执行自定义函数
+- **`google-sheets:PerformFunctionResponder`** - 自定义函数响应器
+
+#### API调用
+- **`google-sheets:MakeAPICall`** - 调用Google Sheets API
 
 ### xAI模块 (xAI Grok)
 - **`xai:CreateCompletion`** - 使用Grok模型创建文本完成
@@ -128,27 +174,41 @@
 
 ### 使用示例
 
-**xAI模块使用：**
+**Google Sheets模块使用：**
 ```json
 {
-  "module": "xai:CreateChatCompletion",
+  "module": "google-sheets:AddRow",
   "version": 1,
   "parameters": {
-    "model": "grok-beta",
-    "messages": [{"role": "user", "content": "Hello"}]
+    "spreadsheetId": "1ABC123...",
+    "sheetName": "Sheet1",
+    "values": ["Name", "Email", "Status"]
   }
 }
 ```
 
-**OpenAI模块使用：**
+**Google Sheets搜索行：**
 ```json
 {
-  "module": "openai-gpt-3:CreateCompletion",
+  "module": "google-sheets:SearchRows",
   "version": 1,
   "parameters": {
-    "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "max_completion_tokens": 1000
+    "spreadsheetId": "1ABC123...",
+    "sheetName": "Sheet1",
+    "filter": [{"field": "Email", "operator": "contains", "value": "@gmail.com"}]
+  }
+}
+```
+
+**Google Sheets监听新行：**
+```json
+{
+  "module": "google-sheets:WatchNewRows",
+  "version": 1,
+  "parameters": {
+    "spreadsheetId": "1ABC123...",
+    "sheetName": "Sheet1",
+    "tableContainsHeaders": true
   }
 }
 ```
