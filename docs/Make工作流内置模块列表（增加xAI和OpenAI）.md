@@ -1,214 +1,168 @@
-基于最新搜集到的Google Sheets模块信息，以下是完整的Make工作流模块列表（包含Google Sheets）：
+**Make.com所有可用模块列表：**
 
-## Make工作流内置模块列表（完整版）
+根据您的脚本分析，以下是Make.com平台中可用的主要模块类型：
 
-### 流程控制模块
-- **`builtin:BasicFeeder`** - 数组迭代器，遍历数组中的每个元素
-- **`builtin:BasicAggregator`** - 数据聚合器，收集多个数据包
-- **`builtin:BasicRouter`** - 路由器，根据条件分发数据流
-- **`builtin:BasicRepeater`** - 重复器，重复执行操作
+## **数据存储和表格模块：**
 
-### Google Sheets模块 (google-sheets)
-#### 表格管理
-- **`google-sheets:CreateSpreadsheet`** - 创建新电子表格
-- **`google-sheets:CreateSpreadsheetFromTemplate`** - 从模板创建电子表格
-- **`google-sheets:CopySheet`** - 复制工作表
-- **`google-sheets:AddSheet`** - 添加工作表
-- **`google-sheets:RenameSheet`** - 重命名工作表
-- **`google-sheets:DeleteSheet`** - 删除工作表
-- **`google-sheets:ListSheets`** - 列出所有工作表
+**Google Sheets模块：**
+- `google-sheets:filterRows` - 筛选表格行数据
+- `google-sheets:addRow` - 添加新行到表格
+- `google-sheets:updateRow` - 更新表格行数据
+- `google-sheets:deleteRow` - 删除表格行
+- `google-sheets:getRow` - 获取特定行数据
+- `google-sheets:createSpreadsheet` - 创建新的电子表格
+- `google-sheets:getSpreadsheet` - 获取电子表格信息
 
-#### 数据读取
-- **`google-sheets:GetRangeValues`** - 获取范围值
-- **`google-sheets:GetCell`** - 获取单元格值
-- **`google-sheets:SearchRows`** - 搜索行
-- **`google-sheets:SearchRowsAdvanced`** - 高级搜索行
+**其他数据库模块：**
+- `airtable:*` - Airtable数据库操作
+- `mysql:*` - MySQL数据库连接
+- `postgresql:*` - PostgreSQL数据库操作
+- `mongodb:*` - MongoDB数据库操作
 
-#### 数据写入
-- **`google-sheets:AddRow`** - 添加行
-- **`google-sheets:BulkAddRows`** - 批量添加行
-- **`google-sheets:UpdateRow`** - 更新行
-- **`google-sheets:BulkUpdateRows`** - 批量更新行
-- **`google-sheets:UpdateCell`** - 更新单元格
+## **AI和机器学习模块：**
 
-#### 数据删除/清空
-- **`google-sheets:DeleteRow`** - 删除行
-- **`google-sheets:ClearRow`** - 清空行
-- **`google-sheets:ClearCell`** - 清空单元格
-- **`google-sheets:ClearValuesFromRange`** - 清空范围值
+**OpenAI模块：**
+- `openai-gpt-3:CreateCompletion` - GPT文本生成
+- `openai-gpt-3:CreateImage` - DALL-E图像生成
+- `openai-gpt-3:CreateEmbedding` - 文本嵌入向量
+- `openai-gpt-3:CreateTranscription` - 语音转文字
 
-#### 触发器
-- **`google-sheets:WatchNewRows`** - 监听新行
-- **`google-sheets:WatchChanges`** - 监听单元格变化
+**xAI模块：**
+- `xai:createACompletion` - Grok模型文本生成
+- `xai:createChatCompletion` - 对话式AI交互
 
-#### 条件格式
-- **`google-sheets:AddConditionalFormatRule`** - 添加条件格式规则
-- **`google-sheets:DeleteConditionalFormatRule`** - 删除条件格式规则
+**其他AI服务：**
+- `anthropic:*` - Claude AI模型
+- `cohere:*` - Cohere AI服务
+- `huggingface:*` - Hugging Face模型
 
-#### 自定义函数
-- **`google-sheets:PerformFunction`** - 执行自定义函数
-- **`google-sheets:PerformFunctionResponder`** - 自定义函数响应器
+## **通信和消息模块：**
 
-#### API调用
-- **`google-sheets:MakeAPICall`** - 调用Google Sheets API
+**邮件模块：**
+- `email:ActionSendEmail` - 发送邮件
+- `gmail:sendEmail` - 通过Gmail发送
+- `outlook:sendEmail` - 通过Outlook发送
+- `smtp:sendEmail` - SMTP协议发送
 
-### xAI模块 (xAI Grok)
-- **`xai:CreateCompletion`** - 使用Grok模型创建文本完成
-- **`xai:CreateChatCompletion`** - 创建对话完成
-- **`xai-community:CreateCompletion`** - 社区版xAI完成
-- **`xai-community:CreateChatCompletion`** - 社区版xAI对话
-- **`xai:MakeAPICall`** - 调用xAI API
-- **`xai:CreateModeration`** - 内容审核
+**即时通讯模块：**
+- `slack:*` - Slack消息和频道操作
+- `discord:*` - Discord机器人和消息
+- `telegram:*` - Telegram机器人
+- `whatsapp:*` - WhatsApp Business API
+- `teams:*` - Microsoft Teams集成
 
-### OpenAI模块 (openai-gpt-3)
-#### 文本生成
-- **`openai-gpt-3:CreateCompletion`** - 创建文本完成 (GPT-3.5, GPT-4, GPT-4o, O1, O3, O4系列)
-- **`openai-gpt-3:CreateChatCompletion`** - 创建对话完成
-- **`openai-gpt-3:TransformTextToStructuredData`** - 将文本转换为结构化数据
-- **`openai-gpt-3:AIMessage`** - AI助手消息处理
+## **内置工具模块：**
 
-#### 图像处理
-- **`openai-gpt-3:GenerateImage`** - 生成图像 (DALL-E 2, DALL-E 3, GPT-Image-1)
-- **`openai-gpt-3:EditImage`** - 编辑图像
-- **`openai-gpt-3:AnalyzeImage`** - 图像分析 (Vision)
+**数据处理：**
+- `builtin:BasicFeeder` - 数组迭代器
+- `builtin:BasicAggregator` - 数据聚合器
+- `builtin:BasicRouter` - 条件路由器
+- `builtin:Filter` - 数据过滤器
+- `builtin:Iterator` - 高级迭代器
 
-#### 音频处理
-- **`openai-gpt-3:CreateTranscription`** - 音频转录 (Whisper)
-- **`openai-gpt-3:CreateTranslation`** - 音频翻译
-- **`openai-gpt-3:GenerateAudio`** - 生成音频 (TTS)
+**变量和存储：**
+- `util:SetVariables` - 设置多个变量
+- `util:SetVariable2` - 设置单个变量
+- `util:GetVariable` - 获取变量值
+- `datastore:*` - 数据存储操作
 
-#### 内容审核
-- **`openai-gpt-3:CreateModeration`** - 内容审核
+**数据转换：**
+- `json:ParseJSON` - JSON解析
+- `json:CreateJSON` - JSON创建
+- `xml:ParseXML` - XML解析
+- `csv:ParseCSV` - CSV解析
+- `base64:*` - Base64编码解码
 
-#### 文件管理
-- **`openai-gpt-3:UploadFile`** - 上传文件
-- **`openai-gpt-3:AddFilesToVectorStore`** - 添加文件到向量存储
+## **文件和存储模块：**
 
-#### 批处理
-- **`openai-gpt-3:CreateBatch`** - 创建批处理
-- **`openai-gpt-3:GetBatch`** - 获取批处理信息
-- **`openai-gpt-3:ListBatches`** - 列出批处理
-- **`openai-gpt-3:CancelBatch`** - 取消批处理
-- **`openai-gpt-3:WatchBatchCompleted`** - 监听批处理完成 (触发器)
+**云存储：**
+- `google-drive:*` - Google Drive文件操作
+- `dropbox:*` - Dropbox文件管理
+- `onedrive:*` - OneDrive文件操作
+- `aws-s3:*` - Amazon S3存储
 
-#### 响应管理
-- **`openai-gpt-3:CreateModelResponse`** - 创建模型响应
-- **`openai-gpt-3:GetModelResponse`** - 获取模型响应
-- **`openai-gpt-3:DeleteModelResponse`** - 删除模型响应
-- **`openai-gpt-3:ListInputItems`** - 列出输入项
+**文件处理：**
+- `pdf:*` - PDF文件操作
+- `image:*` - 图像处理和转换
+- `archive:*` - 压缩文件处理
 
-#### API调用
-- **`openai-gpt-3:MakeAPICall`** - 调用OpenAI API
+## **Web和API模块：**
 
-### 数据处理模块
-- **`util:SetVariable2`** - 设置单个变量
-- **`util:SetVariables`** - 设置多个变量
-- **`util:GetVariable`** - 获取变量值
-- **`util:ComposeTransformer`** - 数据转换器
-- **`util:TextAggregator`** - 文本聚合器
-- **`util:ArrayAggregator`** - 数组聚合器
+**HTTP请求：**
+- `http:makeRequest` - 发送HTTP请求
+- `webhook:customWebhook` - 自定义Webhook
+- `rest:*` - RESTful API调用
 
-### HTTP和API模块
-- **`http:ActionSendData`** - 发送HTTP请求
-- **`http:ActionGetData`** - 获取HTTP数据
-- **`http:TriggerWebhook`** - Webhook触发器
-- **`http:TriggerCustomWebhook`** - 自定义Webhook
+**网页操作：**
+- `web-scraper:*` - 网页数据抓取
+- `browser:*` - 浏览器自动化
 
-### 数据格式处理模块
-- **`json:ParseJSON`** - 解析JSON数据
-- **`json:CreateJSON`** - 创建JSON数据
-- **`csv:ParseCSV`** - 解析CSV文件
-- **`csv:CreateCSV`** - 创建CSV文件
-- **`xml:ParseXML`** - 解析XML数据
-- **`xml:CreateXML`** - 创建XML数据
+## **电商和支付模块：**
 
-### 文本处理模块
-- **`text:TextParser`** - 文本解析器
-- **`text:TextReplacer`** - 文本替换器
-- **`text:TextSplitter`** - 文本分割器
-- **`text:TextFormatter`** - 文本格式化器
+**电商平台：**
+- `shopify:*` - Shopify店铺管理
+- `woocommerce:*` - WooCommerce集成
+- `magento:*` - Magento电商平台
 
-### 邮件模块
-- **`email:SendEmail`** - 发送邮件
-- **`email:ParseEmail`** - 解析邮件
-- **`email:TriggerEmail`** - 邮件触发器
+**支付处理：**
+- `stripe:*` - Stripe支付处理
+- `paypal:*` - PayPal支付集成
 
-### 数学和计算模块
-- **`math:DoMath`** - 数学计算
-- **`math:RoundNumber`** - 数字四舍五入
-- **`math:FormatNumber`** - 数字格式化
+## **社交媒体模块：**
 
-### 时间和日期模块
-- **`datetime:ParseDate`** - 解析日期
-- **`datetime:FormatDate`** - 格式化日期
-- **`datetime:AddTime`** - 时间计算
-- **`datetime:GetTimestamp`** - 获取时间戳
+**主要平台：**
+- `facebook:*` - Facebook页面和广告
+- `twitter:*` - Twitter/X发布和管理
+- `instagram:*` - Instagram内容管理
+- `linkedin:*` - LinkedIn专业网络
+- `youtube:*` - YouTube视频管理
 
-### 文件处理模块
-- **`file:ReadFile`** - 读取文件
-- **`file:WriteFile`** - 写入文件
-- **`file:CreateArchive`** - 创建压缩文件
-- **`file:ExtractArchive`** - 解压文件
+## **项目管理模块：**
 
-### 图像处理模块
-- **`image:ResizeImage`** - 调整图像大小
-- **`image:ConvertImage`** - 转换图像格式
-- **`image:WatermarkImage`** - 添加水印
+**任务管理：**
+- `trello:*` - Trello看板管理
+- `asana:*` - Asana项目管理
+- `notion:*` - Notion数据库操作
+- `jira:*` - Jira问题跟踪
 
-### 加密和安全模块
-- **`crypto:HashData`** - 数据加密
-- **`crypto:EncryptData`** - 数据加密
-- **`crypto:DecryptData`** - 数据解密
-- **`crypto:GenerateSignature`** - 生成签名
+## **CRM和销售模块：**
 
-### 条件和逻辑模块
-- **`condition:BasicCondition`** - 基本条件判断
-- **`condition:AdvancedCondition`** - 高级条件判断
-- **`condition:SwitchCondition`** - 条件切换
+**客户关系管理：**
+- `salesforce:*` - Salesforce CRM
+- `hubspot:*` - HubSpot营销和销售
+- `pipedrive:*` - Pipedrive销售管道
+- `zoho:*` - Zoho CRM套件
 
-### 数据库模块
-- **`database:QueryDatabase`** - 数据库查询
-- **`database:InsertRecord`** - 插入记录
-- **`database:UpdateRecord`** - 更新记录
-- **`database:DeleteRecord`** - 删除记录
+## **时间和调度模块：**
 
-### 使用示例
+**时间处理：**
+- `datetime:*` - 日期时间操作
+- `scheduler:*` - 定时任务调度
+- `calendar:*` - 日历事件管理
 
-**Google Sheets模块使用：**
-```json
-{
-  "module": "google-sheets:AddRow",
-  "version": 1,
-  "parameters": {
-    "spreadsheetId": "1ABC123...",
-    "sheetName": "Sheet1",
-    "values": ["Name", "Email", "Status"]
-  }
-}
-```
+## **开发和技术模块：**
 
-**Google Sheets搜索行：**
-```json
-{
-  "module": "google-sheets:SearchRows",
-  "version": 1,
-  "parameters": {
-    "spreadsheetId": "1ABC123...",
-    "sheetName": "Sheet1",
-    "filter": [{"field": "Email", "operator": "contains", "value": "@gmail.com"}]
-  }
-}
-```
+**版本控制：**
+- `github:*` - GitHub仓库管理
+- `gitlab:*` - GitLab项目操作
+- `bitbucket:*` - Bitbucket代码管理
 
-**Google Sheets监听新行：**
-```json
-{
-  "module": "google-sheets:WatchNewRows",
-  "version": 1,
-  "parameters": {
-    "spreadsheetId": "1ABC123...",
-    "sheetName": "Sheet1",
-    "tableContainsHeaders": true
-  }
-}
-```
+**监控和分析：**
+- `google-analytics:*` - Google Analytics数据
+- `mixpanel:*` - Mixpanel事件跟踪
+
+## **特殊功能模块：**
+
+**加密和安全：**
+- `crypto:*` - 加密解密操作
+- `hash:*` - 哈希算法处理
+
+**数学和计算：**
+- `math:*` - 数学计算操作
+- `text:*` - 文本处理和格式化
+
+**地理位置：**
+- `maps:*` - 地图和地理编码
+- `location:*` - 位置服务
+
+这个列表涵盖了Make.com平台上主要的模块类型，每个模块类别下通常都有多个具体的操作选项。实际使用时，您可以根据具体需求选择相应的模块和操作。模块的可用性可能会根据您的订阅计划和地区而有所不同。
