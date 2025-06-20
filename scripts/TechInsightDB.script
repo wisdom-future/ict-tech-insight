@@ -1,0 +1,1401 @@
+/**
+ * 技术情报决策引擎 - 完整数据库系统创建脚本
+ * 修复版本 - 解决列数超出边界问题
+ * 创建日期: 2025-06-20
+ * 版本: v1.0-fixed
+ */
+
+function createTechIntelligenceSystem() {
+  console.log("🚀 开始创建技术情报决策引擎数据库系统...");
+  
+  try {
+    const systemConfig = {
+      version: "1.0",
+      createdDate: new Date().toISOString(),
+      creator: Session.getActiveUser().getEmail(),
+      timezone: "Asia/Shanghai"
+    };
+    
+    const databases = {};
+    
+    console.log("📋 创建配置管理数据库...");
+    databases.config = createConfigDatabase();
+    
+    console.log("📥 创建原始数据数据库...");
+    databases.rawdata = createRawDataDatabase();
+    
+    console.log("🧠 创建核心情报数据库...");
+    databases.intelligence = createIntelligenceDatabase();
+    
+    console.log("🔧 创建系统运营数据库...");
+    databases.operations = createOperationsDatabase();
+    
+    console.log("🔐 配置数据库访问权限...");
+    setupCrossDatabaseAccess(databases);
+    
+    console.log("📊 创建系统监控仪表板...");
+    const dashboard = createSystemDashboard(databases);
+    
+    logSystemCreation(databases, dashboard, systemConfig);
+    
+    console.log("✅ 技术情报决策引擎数据库系统创建完成！");
+    
+    return {
+      databases: databases,
+      dashboard: dashboard,
+      config: systemConfig,
+      status: "success",
+      message: "数据库系统创建成功，已配置完整的表结构和权限设置。"
+    };
+    
+  } catch (error) {
+    console.error("❌ 系统创建失败:", error.toString());
+    throw new Error(`数据库系统创建失败: ${error.message}`);
+  }
+}
+
+function createConfigDatabase() {
+  const spreadsheet = SpreadsheetApp.create("TechInsight_Config_DB");
+  const spreadsheetId = spreadsheet.getId();
+  
+  const techRegistrySheet = createTechnologyRegistrySheet(spreadsheet);
+  const competitorRegistrySheet = createCompetitorRegistrySheet(spreadsheet);
+  const conferenceRegistrySheet = createConferenceRegistrySheet(spreadsheet);
+  
+  const defaultSheet = spreadsheet.getActiveSheet();
+  if (defaultSheet.getName() === "工作表1" || defaultSheet.getName() === "Sheet1") {
+    spreadsheet.deleteSheet(defaultSheet);
+  }
+  
+  setupConfigDatabaseFormatting(spreadsheet);
+  
+  console.log(`✅ 配置管理数据库创建完成: ${spreadsheet.getUrl()}`);
+  
+  return {
+    spreadsheet: spreadsheet,
+    spreadsheetId: spreadsheetId,
+    url: spreadsheet.getUrl(),
+    sheets: {
+      technologyRegistry: techRegistrySheet,
+      competitorRegistry: competitorRegistrySheet,
+      conferenceRegistry: conferenceRegistrySheet
+    }
+  };
+}
+
+function createTechnologyRegistrySheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Technology_Registry");
+  
+  const headers = [
+    "tech_id", "tech_name", "tech_category", "tech_keywords", 
+    "academic_search_terms", "patent_search_terms", "monitoring_priority",
+    "monitoring_status", "data_source_academic", "data_source_patent",
+    "data_source_opensource", "data_source_news", "created_date",
+    "last_updated", "notes"
+  ];
+  
+  const headerDescriptions = [
+    "技术ID (主键)", "技术名称", "技术类别", "技术关键词",
+    "学术搜索词", "专利搜索词", "监控优先级 (1-10)",
+    "监控状态 (active/inactive)", "学术数据源启用", "专利数据源启用",
+    "开源数据源启用", "新闻数据源启用", "创建日期",
+    "最后更新时间", "备注"
+  ];
+  
+  if (headers.length > 26) {
+    throw new Error(`技术登记表列数 ${headers.length} 超出Google Sheets限制`);
+  }
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#4285f4");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupTechnologyRegistryValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createCompetitorRegistrySheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Competitor_Registry");
+  
+  const headers = [
+    "competitor_id", "company_name", "industry_category", "headquarters_location",
+    "founded_year", "employee_count", "annual_revenue", "stock_symbol",
+    "website_url", "tech_focus_areas", "monitoring_priority", "threat_level",
+    "monitoring_status", "news_monitoring", "patent_monitoring", "social_monitoring",
+    "created_date", "last_updated", "notes"
+  ];
+  
+  const headerDescriptions = [
+    "竞争对手ID (主键)", "公司名称", "行业类别", "总部位置",
+    "成立年份", "员工数量", "年收入", "股票代码",
+    "官方网站", "技术重点领域", "监控优先级 (1-10)", "威胁等级 (high/medium/low)",
+    "监控状态 (active/inactive)", "新闻监控启用", "专利监控启用", "社交媒体监控启用",
+    "创建日期", "最后更新时间", "备注"
+  ];
+  
+  if (headers.length > 26) {
+    throw new Error(`竞争对手登记表列数 ${headers.length} 超出限制`);
+  }
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#34a853");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupCompetitorRegistryValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createConferenceRegistrySheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Conference_Registry");
+  
+  const headers = [
+    "conference_id", "conference_name", "conference_type", "industry_focus",
+    "annual_schedule", "official_website", "monitoring_priority", "monitoring_status",
+    "last_event_date", "next_event_date", "created_date", "last_updated", "notes"
+  ];
+  
+  const headerDescriptions = [
+    "会议ID (主键)", "会议名称", "会议类型", "行业焦点",
+    "年度时间表", "官方网站", "监控优先级 (1-10)", "监控状态 (active/inactive)",
+    "最后活动日期", "下次活动日期", "创建日期", "最后更新时间", "备注"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#ff9800");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupConferenceRegistryValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawDataDatabase() {
+  const spreadsheet = SpreadsheetApp.create("TechInsight_RawData_DB");
+  const spreadsheetId = spreadsheet.getId();
+  
+  const rawAcademicSheet = createRawAcademicPapersSheet(spreadsheet);
+  const rawPatentSheet = createRawPatentDataSheet(spreadsheet);
+  const rawOpenSourceSheet = createRawOpenSourceDataSheet(spreadsheet);
+  const rawTechNewsSheet = createRawTechNewsSheet(spreadsheet);
+  const rawIndustrySheet = createRawIndustryDynamicsSheet(spreadsheet);
+  const rawCompetitorSheet = createRawCompetitorIntelligenceSheet(spreadsheet);
+  
+  const defaultSheet = spreadsheet.getActiveSheet();
+  if (defaultSheet.getName() === "工作表1" || defaultSheet.getName() === "Sheet1") {
+    spreadsheet.deleteSheet(defaultSheet);
+  }
+  
+  setupRawDataDatabaseFormatting(spreadsheet);
+  
+  console.log(`✅ 原始数据数据库创建完成: ${spreadsheet.getUrl()}`);
+  
+  return {
+    spreadsheet: spreadsheet,
+    spreadsheetId: spreadsheetId,
+    url: spreadsheet.getUrl(),
+    sheets: {
+      rawAcademicPapers: rawAcademicSheet,
+      rawPatentData: rawPatentSheet,
+      rawOpenSourceData: rawOpenSourceSheet,
+      rawTechNews: rawTechNewsSheet,
+      rawIndustryDynamics: rawIndustrySheet,
+      rawCompetitorIntelligence: rawCompetitorSheet
+    }
+  };
+}
+
+function createRawAcademicPapersSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_Academic_Papers");
+  
+  const headers = [
+    "raw_id", "source_type", "title", "abstract", "authors", "publication_date",
+    "source_url", "journal_name", "initial_relevance_score", "tech_keywords",
+    "processing_status", "linked_intelligence_id", "ai_evaluation_score", "innovation_score",
+    "duplicate_check_hash", "workflow_execution_id", "created_timestamp", 
+    "processed_timestamp", "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "论文标题", "论文摘要", "作者列表", "发布日期",
+    "来源链接", "期刊名称", "初始相关性评分", "关联技术关键词",
+    "处理状态", "关联情报ID", "AI评估总分", "创新度评分",
+    "去重检查哈希", "工作流执行ID", "创建时间", "处理时间", "最后更新时间"
+  ];
+  
+  if (headers.length > 26) {
+    throw new Error(`学术论文表列数 ${headers.length} 超出限制`);
+  }
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#1565c0");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawAcademicValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawPatentDataSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_Patent_Data");
+  
+  const headers = [
+    "raw_id", "source_type", "title", "abstract", "inventors", "assignee",
+    "source_url", "patent_number", "application_date", "publication_date", "patent_status",
+    "tech_keywords", "processing_status", "linked_intelligence_id", "importance_score",
+    "threat_level", "duplicate_check_hash", "workflow_execution_id", "created_timestamp",
+    "processed_timestamp", "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "专利标题", "专利摘要", "发明人", "申请人/受让人",
+    "专利链接", "专利号", "申请日期", "公布日期", "专利状态",
+    "关联技术关键词", "处理状态", "关联情报ID", "重要性评分",
+    "威胁等级评分", "去重检查哈希", "工作流执行ID", "创建时间",
+    "处理时间", "最后更新时间"
+  ];
+  
+  if (headers.length > 26) {
+    throw new Error(`专利数据表列数 ${headers.length} 超出限制`);
+  }
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#2e7d32");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawPatentValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawOpenSourceDataSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_OpenSource_Data");
+  
+  const headers = [
+    "raw_id", "source_type", "project_name", "description", "main_language",
+    "source_url", "github_stars", "github_forks", "last_commit_date", "contributor_count",
+    "tech_keywords", "processing_status", "linked_intelligence_id", "project_potential_score",
+    "adoption_trend", "duplicate_check_hash", "workflow_execution_id", "created_timestamp",
+    "processed_timestamp", "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "项目名称", "项目描述", "主要编程语言",
+    "项目链接", "GitHub星数", "Fork数量", "最后提交日期", "贡献者数量",
+    "关联技术关键词", "处理状态", "关联情报ID", "项目潜力评分",
+    "采用趋势评分", "去重检查哈希", "工作流执行ID", "创建时间",
+    "处理时间", "最后更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#7b1fa2");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawOpenSourceValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawTechNewsSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_Tech_News");
+  
+  const headers = [
+    "raw_id", "source_type", "news_title", "news_summary", "source_url",
+    "publication_date", "source_platform", "author", "related_companies", "tech_keywords",
+    "processing_status", "linked_intelligence_id", "news_value_score", "market_impact_score",
+    "duplicate_check_hash", "workflow_execution_id", "created_timestamp", "processed_timestamp", 
+    "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "新闻标题", "新闻摘要", "新闻链接",
+    "发布时间", "来源平台", "作者", "相关公司", "关联技术关键词",
+    "处理状态", "关联情报ID", "新闻价值评分", "市场影响评分",
+    "去重检查哈希", "工作流执行ID", "创建时间", "处理时间", "最后更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#ef6c00");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawTechNewsValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawIndustryDynamicsSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_Industry_Dynamics");
+  
+  const headers = [
+    "raw_id", "source_type", "event_title", "event_description", "source_url",
+    "event_date", "industry_sector", "impact_level", "related_companies", "tech_keywords",
+    "processing_status", "linked_intelligence_id", "industry_impact_score", "strategic_importance",
+    "duplicate_check_hash", "workflow_execution_id", "created_timestamp", "processed_timestamp",
+    "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "事件标题", "事件描述", "来源链接",
+    "事件日期", "行业领域", "影响级别", "相关公司", "关联技术关键词",
+    "处理状态", "关联情报ID", "产业影响评分", "战略重要性评分",
+    "去重检查哈希", "工作流执行ID", "创建时间", "处理时间", "最后更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#1b5e20");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawIndustryValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createRawCompetitorIntelligenceSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Raw_Competitor_Intelligence");
+  
+  const headers = [
+    "raw_id", "source_type", "intelligence_title", "intelligence_summary", 
+    "source_url", "competitor_name", "intelligence_type", "credibility_level", "related_technologies",
+    "tech_keywords", "processing_status", "linked_intelligence_id", "threat_level_score",
+    "business_impact_score", "duplicate_check_hash", "workflow_execution_id", "created_timestamp",
+    "processed_timestamp", "last_update_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "原始数据ID (主键)", "来源类型", "情报标题", "情报摘要",
+    "来源链接", "竞争对手名称", "情报类型", "可信度级别", "相关技术",
+    "关联技术关键词", "处理状态", "关联情报ID", "威胁等级评分",
+    "商业影响评分", "去重检查哈希", "工作流执行ID", "创建时间",
+    "处理时间", "最后更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#c62828");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupRawCompetitorValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createIntelligenceDatabase() {
+  const spreadsheet = SpreadsheetApp.create("TechInsight_Intelligence_DB");
+  const spreadsheetId = spreadsheet.getId();
+  
+  const techIntelMasterSheet = createTechIntelligenceMasterSheet(spreadsheet);
+  const techIntelExtendedSheet = createTechIntelligenceExtendedSheet(spreadsheet);
+  const evidenceValidationSheet = createEvidenceValidationMatrixSheet(spreadsheet);
+  const commercialValueSheet = createCommercialValueQuantificationSheet(spreadsheet);
+  const competitiveIntelSheet = createCompetitiveIntelligenceMonitorSheet(spreadsheet);
+  const technicalAnalysisSheet = createTechnicalDeepAnalysisSheet(spreadsheet);
+  const actionRecommendationsSheet = createActionRecommendationsSheet(spreadsheet);
+  
+  const defaultSheet = spreadsheet.getActiveSheet();
+  if (defaultSheet.getName() === "工作表1" || defaultSheet.getName() === "Sheet1") {
+    spreadsheet.deleteSheet(defaultSheet);
+  }
+  
+  setupIntelligenceDatabaseFormatting(spreadsheet);
+  
+  console.log(`✅ 核心情报数据库创建完成: ${spreadsheet.getUrl()}`);
+  
+  return {
+    spreadsheet: spreadsheet,
+    spreadsheetId: spreadsheetId,
+    url: spreadsheet.getUrl(),
+    sheets: {
+      techIntelligenceMaster: techIntelMasterSheet,
+      techIntelligenceExtended: techIntelExtendedSheet,
+      evidenceValidationMatrix: evidenceValidationSheet,
+      commercialValueQuantification: commercialValueSheet,
+      competitiveIntelligenceMonitor: competitiveIntelSheet,
+      technicalDeepAnalysis: technicalAnalysisSheet,
+      actionRecommendations: actionRecommendationsSheet
+    }
+  };
+}
+
+function createTechIntelligenceMasterSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Tech_Intelligence_Master");
+  
+  const headers = [
+    "intelligence_id", "tech_id", "tech_keyword", "title", "content_summary", "data_type",
+    "source_url", "trigger_source", "signal_strength", "breakthrough_score", "commercial_value_score",
+    "confidence_level", "priority_level", "processing_status", "evidence_count", "analysis_completion", 
+    "created_timestamp", "updated_timestamp", "source_table", "data_lineage"
+  ];
+  
+  const headerDescriptions = [
+    "情报ID (主键)", "技术ID (外键)", "技术关键词", "情报标题", "内容摘要", "数据类型",
+    "原始来源链接", "触发来源", "信号强度 (1-10)", "技术突破性评分", "商业价值评分",
+    "置信度", "优先级", "处理状态", "支撑证据数量", "分析完成度 (%)", 
+    "创建时间", "更新时间", "原始数据来源表", "数据血缘关系"
+  ];
+  
+  if (headers.length > 26) {
+    throw new Error(`技术情报主表列数 ${headers.length} 超出限制`);
+  }
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#0d47a1");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupTechIntelligenceValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createTechIntelligenceExtendedSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Tech_Intelligence_Extended");
+  
+  const headers = [
+    "intelligence_id", "breakthrough_reason", "value_proposition", "key_innovations", 
+    "target_industries", "technical_challenges", "market_opportunities", "competitive_landscape",
+    "implementation_roadmap", "risk_factors", "success_indicators", "expert_opinions",
+    "related_patents", "academic_references", "market_validation", "funding_status",
+    "partnerships", "regulatory_considerations", "scalability_assessment", "timeline_projections"
+  ];
+  
+  const headerDescriptions = [
+    "情报ID (外键)", "突破性分析理由", "价值主张", "关键创新点",
+    "目标行业", "技术挑战", "市场机会", "竞争格局",
+    "实施路线图", "风险因素", "成功指标", "专家观点",
+    "相关专利", "学术参考", "市场验证", "融资状态",
+    "合作伙伴关系", "监管考虑", "可扩展性评估", "时间线预测"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#1565c0");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createEvidenceValidationMatrixSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Evidence_Validation_Matrix");
+  
+  const headers = [
+    "validation_id", "intelligence_id", "evidence_type", "evidence_source", "evidence_url",
+    "url_validity_status", "source_authority_score", "content_relevance_score", "expert_opinion_found",
+    "cross_validation_count", "validation_confidence", "quality_score", "validation_status",
+    "validation_notes", "validator_id", "created_timestamp", "validated_timestamp", "last_check_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "验证ID (主键)", "情报ID (外键)", "证据类型", "证据来源", "证据链接",
+    "链接有效性状态", "来源权威性评分", "内容相关性评分", "是否找到专家观点",
+    "交叉验证数量", "验证置信度", "证据质量评分", "验证状态",
+    "验证备注", "验证人员ID", "创建时间", "验证时间", "最后检查时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#1b5e20");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupEvidenceValidationValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createCommercialValueQuantificationSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Commercial_Value_Quantification");
+  
+  const headers = [
+    "analysis_id", "intelligence_id", "market_size_tam", "market_size_sam", "market_size_som",
+    "revenue_projection_y1", "revenue_projection_y3", "revenue_projection_y5", "investment_required",
+    "roi_percentage", "npv_value", "irr_percentage", "payback_period_months", "risk_adjustment_factor",
+    "commercialization_timeline", "analysis_confidence", "analyst_id", "created_timestamp", "updated_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "分析ID (主键)", "情报ID (外键)", "总可用市场规模", "可服务市场规模", "可获得市场规模",
+    "第1年收入预测", "第3年收入预测", "第5年收入预测", "所需投资金额",
+    "投资回报率", "净现值", "内部收益率", "投资回收期", "风险调整因子",
+    "商业化时间线", "分析置信度", "分析师ID", "创建时间", "更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#e65100");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupCommercialValueValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createCompetitiveIntelligenceMonitorSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Competitive_Intelligence_Monitor");
+  
+  const headers = [
+    "monitor_id", "intelligence_id", "threat_level", "threat_urgency", 
+    "competitive_threats", "market_share_impact", "collaboration_opportunities", 
+    "acquisition_targets", "competitive_response_strategy", "monitoring_frequency", 
+    "early_warning_indicators", "analysis_confidence", "analyst_id", 
+    "created_timestamp", "updated_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "监控ID (主键)", "情报ID (外键)", "威胁等级", "威胁紧迫性",
+    "竞争威胁识别", "市场份额影响", "合作机会识别",
+    "收购目标识别", "竞争应对策略", "监控频率建议",
+    "预警指标设置", "分析置信度", "分析师ID",
+    "创建时间", "更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#b71c1c");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupCompetitiveIntelValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createTechnicalDeepAnalysisSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Technical_Deep_Analysis");
+  
+  const headers = [
+    "analysis_id", "intelligence_id", "technical_feasibility", "trl_level",
+    "development_stage", "innovation_degree", "implementation_complexity", 
+    "scalability_assessment", "success_probability", "expert_evaluation", 
+    "analysis_confidence", "analyst_id", "created_timestamp", "updated_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "分析ID (主键)", "情报ID (外键)", "技术可行性评估", "技术成熟度等级",
+    "技术发展阶段", "创新程度评估", "实施复杂度评估",
+    "可扩展性评估", "成功概率评估", "专家评估意见",
+    "分析置信度", "分析师ID", "创建时间", "更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#4a148c");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupTechnicalAnalysisValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createActionRecommendationsSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Action_Recommendations");
+  
+  const headers = [
+    "recommendation_id", "intelligence_id", "recommendation_type", "action_category", "priority_level",
+    "urgency_level", "investment_level", "risk_level", "expected_impact", "recommendation_summary",
+    "success_probability", "roi_estimation", "decision_deadline", "recommendation_status",
+    "approver_id", "created_timestamp", "updated_timestamp", "decision_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "建议ID (主键)", "情报ID (外键)", "建议类型", "行动类别", "优先级",
+    "紧迫性", "投资级别", "风险级别", "预期影响", "建议摘要",
+    "成功概率", "ROI估算", "决策截止时间", "建议状态",
+    "批准人ID", "创建时间", "更新时间", "决策时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#2e7d32");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupActionRecommendationsValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createOperationsDatabase() {
+  const spreadsheet = SpreadsheetApp.create("TechInsight_Operations_DB");
+  const spreadsheetId = spreadsheet.getId();
+  
+  const workflowExecutionSheet = createWorkflowExecutionLogSheet(spreadsheet);
+  const dataQualitySheet = createDataQualityReportsSheet(spreadsheet);
+  
+  const defaultSheet = spreadsheet.getActiveSheet();
+  if (defaultSheet.getName() === "工作表1" || defaultSheet.getName() === "Sheet1") {
+    spreadsheet.deleteSheet(defaultSheet);
+  }
+  
+  setupOperationsDatabaseFormatting(spreadsheet);
+  
+  console.log(`✅ 系统运营数据库创建完成: ${spreadsheet.getUrl()}`);
+  
+  return {
+    spreadsheet: spreadsheet,
+    spreadsheetId: spreadsheetId,
+    url: spreadsheet.getUrl(),
+    sheets: {
+      workflowExecutionLog: workflowExecutionSheet,
+      dataQualityReports: dataQualitySheet
+    }
+  };
+}
+
+function createWorkflowExecutionLogSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Workflow_Execution_Log");
+  
+  const headers = [
+    "execution_id", "workflow_name", "workflow_version", "execution_status", "start_timestamp",
+    "end_timestamp", "duration_seconds", "processed_records", "success_count", "error_count",
+    "warning_count", "trigger_source", "trigger_type", "retry_count", "operator_id", "created_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "执行ID (主键)", "工作流名称", "工作流版本", "执行状态", "开始时间",
+    "结束时间", "执行时长（秒）", "处理记录数", "成功数量", "错误数量",
+    "警告数量", "触发来源", "触发类型", "重试次数", "操作人员ID", "创建时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#37474f");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupWorkflowLogValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function createDataQualityReportsSheet(spreadsheet) {
+  const sheet = spreadsheet.insertSheet("Data_Quality_Reports");
+  
+  const headers = [
+    "report_id", "report_date", "report_type", "data_source", "table_name", "total_records",
+    "valid_records", "invalid_records", "duplicate_records", "missing_data_percentage", 
+    "data_accuracy_percentage", "overall_quality_score", "quality_trend", "analyst_id", 
+    "created_timestamp", "updated_timestamp"
+  ];
+  
+  const headerDescriptions = [
+    "报告ID (主键)", "报告日期", "报告类型", "数据源", "表名", "总记录数",
+    "有效记录数", "无效记录数", "重复记录数", "缺失数据百分比",
+    "数据准确性百分比", "总体质量评分", "质量趋势", "分析师ID",
+    "创建时间", "更新时间"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(2, 1, 1, headerDescriptions.length).setValues([headerDescriptions]);
+  
+  safeSetHeaderFormat(sheet, 2, headers.length, "#00695c");
+  safeSetColumnWidths(sheet, headers.length);
+  
+  setupDataQualityValidation(sheet);
+  sheet.setFrozenRows(2);
+  
+  return sheet;
+}
+
+function safeSetHeaderFormat(sheet, numRows, numCols, backgroundColor) {
+  try {
+    const maxCols = Math.min(numCols, sheet.getMaxColumns());
+    const headerRange = sheet.getRange(1, 1, numRows, maxCols);
+    headerRange.setFontWeight("bold")
+                .setBackground(backgroundColor)
+                .setFontColor("white")
+                .setWrap(true);
+  } catch (error) {
+    console.error(`设置表头格式失败: ${error.toString()}`);
+  }
+}
+
+function safeSetColumnWidths(sheet, numCols) {
+  try {
+    const maxCols = Math.min(numCols, sheet.getMaxColumns());
+    
+    if (maxCols > 0) {
+      sheet.setColumnWidths(1, maxCols, 120);
+    }
+    
+    if (maxCols >= 1) sheet.setColumnWidth(1, 180);
+    if (maxCols >= 3) sheet.setColumnWidth(3, 250);
+    if (maxCols >= 4) sheet.setColumnWidth(4, 300);
+    
+  } catch (error) {
+    console.error(`设置列宽失败: ${error.toString()}`);
+  }
+}
+
+function setupCrossDatabaseAccess(databases) {
+  const currentUser = Session.getActiveUser().getEmail();
+  
+  Object.values(databases).forEach(db => {
+    try {
+      const spreadsheet = db.spreadsheet;
+      spreadsheet.addEditor(currentUser);
+    } catch (error) {
+      console.log(`设置权限失败: ${error.toString()}`);
+    }
+  });
+  
+  console.log("✅ 跨数据库访问权限配置完成");
+}
+
+function createSystemDashboard(databases) {
+  const dashboard = SpreadsheetApp.create("TechInsight_System_Dashboard");
+  
+  const overviewSheet = dashboard.insertSheet("System_Overview");
+  
+  overviewSheet.getRange(1, 1).setValue("技术情报决策引擎 - 系统概览")
+                               .setFontSize(18)
+                               .setFontWeight("bold");
+  
+  overviewSheet.getRange(3, 1).setValue("数据库状态")
+                               .setFontSize(14)
+                               .setFontWeight("bold");
+  
+  const dbHeaders = ["数据库名称", "工作表数量", "URL", "状态", "最后更新"];
+  overviewSheet.getRange(4, 1, 1, dbHeaders.length).setValues([dbHeaders]);
+  overviewSheet.getRange(4, 1, 1, dbHeaders.length).setFontWeight("bold").setBackground("#e3f2fd");
+  
+  let row = 5;
+  Object.entries(databases).forEach(([name, db]) => {
+    const dbInfo = [
+      name,
+      Object.keys(db.sheets).length,
+      db.url,
+      "运行中",
+      new Date().toISOString()
+    ];
+    overviewSheet.getRange(row, 1, 1, dbInfo.length).setValues([dbInfo]);
+    row++;
+  });
+  
+  const defaultSheet = dashboard.getActiveSheet();
+  if (defaultSheet.getName() === "工作表1" || defaultSheet.getName() === "Sheet1") {
+    dashboard.deleteSheet(defaultSheet);
+  }
+  
+  console.log(`✅ 系统监控仪表板创建完成: ${dashboard.getUrl()}`);
+  
+  return {
+    spreadsheet: dashboard,
+    spreadsheetId: dashboard.getId(),
+    url: dashboard.getUrl(),
+    sheets: {
+      overview: overviewSheet
+    }
+  };
+}
+
+function logSystemCreation(databases, dashboard, systemConfig) {
+  const logData = {
+    timestamp: new Date().toISOString(),
+    version: systemConfig.version,
+    creator: systemConfig.creator,
+    databases: Object.keys(databases),
+    dashboard_url: dashboard.url,
+    status: "created"
+  };
+  
+  console.log("✅ 系统创建日志:", JSON.stringify(logData, null, 2));
+  
+  try {
+    GmailApp.sendEmail(
+      systemConfig.creator,
+      "技术情报决策引擎数据库创建完成",
+      `系统已成功创建完成！
+
+创建时间: ${logData.timestamp}
+仪表板链接: ${dashboard.url}
+
+数据库列表:
+${Object.entries(databases).map(([name, db]) => `- ${name}: ${db.url}`).join('\n')}
+
+请保存这些链接用于Make工作流配置。`
+    );
+  } catch (e) {
+    console.log("邮件发送失败:", e.toString());
+  }
+}
+
+function setupTechnologyRegistryValidation(sheet) {
+  const lastRow = 1000;
+  
+  try {
+    const priorityRange = sheet.getRange(3, 7, lastRow, 1);
+    const priorityRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 10)
+      .setAllowInvalid(false)
+      .setHelpText("请输入1-10之间的数值")
+      .build();
+    priorityRange.setDataValidation(priorityRule);
+    
+    const statusRange = sheet.getRange(3, 8, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['active', 'inactive'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+    
+    const booleanRange = sheet.getRange(3, 9, lastRow, 4);
+    const booleanRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['true', 'false'], true)
+      .setAllowInvalid(false)
+      .build();
+    booleanRange.setDataValidation(booleanRule);
+    
+    const dateRange = sheet.getRange(3, 13, lastRow, 2);
+    const dateRule = SpreadsheetApp.newDataValidation()
+      .requireDate()
+      .setAllowInvalid(false)
+      .build();
+    dateRange.setDataValidation(dateRule);
+  } catch (error) {
+    console.log("技术登记表数据验证设置失败:", error.toString());
+  }
+}
+
+function setupCompetitorRegistryValidation(sheet) {
+  const lastRow = 1000;
+  
+  try {
+    const threatRange = sheet.getRange(3, 12, lastRow, 1);
+    const threatRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['high', 'medium', 'low'], true)
+      .setAllowInvalid(false)
+      .build();
+    threatRange.setDataValidation(threatRule);
+    
+    const priorityRange = sheet.getRange(3, 11, lastRow, 1);
+    const priorityRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 10)
+      .setAllowInvalid(false)
+      .build();
+    priorityRange.setDataValidation(priorityRule);
+    
+    const booleanRange = sheet.getRange(3, 14, lastRow, 3);
+    const booleanRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['true', 'false'], true)
+      .setAllowInvalid(false)
+      .build();
+    booleanRange.setDataValidation(booleanRule);
+  } catch (error) {
+    console.log("竞争对手登记表数据验证设置失败:", error.toString());
+  }
+}
+
+function setupConferenceRegistryValidation(sheet) {
+  const lastRow = 1000;
+  
+  try {
+    const statusRange = sheet.getRange(3, 8, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['active', 'inactive'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+    
+    const dateRange = sheet.getRange(3, 9, lastRow, 4);
+    const dateRule = SpreadsheetApp.newDataValidation()
+      .requireDate()
+      .setAllowInvalid(false)
+      .build();
+    dateRange.setDataValidation(dateRule);
+  } catch (error) {
+    console.log("会议登记表数据验证设置失败:", error.toString());
+  }
+}
+
+function setupRawAcademicValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawPatentValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawOpenSourceValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawTechNewsValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawIndustryValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawCompetitorValidation(sheet) {
+  setupRawDataValidation(sheet);
+}
+
+function setupRawDataValidation(sheet) {
+  const lastRow = 10000;
+  
+  try {
+    const statusCol = getColumnByHeader(sheet, "processing_status");
+    if (statusCol > 0) {
+      const statusRange = sheet.getRange(3, statusCol, lastRow, 1);
+      const statusRule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(['pending', 'processed', 'failed'], true)
+        .setAllowInvalid(false)
+        .build();
+      statusRange.setDataValidation(statusRule);
+    }
+    
+    const scoreColumns = ["ai_evaluation_score", "innovation_score", "importance_score", 
+                         "project_potential_score", "news_value_score", "market_impact_score"];
+    
+    scoreColumns.forEach(colName => {
+      const col = getColumnByHeader(sheet, colName);
+      if (col > 0) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        const rule = SpreadsheetApp.newDataValidation()
+          .requireNumberBetween(1, 10)
+          .setAllowInvalid(false)
+          .build();
+        range.setDataValidation(rule);
+      }
+    });
+    
+    const timestampColumns = ["created_timestamp", "processed_timestamp", "last_update_timestamp"];
+    timestampColumns.forEach(colName => {
+      const col = getColumnByHeader(sheet, colName);
+      if (col > 0) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        range.setNumberFormat("yyyy-mm-dd hh:mm:ss");
+      }
+    });
+  } catch (error) {
+    console.log("原始数据表验证设置失败:", error.toString());
+  }
+}
+
+function setupTechIntelligenceValidation(sheet) {
+  const lastRow = 5000;
+  
+  try {
+    const signalRange = sheet.getRange(3, 9, lastRow, 1);
+    const signalRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 10)
+      .setAllowInvalid(false)
+      .build();
+    signalRange.setDataValidation(signalRule);
+    
+    const confidenceRange = sheet.getRange(3, 12, lastRow, 1);
+    const confidenceRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['high', 'medium', 'low'], true)
+      .setAllowInvalid(false)
+      .build();
+    confidenceRange.setDataValidation(confidenceRule);
+    
+    const priorityRange = sheet.getRange(3, 13, lastRow, 1);
+    const priorityRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['urgent', 'high', 'medium', 'low'], true)
+      .setAllowInvalid(false)
+      .build();
+    priorityRange.setDataValidation(priorityRule);
+    
+    const statusRange = sheet.getRange(3, 14, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['signal_identified', 'analyzing', 'completed'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+  } catch (error) {
+    console.log("技术情报主表验证设置失败:", error.toString());
+  }
+}
+
+function setupEvidenceValidationValidation(sheet) {
+  const lastRow = 5000;
+  
+  try {
+    const statusRange = sheet.getRange(3, 13, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['pending', 'verified', 'rejected'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+    
+    const scoreRange = sheet.getRange(3, 7, lastRow, 2);
+    const scoreRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 10)
+      .setAllowInvalid(false)
+      .build();
+    scoreRange.setDataValidation(scoreRule);
+    
+    const percentRange = sheet.getRange(3, 11, lastRow, 1);
+    const percentRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(0, 100)
+      .setAllowInvalid(false)
+      .build();
+    percentRange.setDataValidation(percentRule);
+  } catch (error) {
+    console.log("证据验证表验证设置失败:", error.toString());
+  }
+}
+
+function setupCommercialValueValidation(sheet) {
+  const lastRow = 2000;
+  
+  try {
+    const percentColumns = [10, 12, 16];
+    percentColumns.forEach(col => {
+      if (col <= sheet.getMaxColumns()) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        const rule = SpreadsheetApp.newDataValidation()
+          .requireNumberBetween(0, 100)
+          .setAllowInvalid(false)
+          .build();
+        range.setDataValidation(rule);
+      }
+    });
+    
+    const currencyColumns = [3, 4, 5, 6, 7, 8, 9, 11];
+    currencyColumns.forEach(col => {
+      if (col <= sheet.getMaxColumns()) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        range.setNumberFormat("$#,##0.00");
+      }
+    });
+  } catch (error) {
+    console.log("商业价值表验证设置失败:", error.toString());
+  }
+}
+
+function setupCompetitiveIntelValidation(sheet) {
+  const lastRow = 2000;
+  
+  try {
+    const threatRange = sheet.getRange(3, 3, lastRow, 1);
+    const threatRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['high', 'medium', 'low'], true)
+      .setAllowInvalid(false)
+      .build();
+    threatRange.setDataValidation(threatRule);
+    
+    const urgencyRange = sheet.getRange(3, 4, lastRow, 1);
+    const urgencyRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['urgent', 'normal', 'low'], true)
+      .setAllowInvalid(false)
+      .build();
+    urgencyRange.setDataValidation(urgencyRule);
+  } catch (error) {
+    console.log("竞争情报监控表验证设置失败:", error.toString());
+  }
+}
+
+function setupTechnicalAnalysisValidation(sheet) {
+  const lastRow = 2000;
+  
+  try {
+    const trlRange = sheet.getRange(3, 4, lastRow, 1);
+    const trlRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 9)
+      .setAllowInvalid(false)
+      .setHelpText("技术成熟度等级 (TRL 1-9)")
+      .build();
+    trlRange.setDataValidation(trlRule);
+    
+    const innovationRange = sheet.getRange(3, 6, lastRow, 1);
+    const innovationRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['incremental', 'radical', 'disruptive'], true)
+      .setAllowInvalid(false)
+      .build();
+    innovationRange.setDataValidation(innovationRule);
+    
+    const percentColumns = [9, 11];
+    percentColumns.forEach(col => {
+      if (col <= sheet.getMaxColumns()) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        const rule = SpreadsheetApp.newDataValidation()
+          .requireNumberBetween(0, 100)
+          .setAllowInvalid(false)
+          .build();
+        range.setDataValidation(rule);
+      }
+    });
+  } catch (error) {
+    console.log("技术深度分析表验证设置失败:", error.toString());
+  }
+}
+
+function setupActionRecommendationsValidation(sheet) {
+  const lastRow = 2000;
+  
+  try {
+    const typeRange = sheet.getRange(3, 3, lastRow, 1);
+    const typeRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['investment', 'partnership', 'research', 'monitoring'], true)
+      .setAllowInvalid(false)
+      .build();
+    typeRange.setDataValidation(typeRule);
+    
+    const categoryRange = sheet.getRange(3, 4, lastRow, 1);
+    const categoryRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['strategic', 'tactical', 'operational'], true)
+      .setAllowInvalid(false)
+      .build();
+    categoryRange.setDataValidation(categoryRule);
+    
+    const levelColumns = [5, 6, 7, 8, 9];
+    levelColumns.forEach(col => {
+      if (col <= sheet.getMaxColumns()) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        const rule = SpreadsheetApp.newDataValidation()
+          .requireValueInList(['high', 'medium', 'low'], true)
+          .setAllowInvalid(false)
+          .build();
+        range.setDataValidation(rule);
+      }
+    });
+    
+    const statusRange = sheet.getRange(3, 14, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['pending', 'approved', 'rejected', 'implemented'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+  } catch (error) {
+    console.log("行动建议表验证设置失败:", error.toString());
+  }
+}
+
+function setupWorkflowLogValidation(sheet) {
+  const lastRow = 10000;
+  
+  try {
+    const statusRange = sheet.getRange(3, 4, lastRow, 1);
+    const statusRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['running', 'completed', 'failed', 'cancelled'], true)
+      .setAllowInvalid(false)
+      .build();
+    statusRange.setDataValidation(statusRule);
+    
+    const triggerRange = sheet.getRange(3, 13, lastRow, 1);
+    const triggerRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['scheduled', 'manual', 'webhook', 'event'], true)
+      .setAllowInvalid(false)
+      .build();
+    triggerRange.setDataValidation(triggerRule);
+  } catch (error) {
+    console.log("工作流日志表验证设置失败:", error.toString());
+  }
+}
+
+function setupDataQualityValidation(sheet) {
+  const lastRow = 5000;
+  
+  try {
+    const typeRange = sheet.getRange(3, 3, lastRow, 1);
+    const typeRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['daily', 'weekly', 'monthly', 'adhoc'], true)
+      .setAllowInvalid(false)
+      .build();
+    typeRange.setDataValidation(typeRule);
+    
+    const trendRange = sheet.getRange(3, 13, lastRow, 1);
+    const trendRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['improving', 'stable', 'declining'], true)
+      .setAllowInvalid(false)
+      .build();
+    trendRange.setDataValidation(trendRule);
+    
+    const percentColumns = [10, 11];
+    percentColumns.forEach(col => {
+      if (col <= sheet.getMaxColumns()) {
+        const range = sheet.getRange(3, col, lastRow, 1);
+        const rule = SpreadsheetApp.newDataValidation()
+          .requireNumberBetween(0, 100)
+          .setAllowInvalid(false)
+          .build();
+        range.setDataValidation(rule);
+      }
+    });
+    
+    const scoreRange = sheet.getRange(3, 12, lastRow, 1);
+    const scoreRule = SpreadsheetApp.newDataValidation()
+      .requireNumberBetween(1, 10)
+      .setAllowInvalid(false)
+      .build();
+    scoreRange.setDataValidation(scoreRule);
+  } catch (error) {
+    console.log("数据质量报告表验证设置失败:", error.toString());
+  }
+}
+
+function getColumnByHeader(sheet, headerName) {
+  try {
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const columnIndex = headers.indexOf(headerName);
+    return columnIndex >= 0 ? columnIndex + 1 : -1;
+  } catch (error) {
+    console.log(`获取列号失败: ${error.toString()}`);
+    return -1;
+  }
+}
+
+function setupConfigDatabaseFormatting(spreadsheet) {
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach(sheet => {
+    try {
+      sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+           .setFontFamily("Arial")
+           .setFontSize(10);
+    } catch (error) {
+      console.log(`配置数据库格式设置失败: ${error.toString()}`);
+    }
+  });
+}
+
+function setupRawDataDatabaseFormatting(spreadsheet) {
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach(sheet => {
+    try {
+      sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+           .setFontFamily("Arial")
+           .setFontSize(9);
+    } catch (error) {
+      console.log(`原始数据库格式设置失败: ${error.toString()}`);
+    }
+  });
+}
+
+function setupIntelligenceDatabaseFormatting(spreadsheet) {
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach(sheet => {
+    try {
+      sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+           .setFontFamily("Arial")
+           .setFontSize(10);
+    } catch (error) {
+      console.log(`情报数据库格式设置失败: ${error.toString()}`);
+    }
+  });
+}
+
+function setupOperationsDatabaseFormatting(spreadsheet) {
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach(sheet => {
+    try {
+      sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+           .setFontFamily("Consolas")
+           .setFontSize(9);
+    } catch (error) {
+      console.log(`运营数据库格式设置失败: ${error.toString()}`);
+    }
+  });
+}
+
+function createSampleData(databases) {
+  console.log("📝 创建示例数据...");
+  
+  try {
+    const techSheet = databases.config.sheets.technologyRegistry;
+    const sampleTech = [
+      ["TECH001", "人工智能", "AI/ML", "机器学习,深度学习,神经网络", "machine learning,deep learning", "artificial intelligence patent", 10, "active", "true", "true", "true", "true", new Date(), new Date(), "重点监控技术"]
+    ];
+    batchInsertData(techSheet, sampleTech);
+    
+    const compSheet = databases.config.sheets.competitorRegistry;
+    const sampleComp = [
+      ["COMP001", "OpenAI", "AI Technology", "San Francisco, USA", 2015, 1000, 1000000000, "PRIVATE", "https://openai.com", "大语言模型,GPT", 10, "high", "active", "true", "true", "true", new Date(), new Date(), "重点关注竞争对手"]
+    ];
+    batchInsertData(compSheet, sampleComp);
+    
+    console.log("✅ 示例数据创建完成");
+  } catch (error) {
+    console.log("示例数据创建失败:", error.toString());
+  }
+}
+
+function batchInsertData(sheet, data, startRow = null) {
+  if (!data || data.length === 0) return;
+  
+  const insertRow = startRow || sheet.getLastRow() + 1;
+  const numRows = data.length;
+  const numCols = data[0].length;
+  
+  try {
+    const currentRows = sheet.getMaxRows();
+    if (insertRow + numRows > currentRows) {
+      sheet.insertRows(currentRows, (insertRow + numRows) - currentRows);
+    }
+    
+    const range = sheet.getRange(insertRow, 1, numRows, numCols);
+    range.setValues(data);
+    
+    console.log(`成功插入 ${numRows} 行数据到工作表 ${sheet.getName()}`);
+    return true;
+    
+  } catch (error) {
+    console.error(`批量插入数据失败: ${error.toString()}`);
+    return false;
+  }
+}
+
+function quickStart() {
+  console.log("🚀 开始快速创建技术情报决策引擎...");
+  
+  try {
+    const system = createTechIntelligenceSystem();
+    
+    createSampleData(system.databases);
+    
+    console.log("✅ 系统创建完成！");
+    console.log("📊 仪表板链接:", system.dashboard.url);
+    console.log("🔗 数据库链接:");
+    Object.entries(system.databases).forEach(([name, db]) => {
+      console.log(`   ${name}: ${db.url}`);
+    });
+    
+    return system;
+    
+  } catch (error) {
+    console.error("❌ 系统创建失败:", error.toString());
+    throw error;
+  }
+}
