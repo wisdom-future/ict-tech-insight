@@ -1,0 +1,993 @@
+ // 加载配置
+        function loadConfig() {
+            const savedToken = localStorage.getItem('makeApiToken');
+            const savedTeamId = localStorage.getItem('makeTeamId');
+            
+            if (savedToken) {
+                makeConfig.apiToken = savedToken;
+            }
+            if (savedTeamId) {
+                makeConfig.teamId = savedTeamId;
+            }
+        }
+
+        // 验证配置
+        function validateConfig() {
+            if (!makeConfig.apiToken) {
+                showToast('请先配置Make API Token', 'error');
+                showConfig();
+                return false;
+            }
+            return true;
+        }
+
+        // 更新工作流状态
+        function updateWorkflowStatus(workflowId, status) {
+            workflowConfig[workflowId].status = status;
+            
+            // 更新对应的卡片显示
+            const card = document.getElementById(`card-${workflowId}`);
+            if (card) {
+                const statusIndicator = card.querySelector('.status-indicator');
+                if (statusIndicator) {
+                    statusIndicator.className = `status-indicator status-${status}`;
+                    statusIndicator.innerHTML = `${getStatusIcon(status)} ${getStatusText(status)}`;
+                }
+            }
+        }
+
+        // 显示提示消息
+        function showToast(message, type = 'info') {
+            // 移除现有的toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            // 创建新的toast
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // 显示动画
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // 导出配置（用于备份）
+        function exportConfig() {
+            const config = {
+                workflows: workflowConfig,
+                makeConfig: {
+                    teamId: makeConfig.teamId
+                    // 不导出API Token，安全考虑
+                }
+            };
+            
+            const dataStr = JSON.stringify(config, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'workflow-config.json';
+            link.click();
+            
+            showToast('配置已导出！', 'success');
+        }
+
+        // 导入配置
+        function importConfig() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const config = JSON.parse(e.target.result);
+                        
+                        if (config.workflows) {
+                            Object.assign(workflowConfig, config.workflows);
+                        }
+                        if (config.makeConfig) {
+                            if (config.makeConfig.teamId) {
+                                makeConfig.teamId = config.makeConfig.teamId;
+                                localStorage.setItem('makeTeamId', config.makeConfig.teamId);
+                            }
+                        }
+                        
+                        renderWorkflowGrid();
+                        showToast('配置导入成功！', 'success');
+                        
+                    } catch (error) {
+                        showToast('配置文件格式错误！', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // 批量配置Scenario ID
+        function batchConfigureScenarios() {
+            const scenarios = prompt(`请输入所有Scenario ID，格式：
+WF1:scenario_id_1
+WF2:scenario_id_2
+...`, '');
+            
+            if (!scenarios) return;
+            
+            const lines = scenarios.split('\n');
+            let configCount = 0;
+            
+            lines.forEach(line => {
+                const [workflowId, scenarioId] = line.split(':').map(s => s.trim());
+                if (workflowId && scenarioId && workflowConfig[workflowId]) {
+                    workflowConfig[workflowId].scenarioId = scenarioId;
+                    configCount++;
+                }
+            });
+            
+            showToast(`已配置 ${configCount} 个Scenario ID`, 'success');
+        }
+
+        // 批量配置Webhook URL
+        function batchConfigureWebhooks() {
+            const webhooks = prompt(`请输入所有Webhook URL，格式：
+WF1:https://hook.make.com/xxx
+WF2:https://hook.make.com/yyy
+...`, '');
+            
+            if (!webhooks) return;
+            
+            const lines = webhooks.split('\n');
+            let configCount = 0;
+            
+            lines.forEach(line => {
+                const [workflowId, webhookUrl] = line.split(':').map(s => s.trim());
+                if (workflowId && webhookUrl && workflowConfig[workflowId]) {
+                    workflowConfig[workflowId].webhookUrl = webhookUrl;
+                    configCount++;
+                }
+            });
+            
+            showToast(`已配置 ${configCount} 个Webhook URL`, 'success');
+        }
+
+        // 获取Make API状态（实际调用Make API）
+        async function getMakeScenarioStatus(scenarioId) {
+            if (!makeConfig.apiToken || !scenarioId) return null;
+            
+            try {
+                const response = await fetch(`https://api.make.com/v2/scenarios/${scenarioId}`, {
+                    headers: {
+                        'Authorization': `Token ${makeConfig.apiToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        isActive: data.isActive,
+                        lastRun: data.lastRun,
+                        name: data.name
+                    };
+                }
+            } catch (error) {
+                console.error('获取Scenario状态失败:', error);
+            }
+            
+            return null;
+        }
+
+        // 实时
+我不使用Webhook，所以这部分可以去掉，我只要一个页面，能够逐个看到各个工作流的配置，且能够控制启动和关闭的开关或者按钮
+Jason，我来为你创建一个简化版的工作流管理页面，专注于配置管理和启停控制。
+
+🎛️ 简化版工作流管理页面
+Copy<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术情报系统 - 工作流管理器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .global-controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            padding: 30px;
+        }
+
+        .workflow-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+        }
+
+        .workflow-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 0.95rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #28a745;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .status-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-active { color: #28a745; }
+        .status-inactive { color: #dc3545; }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .config-section {
+            margin-bottom: 20px;
+        }
+
+        .config-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .config-label {
+            min-width: 100px;
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .config-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: border-color 0.3s;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .card-actions .btn {
+            flex: 1;
+            justify-content: center;
+            font-size: 0.85rem;
+            padding: 10px 16px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success { background: #28a745; }
+        .toast-error { background: #dc3545; }
+        .toast-info { background: #17a2b8; }
+
+        .layer-divider {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #495057;
+            background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .global-controls {
+                flex-direction: column;
+            }
+            
+            .config-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .config-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>🎯 技术情报系统工作流管理器</h1>
+            <p>配置和控制所有Make工作流的启动与停止</p>
+        </div>
+
+        <!-- 全局控制区 -->
+        <div class="global-controls">
+            <button class="btn btn-success" onclick="startDataCollectionLayer()">
+                🚀 启动数据采集层
+            </button>
+            <button class="btn btn-primary" onclick="startAllWorkflows()">
+                ⚡ 启动所有工作流
+            </button>
+            <button class="btn btn-danger" onclick="stopAllWorkflows()">
+                🛑 停止所有工作流
+            </button>
+            <button class="btn btn-warning" onclick="saveAllConfigs()">
+                💾 保存所有配置
+            </button>
+            <button class="btn btn-secondary" onclick="exportConfigs()">
+                📤 导出配置
+            </button>
+        </div>
+
+        <!-- 工作流网格 -->
+        <div class="workflow-grid" id="workflowGrid">
+            <!-- 工作流卡片将在这里动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 工作流配置数据
+        const workflowData = {
+            // 数据采集层
+            'WF1': {
+                name: '学术论文监控流',
+                description: '监控arXiv、Google Scholar、IEEE等学术论文数据源',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: 'arXiv + Google Scholar',
+                    outputTable: 'Raw_Academic_Papers'
+                }
+            },
+            'WF2': {
+                name: '专利申请追踪流',
+                description: '追踪USPTO、EPO、Google Patents等专利申请',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: 'USPTO + EPO + Google Patents',
+                    outputTable: 'Raw_Patent_Data'
+                }
+            },
+            'WF3': {
+                name: '开源项目监测流',
+                description: '监测GitHub、GitLab等开源项目动态',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: 'GitHub + GitLab',
+                    outputTable: 'Raw_OpenSource_Data'
+                }
+            },
+            'WF4': {
+                name: '产业新闻获取流',
+                description: '获取TechCrunch、MIT Tech Review等产业新闻',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: 'TechCrunch + MIT Tech Review',
+                    outputTable: 'Raw_Tech_News'
+                }
+            },
+            'WF5': {
+                name: '产业动态捕获流',
+                description: '捕获会议、SEC文件、公司公告等产业动态',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: '会议 + SEC文件',
+                    outputTable: 'Raw_Industry_Dynamics'
+                }
+            },
+            'WF6': {
+                name: '竞争对手收集流',
+                description: '收集竞争对手相关情报和动态',
+                layer: '数据采集层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '00:30',
+                    frequency: 'daily',
+                    dataSource: 'LinkedIn + Crunchbase',
+                    outputTable: 'Raw_Competitor_Intelligence'
+                }
+            },
+            // 信号识别层
+            'WF7': {
+                name: '技术信号识别流',
+                description: '从原始数据中识别技术突破信号',
+                layer: '信号识别层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '02:00',
+                    frequency: 'daily',
+                    dependencies: 'WF1-WF6完成',
+                    outputTable: 'Tech_Intelligence_Master'
+                }
+            },
+            'WF8': {
+                name: '证据验证处理流',
+                description: '验证情报证据的质量和可信度',
+                layer: '信号识别层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '04:00',
+                    frequency: 'daily',
+                    dependencies: 'WF7完成',
+                    outputTable: 'Evidence_Validation_Matrix'
+                }
+            },
+            // 深度分析层
+            'WF9': {
+                name: '商业价值分析流',
+                description: '分析技术的商业价值和市场潜力',
+                layer: '深度分析层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '05:30',
+                    frequency: 'daily',
+                    dependencies: 'WF8完成',
+                    outputTable: 'Commercial_Value_Quantification'
+                }
+            },
+            'WF10': {
+                name: '竞争情报分析流',
+                description: '分析竞争态势和威胁等级',
+                layer: '深度分析层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '05:30',
+                    frequency: 'daily',
+                    dependencies: 'WF8完成',
+                    outputTable: 'Competitive_Intelligence_Monitor'
+                }
+            },
+            'WF11': {
+                name: '技术深度分析流',
+                description: '深度分析技术可行性和成熟度',
+                layer: '深度分析层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '05:30',
+                    frequency: 'daily',
+                    dependencies: 'WF8完成',
+                    outputTable: 'Technical_Deep_Analysis'
+                }
+            },
+            // 决策支撑层
+            'WF12': {
+                name: '情报整合决策流',
+                description: '整合所有分析结果生成决策建议',
+                layer: '决策支撑层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '08:00',
+                    frequency: 'daily',
+                    dependencies: 'WF9-WF11完成',
+                    outputTable: 'Action_Recommendations'
+                }
+            },
+            'WF13': {
+                name: '报告生成输出流',
+                description: '生成并分发技术情报报告',
+                layer: '决策支撑层',
+                isActive: false,
+                config: {
+                    scenarioId: '',
+                    scheduleTime: '09:00',
+                    frequency: 'daily',
+                    dependencies: 'WF12完成',
+                    outputTable: '多渠道输出'
+                }
+            }
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedConfigs();
+            renderWorkflowGrid();
+        });
+
+        // 从localStorage加载保存的配置
+        function loadSavedConfigs() {
+            const savedConfigs = localStorage.getItem('workflowConfigs');
+            if (savedConfigs) {
+                try {
+                    const configs = JSON.parse(savedConfigs);
+                    Object.keys(configs).forEach(workflowId => {
+                        if (workflowData[workflowId]) {
+                            workflowData[workflowId] = { ...workflowData[workflowId], ...configs[workflowId] };
+                        }
+                    });
+                } catch (error) {
+                    console.error('加载配置失败:', error);
+                }
+            }
+        }
+
+        // 渲染工作流网格
+        function renderWorkflowGrid() {
+            const grid = document.getElementById('workflowGrid');
+            grid.innerHTML = '';
+
+            const layers = ['数据采集层', '信号识别层', '深度分析层', '决策支撑层'];
+            
+            layers.forEach(layer => {
+                // 添加层级分隔符
+                const divider = document.createElement('div');
+                divider.className = 'layer-divider';
+                divider.innerHTML = `📊 ${layer}`;
+                grid.appendChild(divider);
+
+                // 添加该层级的工作流卡片
+                Object.keys(workflowData).forEach(workflowId => {
+                    const workflow = workflowData[workflowId];
+                    if (workflow.layer === layer) {
+                        const card = createWorkflowCard(workflowId, workflow);
+                        grid.appendChild(card);
+                    }
+                });
+            });
+        }
+
+        // 创建工作流卡片
+        function createWorkflowCard(workflowId, workflow) {
+            const card = document.createElement('div');
+            card.className = 'workflow-card';
+            card.id = `card-${workflowId}`;
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title">${workflowId}: ${workflow.name}</div>
+                    <div class="card-subtitle">${workflow.description}</div>
+                    <div class="status-toggle">
+                        <div class="toggle-switch ${workflow.isActive ? 'active' : ''}" onclick="toggleWorkflow('${workflowId}')">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span class="status-text ${workflow.isActive ? 'status-active' : 'status-inactive'}">
+                            ${workflow.isActive ? '✅ 已启用' : '❌ 已禁用'}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="config-section">
+                        <div class="config-title">⚙️ 基础配置</div>
+                        <div class="config-item">
+                            <span class="config-label">Scenario ID:</span>
+                            <input type="text" class="config-input" value="${workflow.config.scenarioId}" 
+                                   placeholder="输入Make Scenario ID" 
+                                   onchange="updateConfig('${workflowId}', 'scenarioId', this.value)">
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">执行时间:</span>
+                            <input type="time" class="config-input" value="${workflow.config.scheduleTime}" 
+                                   onchange="updateConfig('${workflowId}', 'scheduleTime', this.value)">
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">执行频率:</span>
+                            <select class="config-input" onchange="updateConfig('${workflowId}', 'frequency', this.value)">
+                                <option value="daily" ${workflow.config.frequency === 'daily' ? 'selected' : ''}>每日</option>
+                                <option value="hourly" ${workflow.config.frequency === 'hourly' ? 'selected' : ''}>每小时</option>
+                                <option value="weekly" ${workflow.config.frequency === 'weekly' ? 'selected' : ''}>每周</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="config-section">
+                        <div class="config-title">📊 运行信息</div>
+                        <div class="config-item">
+                            <span class="config-label">数据源:</span>
+                            <span class="config-input" style="border: none; background: #f8f9fa;">${workflow.config.dataSource || workflow.config.dependencies || '无'}</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">输出表:</span>
+                            <span class="config-input" style="border: none; background: #f8f9fa;">${workflow.config.outputTable}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn btn-primary" onclick="openMakeScenario('${workflowId}')">
+                            🔗 打开Make
+                        </button>
+                        <button class="btn btn-success" onclick="testWorkflow('${workflowId}')">
+                            🧪 测试运行
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewLogs('${workflowId}')">
+                            📋 查看日志
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // 切换工作流启用/禁用状态
+        function toggleWorkflow(workflowId) {
+            const workflow = workflowData[workflowId];
+            workflow.isActive = !workflow.isActive;
+            
+            const card = document.getElementById(`card-${workflowId}`);
+            const toggle = card.querySelector('.toggle-switch');
+            const statusText = card.querySelector('.status-text');
+            
+            if (workflow.isActive) {
+                toggle.classList.add('active');
+                statusText.textContent = '✅ 已启用';
+                statusText.className = 'status-text status-active';
+                showToast(`${workflowId} 已启用`, 'success');
+            } else {
+                toggle.classList.remove('active');
+                statusText.textContent = '❌ 已禁用';
+                statusText.className = 'status-text status-inactive';
+                showToast(`${workflowId} 已禁用`, 'info');
+            }
+            
+            saveConfigs();
+        }
+
+        // 更新工作流配置
+        function updateConfig(workflowId, configKey, value) {
+            workflowData[workflowId].config[configKey] = value;
+            saveConfigs();
+            showToast(`${workflowId} 配置已更新`, 'info');
+        }
+
+        // 打开Make Scenario页面
+        function openMakeScenario(workflowId) {
+            const scenarioId = workflowData[workflowId].config.scenarioId;
+            if (scenarioId) {
+                const url = `https://www.make.com/en/my-scenarios/${scenarioId}`;
+                window.open(url, '_blank');
+            } else {
+                showToast('请先配置Scenario ID', 'error');
+            }
+        }
+
+        // 测试工作流运行
+        function testWorkflow(workflowId) {
+            const workflow = workflowData[workflowId];
+            if (!workflow.config.scenarioId) {
+                showToast('请先配置Scenario ID', 'error');
+                return;
+            }
+            
+            if (!workflow.isActive) {
+                showToast('请先启用该工作流', 'error');
+                return;
+            }
+
+            showToast(`正在测试 ${workflowId}...`, 'info');
+            
+            // 这里可以调用Make API进行测试
+            // 目前使用模拟测试
+            setTimeout(() => {
+                showToast(`${workflowId} 测试完成`, 'success');
+            }, 2000);
+        }
+
+        // 查看工作流日志
+        function viewLogs(workflowId) {
+            const scenarioId = workflowData[workflowId].config.scenarioId;
+            if (scenarioId) {
+                const url = `https://www.make.com/en/my-scenarios/${scenarioId}/runs`;
+                window.open(url, '_blank');
+            } else {
+                showToast('请先配置Scenario ID', 'error');
+            }
+        }
+
+        // 启动数据采集层
+        function startDataCollectionLayer() {
+            const dataCollectionWorkflows = ['WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6'];
+            let enabledCount = 0;
+            
+            dataCollectionWorkflows.forEach(workflowId => {
+                if (!workflowData[workflowId].isActive) {
+                    workflowData[workflowId].isActive = true;
+                    enabledCount++;
+                }
+            });
+            
+            renderWorkflowGrid();
+            saveConfigs();
+            showToast(`数据采集层 ${enabledCount} 个工作流已启用`, 'success');
+        }
+
+        // 启动所有工作流
+        function startAllWorkflows() {
+            if (!confirm('确定要启用所有工作流吗？')) return;
+            
+            let enabledCount = 0;
+            Object.keys(workflowData).forEach(workflowId => {
+                if (!workflowData[workflowId].isActive) {
+                    workflowData[workflowId].isActive = true;
+                    enabledCount++;
+                }
+            });
+            
+            renderWorkflowGrid();
+            saveConfigs();
+            showToast(`所有 ${enabledCount} 个工作流已启用`, 'success');
+        }
+
+        // 停止所有工作流
+        function stopAllWorkflows() {
+            if (!confirm('确定要禁用所有工作流吗？')) return;
+            
+            let disabledCount = 0;
+            Object.keys(workflowData).forEach(workflowId => {
+                if (workflowData[workflowId].isActive) {
+                    workflowData[workflowId].isActive = false;
+                    disabledCount++;
+                }
+            });
+            
+            renderWorkflowGrid();
+            saveConfigs();
+            showToast(`所有 ${disabledCount} 个工作流已禁用`, 'success');
+        }
+
+        // 保存所有配置
+        function saveAllConfigs() {
+            saveConfigs();
+            showToast('所有配置已保存到本地存储', 'success');
+        }
+
+        // 导出配置
+        function exportConfigs() {
+            const configData = JSON.stringify(workflowData, null, 2);
+            const blob = new Blob([configData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `workflow-configs-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('配置文件已导出', 'success');
+        }
+
+        // 保存配置到localStorage
+        function saveConfigs() {
+            try {
+                localStorage.setItem('workflowConfigs', JSON.stringify(workflowData));
+            } catch (error) {
+                console.error('保存配置失败:', error);
+                showToast('保存配置失败', 'error');
+            }
+        }
+
+        // 显示提示消息
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
