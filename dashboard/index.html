@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>技术洞察系统监控仪表板</title>
     
-    <!-- 样式文件 - 修改路径 -->
+    <!-- 样式文件 -->
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
     
@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="技术洞察系统">
     
-    <!-- 预加载关键资源 - 修改路径 -->
+    <!-- 预加载关键资源 -->
     <link rel="preload" href="config/config.js" as="script">
     <link rel="preload" href="assets/js/utils.js" as="script">
     <link rel="preload" href="assets/js/api.js" as="script">
@@ -94,106 +94,109 @@
             </div>
         </section>
 
-        <!-- 核心业务可视化 -->
-        <section class="business-visualization">
+        <!-- 数据收敛流转分析 - 独立完整显示 -->
+        <section class="data-flow-analysis">
             <div class="section-header">
-                <h2>📊 核心业务可视化</h2>
+                <h2>📊 数据收敛流转分析</h2>
+                <div class="section-controls">
+                    <span class="panel-subtitle">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</span>
+                </div>
             </div>
             
-            <!-- 数据流转分析 -->
-            <div class="data-flow-grid">
-                <div class="funnel-chart-panel">
-                    <div class="panel-header">
-                        <h3>数据收敛流转分析</h3>
-                        <div class="chart-controls">
-                            <span class="panel-subtitle">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</span>
-                        </div>
+            <div class="funnel-chart-panel">
+                <div class="panel-header">
+                    <h3>数据收敛流转分析</h3>
+                </div>
+                <div class="chart-container">
+                    <!-- 流转统计 -->
+                    <div class="flow-stats">
+                        <div class="flow-stat">转化率 <strong id="conversionRate">--</strong></div>
+                        <div class="flow-stat">处理效率 <strong id="processingEfficiency">--</strong></div>
+                        <div class="flow-stat">总输入 <strong id="totalInput">--</strong></div>
+                        <div class="flow-stat">总输出 <strong id="totalOutput">--</strong></div>
                     </div>
-                    <div class="chart-container">
-                        <!-- 流转统计 -->
-                        <div class="flow-stats">
-                            <div class="flow-stat">转化率 <strong id="conversionRate">--</strong></div>
-                            <div class="flow-stat">处理效率 <strong id="processingEfficiency">--</strong></div>
-                            <div class="flow-stat">总输入 <strong id="totalInput">--</strong></div>
-                            <div class="flow-stat">总输出 <strong id="totalOutput">--</strong></div>
+                    
+                    <!-- 流转步骤 -->
+                    <div class="funnel-steps">
+                        <div class="funnel-step">
+                            <div class="step-header">
+                                <span class="step-icon">📥</span>
+                                <span class="step-label">原始数据</span>
+                                <span class="step-tag">RAW</span>
+                            </div>
+                            <div class="step-value" id="rawDataCount">355</div>
+                            <div class="step-desc">学术论文、专利、新闻等</div>
+                            <div class="step-arrow">87%</div>
                         </div>
                         
-                        <!-- 流转步骤 -->
-                        <div class="funnel-steps">
-                            <div class="funnel-step">
-                                <div class="step-header">
-                                    <span class="step-icon">📥</span>
-                                    <span class="step-label">原始数据</span>
-                                    <span class="step-tag">RAW</span>
-                                </div>
-                                <div class="step-value" id="rawDataCount">355</div>
-                                <div class="step-desc">学术论文、专利、新闻等</div>
-                                <div class="step-arrow">87%</div>
+                        <div class="funnel-step">
+                            <div class="step-header">
+                                <span class="step-icon">🧠</span>
+                                <span class="step-label">智能洞察</span>
+                                <span class="step-tag">Intelligence</span>
                             </div>
-                            
-                            <div class="funnel-step">
-                                <div class="step-header">
-                                    <span class="step-icon">🧠</span>
-                                    <span class="step-label">智能洞察</span>
-                                    <span class="step-tag">Intelligence</span>
-                                </div>
-                                <div class="step-value" id="intelligenceCount">16</div>
-                                <div class="step-desc">AI识别的技术信号</div>
-                                <div class="step-arrow">78%</div>
+                            <div class="step-value" id="intelligenceCount">16</div>
+                            <div class="step-desc">AI识别的技术信号</div>
+                            <div class="step-arrow">78%</div>
+                        </div>
+                        
+                        <div class="funnel-step">
+                            <div class="step-header">
+                                <span class="step-icon">🔍</span>
+                                <span class="step-label">技术线索</span>
+                                <span class="step-tag">Clues</span>
                             </div>
-                            
-                            <div class="funnel-step">
-                                <div class="step-header">
-                                    <span class="step-icon">🔍</span>
-                                    <span class="step-label">技术线索</span>
-                                    <span class="step-tag">Clues</span>
-                                </div>
-                                <div class="step-value" id="cluesCount">--</div>
-                                <div class="step-desc">验证通过的有效线索</div>
-                                <div class="step-arrow">65%</div>
+                            <div class="step-value" id="cluesCount">--</div>
+                            <div class="step-desc">验证通过的有效线索</div>
+                            <div class="step-arrow">65%</div>
+                        </div>
+                        
+                        <div class="funnel-step">
+                            <div class="step-header">
+                                <span class="step-icon">🎯</span>
+                                <span class="step-label">行动建议</span>
+                                <span class="step-tag">Actions</span>
                             </div>
-                            
-                            <div class="funnel-step">
-                                <div class="step-header">
-                                    <span class="step-icon">🎯</span>
-                                    <span class="step-label">行动建议</span>
-                                    <span class="step-tag">Actions</span>
-                                </div>
-                                <div class="step-value" id="actionsCount">--</div>
-                                <div class="step-desc">可执行的决策建议</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 质量监控 -->
-                <div class="quality-metrics-panel">
-                    <div class="panel-header">
-                        <h3>数据质量监控</h3>
-                    </div>
-                    <div class="quality-grid">
-                        <div class="quality-item">
-                            <span class="quality-label">准确性</span>
-                            <span class="quality-value">95.2%</span>
-                        </div>
-                        <div class="quality-item">
-                            <span class="quality-label">完整性</span>
-                            <span class="quality-value">88.7%</span>
-                        </div>
-                        <div class="quality-item">
-                            <span class="quality-label">及时性</span>
-                            <span class="quality-value">92.1%</span>
-                        </div>
-                        <div class="quality-item">
-                            <span class="quality-label">一致性</span>
-                            <span class="quality-value">89.3%</span>
+                            <div class="step-value" id="actionsCount">--</div>
+                            <div class="step-desc">可执行的决策建议</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 工作流状态监控 -->
+        <!-- 数据质量监控 - 独立完整显示 -->
+        <section class="data-quality">
+            <div class="section-header">
+                <h2>📋 数据质量监控</h2>
+            </div>
+            
+            <div class="quality-metrics-panel">
+                <div class="panel-header">
+                    <h3>数据质量指标</h3>
+                </div>
+                <div class="quality-grid">
+                    <div class="quality-item">
+                        <span class="quality-label">准确性</span>
+                        <span class="quality-value">95.2%</span>
+                    </div>
+                    <div class="quality-item">
+                        <span class="quality-label">完整性</span>
+                        <span class="quality-value">88.7%</span>
+                    </div>
+                    <div class="quality-item">
+                        <span class="quality-label">及时性</span>
+                        <span class="quality-value">92.1%</span>
+                    </div>
+                    <div class="quality-item">
+                        <span class="quality-label">一致性</span>
+                        <span class="quality-value">89.3%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工作流状态监控 - 独立完整显示 -->
         <section class="workflow-monitoring">
             <div class="section-header">
                 <h2>🔄 工作流实时状态监控</h2>
@@ -202,106 +205,67 @@
                 </div>
             </div>
             
-            <div class="workflow-grid">
-                <div class="workflow-status-panel">
-                    <div class="panel-header">
-                        <h3>当前工作流状态</h3>
-                        <div class="status-legend">
-                            <div class="legend-item">
-                                <div class="dot success"></div>
-                                <span>已完成</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="dot warning"></div>
-                                <span>运行中</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="dot danger"></div>
-                                <span>失败</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="dot secondary"></div>
-                                <span>等待中</span>
-                            </div>
+            <div class="workflow-status-panel">
+                <div class="panel-header">
+                    <h3>当前工作流状态</h3>
+                    <div class="status-legend">
+                        <div class="legend-item">
+                            <div class="dot success"></div>
+                            <span>已完成</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="dot warning"></div>
+                            <span>运行中</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="dot danger"></div>
+                            <span>失败</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="dot secondary"></div>
+                            <span>等待中</span>
                         </div>
                     </div>
-                    <div class="workflow-list" id="workflowList">
-                        <div class="loading">正在加载工作流状态...</div>
-                    </div>
                 </div>
-
-                <!--
-                <div class="workflow-timeline-panel">
-                    <div class="panel-header">
-                        <h3>执行时间线</h3>
-                    </div>
-                    <div class="chart-container">
-                        <div class="loading">时间线图表加载中...</div>
-                    </div>
+                <div class="workflow-list" id="workflowList">
+                    <div class="loading">正在加载工作流状态...</div>
                 </div>
-                -->
             </div>
         </section>
 
-        <!-- 业务价值分析 -->
+        <!-- 业务价值分析 - 独立完整显示 -->
         <section class="business-value">
             <div class="section-header">
                 <h2>💰 业务价值分析</h2>
             </div>
             
-            <div class="value-grid">
-                <div class="top-intelligence-panel">
-                    <div class="panel-header">
-                        <h3>TOP 洞察排行</h3>
-                        <div class="value-summary">
-                            <div class="value-stat">高价值洞察 <strong id="highValueCount">--</strong></div>
-                            <div class="value-stat">投资机会 <strong id="investmentOpportunities">--</strong></div>
-                        </div>
-                    </div>
-                    <div class="intelligence-list" id="intelligenceList">
-                        <div class="loading">正在加载洞察数据...</div>
+            <div class="top-intelligence-panel">
+                <div class="panel-header">
+                    <h3>TOP 洞察排行</h3>
+                    <div class="value-summary">
+                        <div class="value-stat">高价值洞察 <strong id="highValueCount">--</strong></div>
+                        <div class="value-stat">投资机会 <strong id="investmentOpportunities">--</strong></div>
                     </div>
                 </div>
-
-                <!--
-                <div class="value-matrix-panel">
-                    <div class="panel-header">
-                        <h3>价值矩阵</h3>
-                    </div>
-                    <div class="chart-container">
-                        <div class="loading">价值矩阵加载中...</div>
-                    </div>
+                <div class="intelligence-list" id="intelligenceList">
+                    <div class="loading">正在加载洞察数据...</div>
                 </div>
-                -->
             </div>
         </section>
 
-        <!-- 技术趋势分析 -->
+        <!-- 技术趋势分析 - 独立完整显示 -->
         <section class="tech-trends">
             <div class="section-header">
                 <h2>🔥 技术趋势分析</h2>
             </div>
             
-            <div class="trends-grid">
-                <div class="trends-stats-panel">
-                    <div class="panel-header">
-                        <h3>趋势统计</h3>
-                    </div>
-                    <div class="trends-list" id="trendsList">
-                        <div class="loading">正在分析趋势...</div>
-                    </div>
+            <div class="trends-stats-panel">
+                <div class="panel-header">
+                    <h3>趋势统计</h3>
                 </div>
-
-                <!--
-                <div class="heatmap-panel">
-                    <div class="panel-header">
-                        <h3>技术热度图</h3>
-                    </div>
-                    <div class="heatmap-container">
-                        <div class="loading">热度图加载中...</div>
-                    </div>
+                <div class="trends-list" id="trendsList">
+                    <div class="loading">正在分析趋势...</div>
                 </div>
-                -->
             </div>
         </section>
 
@@ -333,7 +297,7 @@
     </footer>
 
     <!-- 加载遮罩 -->
-    <div class="loading-overlay" id="loadingOverlay" ="display: none;">
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <h3>技术洞察系统</h3>
@@ -434,146 +398,245 @@
 
     <!-- 内联样式补充 -->
     <style>
-    .funnel-steps {
-        display: flex;
-        flex-direction: row; /* 改为横向 */
-        justify-content: space-between;
-        align-items: stretch;
-        gap: 1rem;
-        margin-top: 1rem;
-        overflow-x: auto; /* 移动端可滚动 */
-    }
-    
-    .funnel-step {
-        background: var(--background-secondary);
-        padding: 1rem;
-        border-radius: var(--radius);
-        border-left: 4px solid var(--primary-color);
-        flex: 1; /* 平均分配宽度 */
-        min-width: 200px; /* 最小宽度 */
-        position: relative;
-    }
-    
-    /* 添加箭头连接线 */
-    .funnel-step:not(:last-child)::after {
-        content: '→';
-        position: absolute;
-        right: -1.5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        font-weight: bold;
-        z-index: 1;
-    }
-    
-    .step-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .step-icon {
-        font-size: 1.25rem;
-    }
-    
-    .step-label {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.875rem;
-    }
-    
-    .step-tag {
-        background: var(--primary-color);
-        color: white;
-        padding: 0.125rem 0.5rem;
-        border-radius: var(--radius-sm);
-        font-size: 0.75rem;
-    }
-    
-    .step-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 0.25rem;
-        text-align: center;
-    }
-    
-    .step-desc {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        margin-bottom: 0.5rem;
-        text-align: center;
-        line-height: 1.3;
-    }
-    
-    .step-arrow {
-        font-size: 0.75rem;
-        color: var(--success-color);
-        font-weight: 600;
-        text-align: center;
-        background: var(--success-color);
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: var(--radius-sm);
-        margin-top: 0.5rem;
-    }
-    
-    /* 移动端适配 */
-    @media (max-width: 768px) {
-        .funnel-steps {
-            flex-direction: column; /* 移动端保持纵向 */
+        /* 确保所有面板都是单列布局，内容完整显示 */
+        .data-flow-grid,
+        .workflow-grid,
+        .value-grid,
+        .trends-grid {
+            display: block !important;
         }
         
+        .funnel-chart-panel,
+        .quality-metrics-panel,
+        .workflow-status-panel,
+        .top-intelligence-panel,
+        .trends-stats-panel {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        
+        .funnel-steps {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+        
+        .funnel-step {
+            background: var(--background-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary-color);
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        /* 添加箭头连接线 */
         .funnel-step:not(:last-child)::after {
-            content: '↓';
-            right: 50%;
-            top: auto;
-            bottom: -1.5rem;
-            transform: translateX(50%);
+            content: '→';
+            position: absolute;
+            right: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+        }
+        
+        .step-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .step-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
         }
         
         .step-value {
-            font-size: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
-    }
-    
-    .control-panel {
-        background: var(--card-background);
-        padding: 1.5rem;
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border-color);
-    }
-    
-    .control-status {
-        font-size: 1rem;
-        color: var(--success-color);
-        font-weight: 500;
-    }
-    
-    .workflow-card {
-        background: var(--background-secondary);
-        padding: 1rem;
-        border-radius: var(--radius);
-        margin-bottom: 0.5rem;
-    }
-    
-    .workflow-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-    
-    .workflow-meta {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-</style>
+        
+        .step-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .step-arrow {
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            background: var(--success-color);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            margin-top: auto;
+        }
+        
+        .flow-stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-background);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+        
+        .flow-stat {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .flow-stat strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+        
+        .quality-grid {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .quality-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--background-secondary);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+        }
+        
+        .quality-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .quality-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.125rem;
+        }
+        
+        .control-panel {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .control-status {
+            font-size: 1.125rem;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .workflow-card {
+            background: var(--background-secondary);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .workflow-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .value-summary {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.875rem;
+        }
+        
+        .value-stat {
+            color: var(--text-secondary);
+        }
+        
+        .value-stat strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .funnel-steps {
+                flex-direction: column;
+            }
+            
+            .funnel-step:not(:last-child)::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -1.5rem;
+                transform: translateX(50%);
+            }
+            
+            .flow-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .quality-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .value-summary {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
 </body>
 </html>
