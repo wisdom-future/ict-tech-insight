@@ -9,6 +9,8 @@
     <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
     <meta name="description" content="技术洞察决策引擎实时监控仪表板">
     <meta name="keywords" content="技术洞察,监控仪表板,数据可视化">
+     <!-- 添加Chart.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -67,6 +69,26 @@
                         <div class="metric-value">--</div>
                         <div class="metric-trend">--</div>
                         <div class="metric-detail">当前执行中的工作流</div>
+                    </div>
+                    <!-- 图表区域开始 -->
+                    <div style="margin: 2rem 0;">
+                        <h3>📊 数据可视化</h3>
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <canvas id="workflowChart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="statusChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 图表区域结束 -->
+                    
+                    <!-- 按钮区域 -->
+                    <div style="margin: 2rem 0;">
+                        <button class="btn" onclick="testAPI()">测试API连接</button>
+                        <button class="btn" onclick="refreshData()">刷新数据</button>
+                        <button class="btn" onclick="showConfig()">配置指南</button>
                     </div>
                 </div>
             </section>
