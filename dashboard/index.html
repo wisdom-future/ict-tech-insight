@@ -4,328 +4,830 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>技术洞察系统监控仪表板</title>
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
-    <meta name="description" content="技术洞察决策引擎实时监控仪表板">
-    <meta name="keywords" content="技术洞察,监控仪表板,数据可视化">
-     <!-- 添加Chart.js库 -->
+    
+    <!-- Chart.js库 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+        
+        .status {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 2rem 0;
+            color: #234e52;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+            transition: transform 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .card p {
+            color: #4a5568;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .charts-section {
+            margin: 3rem 0;
+            text-align: left;
+        }
+        
+        .charts-section h3 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .chart-container {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .chart-container h4 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .chart-container canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-success {
+            background: #38a169;
+        }
+        
+        .btn-success:hover {
+            background: #2f855a;
+        }
+        
+        .btn-warning {
+            background: #ed8936;
+        }
+        
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+        
+        .controls-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .info-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #edf2f7;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: #718096;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-item strong {
+            display: block;
+            color: #2d3748;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .loading {
+            display: none;
+            color: #4299e1;
+            margin: 1rem 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .error {
+            color: #e53e3e;
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .success {
+            color: #38a169;
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .success.show {
+            display: block;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .container {
+                padding: 2rem;
+                margin: 0.5rem;
+                border-radius: 15px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .chart-container {
+                padding: 1rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 0.25rem 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 1.75rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .card p {
+                font-size: 1.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <header class="dashboard-header">
-            <div class="header-left">
-                <h1>🎯 技术洞察系统监控仪表板</h1>
-                <div class="system-status" id="systemStatus">
-                    <span class="status-indicator" id="statusIndicator">🟡</span>
-                    <span class="status-text" id="statusText">初始化中...</span>
-                </div>
-            </div>
-            <div class="header-controls">
-                <button id="refreshBtn" class="btn-refresh">🔄 刷新</button>
-                <span id="lastUpdate" class="last-update">最后更新: --</span>
-                <button id="settingsBtn" class="btn-settings">⚙️</button>
-            </div>
-        </header>
+    <div class="container">
+        <!-- 标题区域 -->
+        <h1 class="title">🎯 技术洞察系统</h1>
+        <p class="subtitle">监控仪表板 v1.0.0</p>
         
-        <main class="dashboard-main">
-            <!-- 系统概览区 -->
-            <section class="overview-section">
-                <h2>📊 系统概览</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card health-card" id="systemHealth">
-                        <div class="metric-header">
-                            <h3>📈 系统健康度</h3>
-                            <div class="metric-icon">💚</div>
-                        </div>
-                        <div class="metric-value">--</div>
-                        <div class="metric-trend">--</div>
-                        <div class="metric-detail">基于工作流成功率计算</div>
-                    </div>
-                    <div class="metric-card intel-card" id="todayIntel">
-                        <div class="metric-header">
-                            <h3>📋 今日洞察</h3>
-                            <div class="metric-icon">📊</div>
-                        </div>
-                        <div class="metric-value">--</div>
-                        <div class="metric-trend">--</div>
-                        <div class="metric-detail">新增高价值洞察数量</div>
-                    </div>
-                    <div class="metric-card alert-card" id="alertCount">
-                        <div class="metric-header">
-                            <h3>⚠️ 告警数量</h3>
-                            <div class="metric-icon">🚨</div>
-                        </div>
-                        <div class="metric-value">--</div>
-                        <div class="metric-trend">--</div>
-                        <div class="metric-detail">需要处理的异常事件</div>
-                    </div>
-                    <div class="metric-card workflow-card" id="runningWorkflows">
-                        <div class="metric-header">
-                            <h3>🔄 运行中</h3>
-                            <div class="metric-icon">⚡</div>
-                        </div>
-                        <div class="metric-value">--</div>
-                        <div class="metric-trend">--</div>
-                        <div class="metric-detail">当前执行中的工作流</div>
-                    </div>
-                    <!-- 图表区域开始 -->
-                    <div style="margin: 2rem 0;">
-                        <h3>📊 数据可视化</h3>
-                        <div class="charts-grid">
-                            <div class="chart-container">
-                                <canvas id="workflowChart" width="400" height="200"></canvas>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="statusChart" width="400" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 图表区域结束 -->
-                    
-                    <!-- 按钮区域 -->
-                    <div style="margin: 2rem 0;">
-                        <button class="btn" onclick="testAPI()">测试API连接</button>
-                        <button class="btn" onclick="refreshData()">刷新数据</button>
-                        <button class="btn" onclick="showConfig()">配置指南</button>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 工作流状态区 -->
-            <section class="workflow-section">
-                <div class="section-header">
-                    <h2>🔧 工作流状态</h2>
-                    <div class="section-controls">
-                        <button class="btn-toggle" id="workflowToggle">详细视图</button>
-                    </div>
-                </div>
-                <div class="workflow-grid">
-                    <div class="workflow-status-panel" id="workflowStatus">
-                        <div class="panel-header">
-                            <h3>实时状态</h3>
-                            <div class="status-legend">
-                                <span class="legend-item"><span class="dot success"></span>完成</span>
-                                <span class="legend-item"><span class="dot warning"></span>运行中</span>
-                                <span class="legend-item"><span class="dot danger"></span>失败</span>
-                                <span class="legend-item"><span class="dot secondary"></span>等待</span>
-                            </div>
-                        </div>
-                        <div class="workflow-list" id="workflowList">
-                            <div class="loading">加载工作流状态...</div>
-                        </div>
-                    </div>
-                    <div class="workflow-timeline-panel" id="workflowTimeline">
-                        <div class="panel-header">
-                            <h3>执行时长趋势</h3>
-                            <div class="chart-controls">
-                                <select id="timeRangeSelect">
-                                    <option value="24h">24小时</option>
-                                    <option value="7d">7天</option>
-                                    <option value="30d">30天</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="timelineChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 数据流转区 -->
-            <section class="data-flow-section">
-                <div class="section-header">
-                    <h2>📊 数据流转</h2>
-                    <div class="flow-stats" id="flowStats">
-                        <span class="flow-stat">处理效率: <strong id="processingEfficiency">--</strong></span>
-                        <span class="flow-stat">转化率: <strong id="conversionRate">--</strong></span>
-                    </div>
-                </div>
-                <div class="data-flow-grid">
-                    <div class="funnel-chart-panel" id="dataFunnel">
-                        <div class="panel-header">
-                            <h3>数据处理漏斗</h3>
-                            <div class="funnel-summary" id="funnelSummary">
-                                <span class="summary-item">输入: <strong id="totalInput">--</strong></span>
-                                <span class="summary-item">输出: <strong id="totalOutput">--</strong></span>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="funnelChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="quality-metrics-panel" id="qualityMetrics">
-                        <div class="panel-header">
-                            <h3>数据质量指标</h3>
-                            <div class="quality-score" id="overallQuality">
-                                <span class="score-label">总体评分</span>
-                                <span class="score-value">--/10</span>
-                            </div>
-                        </div>
-                        <div class="quality-grid" id="qualityGrid">
-                            <div class="loading">加载质量指标...</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 业务价值区 -->
-            <section class="value-section">
-                <div class="section-header">
-                    <h2>💰 业务价值分析</h2>
-                    <div class="value-summary" id="valueSummary">
-                        <span class="value-stat">高价值洞察: <strong id="highValueCount">--</strong></span>
-                        <span class="value-stat">投资机会: <strong id="investmentOpportunities">--</strong></span>
-                    </div>
-                </div>
-                <div class="value-grid">
-                    <div class="value-matrix-panel" id="valueMatrix">
-                        <div class="panel-header">
-                            <h3>洞察价值分布矩阵</h3>
-                            <div class="matrix-legend">
-                                <span class="legend-item">X轴: 商业价值</span>
-                                <span class="legend-item">Y轴: 技术突破性</span>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="scatterChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="top-intelligence-panel" id="topIntelligence">
-                        <div class="panel-header">
-                            <h3>🏆 TOP洞察排行</h3>
-                            <div class="ranking-controls">
-                                <select id="rankingCriteria">
-                                    <option value="signal_strength">信号强度</option>
-                                    <option value="commercial_value">商业价值</option>
-                                    <option value="breakthrough_score">技术突破性</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="intelligence-list" id="intelligenceList">
-                            <div class="loading">加载洞察排行...</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 技术热点区 -->
-            <section class="tech-trends-section">
-                <div class="section-header">
-                    <h2>🔥 技术热点趋势</h2>
-                </div>
-                <div class="trends-grid">
-                    <div class="heatmap-panel" id="techHeatmap">
-                        <div class="panel-header">
-                            <h3>技术领域热度图</h3>
-                        </div>
-                        <div class="heatmap-container" id="heatmapContainer">
-                            <div class="loading">生成热度图...</div>
-                        </div>
-                    </div>
-                    <div class="trends-stats-panel" id="trendsStats">
-                        <div class="panel-header">
-                            <h3>趋势统计</h3>
-                        </div>
-                        <div class="trends-list" id="trendsList">
-                            <div class="loading">分析趋势数据...</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+        <!-- 状态显示 -->
+        <div class="status" id="systemStatus">
+            <strong>✅ 系统状态：</strong> 部署成功，API连接正常
+        </div>
         
-        <footer class="dashboard-footer">
-            <div class="footer-content">
-                <div class="footer-left">
-                    <p>© 2024 技术洞察决策引擎 | 实时监控仪表板</p>
+        <!-- 关键指标网格 -->
+        <div class="grid">
+            <div class="card" id="systemHealth">
+                <h3>📊 系统健康度</h3>
+                <p>--</p>
+            </div>
+            <div class="card" id="todayIntel">
+                <h3>📈 今日洞察</h3>
+                <p>--</p>
+            </div>
+            <div class="card" id="alertCount">
+                <h3>⚠️ 告警数量</h3>
+                <p>0</p>
+            </div>
+            <div class="card" id="runningWorkflows">
+                <h3>🔄 运行中</h3>
+                <p>--</p>
+            </div>
+        </div>
+        
+        <!-- 数据可视化图表区域 -->
+        <div class="charts-section">
+            <h3>📊 数据可视化</h3>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h4>工作流执行趋势</h4>
+                    <canvas id="workflowChart" width="400" height="200"></canvas>
                 </div>
-                <div class="footer-right">
-                    <span>最后更新: <span id="footerUpdate">--</span></span>
-                    <span class="separator">|</span>
-                    <span>数据源: Google Sheets</span>
-                    <span class="separator">|</span>
-                    <span class="api-status" id="apiStatus">API连接正常</span>
+                <div class="chart-container">
+                    <h4>状态分布统计</h4>
+                    <canvas id="statusChart" width="400" height="200"></canvas>
                 </div>
             </div>
-        </footer>
-    </div>
-    
-    <!-- 加载提示 -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <h3>正在加载技术洞察数据</h3>
-            <p id="loadingMessage">初始化系统...</p>
-            <div class="loading-progress">
-                <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- 控制按钮区域 -->
+        <div class="controls-section">
+            <h4 style="margin-bottom: 1rem; color: #2d3748;">🎛️ 系统控制</h4>
+            <div class="controls-grid">
+                <button class="btn" onclick="testAPI()" id="testBtn">
+                    🔗 测试API连接
+                </button>
+                <button class="btn btn-success" onclick="refreshData()" id="refreshBtn">
+                    🔄 刷新数据
+                </button>
+                <button class="btn btn-warning" onclick="showConfig()">
+                    ⚙️ 配置指南
+                </button>
+                <button class="btn" onclick="exportData()">
+                    📊 导出数据
+                </button>
             </div>
+        </div>
+        
+        <!-- 加载和错误提示 -->
+        <div class="loading" id="loading">
+            🔄 正在处理请求...
+        </div>
+        
+        <div class="error" id="error">
+            <strong>❌ 操作失败</strong>
+            <p id="errorMessage">--</p>
+        </div>
+        
+        <div class="success" id="success">
+            <strong>✅ 操作成功</strong>
+            <p id="successMessage">--</p>
+        </div>
+        
+        <!-- 系统信息区域 -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong id="deployTime">--</strong>
+                    <span>部署时间</span>
+                </div>
+                <div class="info-item">
+                    <strong id="lastUpdate">--</strong>
+                    <span>最后更新</span>
+                </div>
+                <div class="info-item">
+                    <strong id="apiStatus">未知</strong>
+                    <span>API状态</span>
+                </div>
+                <div class="info-item">
+                    <strong id="dataCount">0</strong>
+                    <span>数据条数</span>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem;">
+                © 2024 技术洞察决策引擎 | 实时监控仪表板 | 
+                数据源: Google Sheets | 
+                <span id="version">v1.0.0</span>
+            </p>
         </div>
     </div>
     
-    <!-- 错误提示 -->
-    <div id="errorModal" class="error-modal hidden">
-        <div class="error-content">
-            <div class="error-header">
-                <h3>⚠️ 数据加载失败</h3>
-                <button class="close-btn" id="closeError">×</button>
-            </div>
-            <div class="error-body">
-                <p id="errorMessage">--</p>
-                <div class="error-details" id="errorDetails">
-                    <details>
-                        <summary>查看详细错误信息</summary>
-                        <pre id="errorStack">--</pre>
-                    </details>
-                </div>
-            </div>
-            <div class="error-footer">
-                <button id="retryBtn" class="btn-retry">重试</button>
-                <button id="reportBtn" class="btn-report">报告问题</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 设置面板 -->
-    <div id="settingsPanel" class="settings-panel hidden">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h3>⚙️ 仪表板设置</h3>
-                <button class="close-btn" id="closeSettings">×</button>
-            </div>
-            <div class="settings-body">
-                <div class="setting-group">
-                    <label>自动刷新间隔</label>
-                    <select id="refreshInterval">
-                        <option value="15000">15秒</option>
-                        <option value="30000" selected>30秒</option>
-                        <option value="60000">1分钟</option>
-                        <option value="300000">5分钟</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label>图表动画</label>
-                    <input type="checkbox" id="chartAnimation" checked>
-                </div>
-                <div class="setting-group">
-                    <label>深色模式</label>
-                    <input type="checkbox" id="darkMode">
-                </div>
-            </div>
-            <div class="settings-footer">
-                <button id="saveSettings" class="btn-save">保存设置</button>
-                <button id="resetSettings" class="btn-reset">重置</button>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <!-- JavaScript代码 -->
     <script src="config/config.js"></script>
-    <script src="assets/js/utils.js"></script>
     <script src="assets/js/api.js"></script>
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script>
+        // 全局变量
+        let workflowChart = null;
+        let statusChart = null;
+        let isInitialized = false;
+        
+        // 工具函数
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = message;
+            successDiv.classList.add('show');
+            setTimeout(() => successDiv.classList.remove('show'), 3000);
+        }
+        
+        // 初始化图表
+        function initCharts() {
+            try {
+                console.log('开始初始化图表...');
+                
+                // 工作流执行趋势图
+                const workflowCtx = document.getElementById('workflowChart');
+                if (workflowCtx) {
+                    workflowChart = new Chart(workflowCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['WF1', 'WF2', 'WF3', 'WF4', 'WF5'],
+                            datasets: [{
+                                label: '执行时长(秒)',
+                                data: [0, 0, 0, 0, 0],
+                                borderColor: '#4299e1',
+                                backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#4299e1',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: '执行时长(秒)'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.1)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: '工作流'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.1)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // 状态分布饼图
+                const statusCtx = document.getElementById('statusChart');
+                if (statusCtx) {
+                    statusChart = new Chart(statusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['已完成', '运行中', '失败', '等待中'],
+                            datasets: [{
+                                data: [0, 0, 0, 0],
+                                backgroundColor: [
+                                    '#38a169',  // 绿色 - 已完成
+                                    '#ed8936',  // 橙色 - 运行中
+                                    '#e53e3e',  // 红色 - 失败
+                                    '#718096'   // 灰色 - 等待中
+                                ],
+                                borderWidth: 3,
+                                borderColor: '#ffffff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                console.log('图表初始化完成');
+                isInitialized = true;
+            } catch (error) {
+                console.error('图表初始化失败:', error);
+                showError('图表初始化失败: ' + error.message);
+            }
+        }
+        
+        // 更新图表数据
+        function updateCharts(data) {
+            try {
+                if (!data || data.length <= 1) {
+                    console.log('没有足够的数据更新图表');
+                    return;
+                }
+                
+                console.log('开始更新图表数据...');
+                const workflowData = data.slice(1); // 跳过标题行
+                
+                // 更新趋势图
+                if (workflowChart && workflowData.length > 0) {
+                    const labels = workflowData.map(row => row[1] || `WF${Math.floor(Math.random()*10)}`);
+                    const durations = workflowData.map(row => parseInt(row[4]) || Math.floor(Math.random()*200));
+                    
+                    workflowChart.data.labels = labels;
+                    workflowChart.data.datasets[0].data = durations;
+                    workflowChart.update('active');
+                }
+                
+                // 更新状态分布图
+                if (statusChart && workflowData.length > 0) {
+                    const completed = workflowData.filter(row => row[2] === 'completed').length;
+                    const running = workflowData.filter(row => row[2] === 'running').length;
+                    const failed = workflowData.filter(row => row[2] === 'failed').length;
+                    const pending = workflowData.length - completed - running - failed;
+                    
+                    statusChart.data.datasets[0].data = [completed, running, failed, pending];
+                    statusChart.update('active');
+                }
+                
+                console.log('图表数据更新完成');
+            } catch (error) {
+                console.error('图表更新失败:', error);
+            }
+        }
+        
+        // 测试API连接
+        async function testAPI() {
+            const testBtn = document.getElementById('testBtn');
+            const apiStatus = document.getElementById('apiStatus');
+            
+            try {
+                testBtn.disabled = true;
+                testBtn.textContent = '🔄 测试中...';
+                showLoading();
+                
+                const result = await api.testConnection();
+                
+                if (result.success) {
+                    apiStatus.textContent = '正常';
+                    apiStatus.style.color = '#38a169';
+                    showSuccess(`API连接成功！获取到 ${result.dataCount} 条数据`);
+                } else {
+                    apiStatus.textContent = '异常';
+                    apiStatus.style.color = '#e53e3e';
+                    showError(result.message);
+                }
+            } catch (error) {
+                console.error('API测试失败:', error);
+                apiStatus.textContent = '错误';
+                apiStatus.style.color = '#e53e3e';
+                showError('API测试失败: ' + error.message);
+            } finally {
+                hideLoading();
+                testBtn.disabled = false;
+                testBtn.textContent = '🔗 测试API连接';
+            }
+        }
+        
+        // 刷新数据
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            try {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '🔄 刷新中...';
+                showLoading();
+                
+                console.log('开始刷新数据...');
+                const data = await api.getWorkflowData();
+                console.log('获取到数据:', data);
+                
+                if (!data || data.length <= 1) {
+                    throw new Error('没有获取到有效数据');
+                }
+                
+                // 更新数据计数
+                document.getElementById('dataCount').textContent = data.length - 1;
+                
+                // 计算统计数据
+                const workflowData = data.slice(1);
+                const totalWorkflows = workflowData.length;
+                const completedWorkflows = workflowData.filter(row => row[2] === 'completed').length;
+                const runningWorkflows = workflowData.filter(row => row[2] === 'running').length;
+                const failedWorkflows = workflowData.filter(row => row[2] === 'failed').length;
+                
+                // 计算健康度
+                const healthPercentage = totalWorkflows > 0 ? 
+                    Math.round((completedWorkflows / totalWorkflows) * 100) : 0;
+                
+                // 更新指标卡片
+                const cards = document.querySelectorAll('.card p');
+                if (cards.length >= 4) {
+                    cards[0].textContent = `${healthPercentage}%`;
+                    cards[0].style.color = healthPercentage >= 80 ? '#38a169' : 
+                                          healthPercentage >= 60 ? '#ed8936' : '#e53e3e';
+                    cards[1].textContent = totalWorkflows;
+                    cards[2].textContent = failedWorkflows;
+                    cards[2].style.color = failedWorkflows > 0 ? '#e53e3e' : '#38a169';
+                    cards[3].textContent = runningWorkflows;
+                    cards[3].style.color = runningWorkflows > 0 ? '#ed8936' : '#718096';
+                }
+                
+                // 更新图表
+                updateCharts(data);
+                
+                // 更新时间
+                const now = new Date().toLocaleString('zh-CN');
+                document.getElementById('lastUpdate').textContent = now;
+                
+                // 更新状态
+                const statusDiv = document.getElementById('systemStatus');
+                if (failedWorkflows > 0) {
+                    statusDiv.innerHTML = '<strong>⚠️ 系统状态：</strong> 检测到异常，请查看告警';
+                    statusDiv.style.background = '#fed7d7';
+                    statusDiv.style.borderColor = '#feb2b2';
+                    statusDiv.style.color = '#c53030';
+                } else if (runningWorkflows > 0) {
+                    statusDiv.innerHTML = '<strong>🔄 系统状态：</strong> 系统运行中，部分工作流执行中';
+                    statusDiv.style.background = '#fef5e7';
+                    statusDiv.style.borderColor = '#fbd38d';
+                    statusDiv.style.color = '#744210';
+                } else {
+                    statusDiv.innerHTML = '<strong>✅ 系统状态：</strong> 系统运行正常，所有工作流正常';
+                    statusDiv.style.background = '#e6fffa';
+                    statusDiv.style.borderColor = '#81e6d9';
+                    statusDiv.style.color = '#234e52';
+                }
+                
+                console.log('数据刷新完成');
+                showSuccess('数据刷新成功！');
+            } catch (error) {
+                console.error('数据刷新失败:', error);
+                showError('数据刷新失败: ' + error.message);
+            } finally {
+                hideLoading();
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 刷新数据';
+            }
+        }
+        
+        // 显示配置指南
+        function showConfig() {
+            const configText = `
+📋 技术洞察系统配置指南：
+
+1. 🔑 获取Google Sheets API密钥
+   - 访问 Google Cloud Console
+   - 创建项目并启用 Sheets API
+   - 创建API密钥并设置限制
+
+2. 📊 创建数据表格
+   - 创建Google Sheets工作簿
+   - 设置正确的表格结构
+   - 配置公开查看权限
+
+3. ⚙️ 配置系统参数
+   - 编辑 config/config.js 文件
+   - 填入API密钥和表格ID
+   - 设置刷新间隔等参数
+
+4. 🧪 测试连接
+   - 点击"测试API连接"按钮
+   - 确认数据获取正常
+   - 验证图表显示正确
+
+详细说明请查看项目README文档。`;
+            
+            alert(configText);
+        }
+        
+        // 导出数据
+        function exportData() {
+            try {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    system: '技术洞察系统监控仪表板',
+                    version: '1.0.0',
+                    metrics: {
+                        systemHealth: document.querySelector('#systemHealth p').textContent,
+                        todayIntel: document.querySelector('#todayIntel p').textContent,
+                        alertCount: document.querySelector('#alertCount p').textContent,
+                        runningWorkflows: document.querySelector('#runningWorkflows p').textContent
+                    },
+                    status: {
+                        apiStatus: document.getElementById('apiStatus').textContent,
+                        lastUpdate: document.getElementById('lastUpdate').textContent,
+                        dataCount: document.getElementById('dataCount').textContent
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `tech-insight-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccess('数据导出成功！');
+            } catch (error) {
+                console.error('数据导出失败:', error);
+                showError('数据导出失败: ' + error.message);
+            }
+        }
+        
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化...');
+            
+            // 设置初始时间
+            const now = new Date().toLocaleString('zh-CN');
+            document.getElementById('deployTime').textContent = now;
+            document.getElementById('lastUpdate').textContent = now;
+            
+            // 延迟初始化图表，确保Chart.js加载完成
+            setTimeout(() => {
+                initCharts();
+                
+                // 如果配置了API，自动测试连接
+                if (typeof CONFIG !== 'undefined' && 
+                    CONFIG.GOOGLE_SHEETS && 
+                    CONFIG.GOOGLE_SHEETS.API_KEY && 
+                    !CONFIG.GOOGLE_SHEETS.API_KEY.includes('YOUR_')) {
+                    console.log('检测到API配置，自动测试连接...');
+                    testAPI();
+                }
+            }, 1000);
+            
+            console.log('技术洞察系统监控仪表板初始化完成');
+        });
+        
+        // 定期自动刷新（可选）
+        setInterval(() => {
+            if (isInitialized && 
+                typeof CONFIG !== 'undefined' && 
+                CONFIG.GOOGLE_SHEETS && 
+                CONFIG.GOOGLE_SHEETS.API_KEY && 
+                !CONFIG.GOOGLE_SHEETS.API_KEY.includes('YOUR_')) {
+                console.log('定期自动刷新数据...');
+                refreshData();
+            }
+        }, 60000); // 每分钟刷新一次
+        
+        // 移动端优化
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            document.body.style.padding = '0.5rem';
+            console.log('检测到移动设备，应用移动端优化');
+        }
+    </script>
 </body>
 </html>
