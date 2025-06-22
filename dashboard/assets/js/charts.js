@@ -1,4 +1,6 @@
-// 简化版图表组件 - 避免Chart.js依赖错误
+// 简化版图表组件
+
+// 避免Chart.js依赖错误
 class DashboardCharts {
     constructor() {
         this.charts = {};
