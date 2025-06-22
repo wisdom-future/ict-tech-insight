@@ -3,281 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 技术洞察系统 - 监控仪表板</title>
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="技术洞察系统实时监控仪表板">
+    <title>技术洞察系统监控仪表板</title>
     
-    <!-- 简化图标引用 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="mobile.css">
+    
+    <!-- PWA支持 -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="技术洞察系统">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="config.js" as="script">
+    <link rel="preload" href="utils.js" as="script">
+    <link rel="preload" href="api.js" as="script">
 </head>
 <body>
-    <!-- 加载遮罩层 -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <h3>技术洞察系统</h3>
-            <p id="loadingMessage">正在初始化系统...</p>
-            <div class="loading-progress">
-                <div class="progress-bar" id="progressBar"></div>
+    <!-- 头部导航 -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <h1>🔍 技术洞察系统</h1>
+            <div class="system-status">
+                <span class="status-indicator">🟢</span>
+                <span id="systemStatus">系统状态：初始化中</span>
             </div>
         </div>
-    </div>
-
-    <!-- 错误模态框 -->
-    <div id="errorModal" class="error-modal hidden">
-        <div class="error-content">
-            <div class="error-header">
-                <h3>🚨 系统错误</h3>
-                <button class="close-btn" id="closeError">&times;</button>
-            </div>
-            <div class="error-body">
-                <p id="errorMessage">发生未知错误</p>
-            </div>
-            <div class="error-footer">
-                <button class="btn-retry" id="retryBtn">🔄 重试</button>
-            </div>
+        <div class="header-controls">
+            <span class="last-update" id="lastUpdate">最后更新: --</span>
+            <button class="btn-refresh" id="refreshBtn">🔄 刷新</button>
+            <button class="btn-settings" id="settingsBtn">⚙️</button>
         </div>
-    </div>
+    </header>
 
-    <!-- 设置面板 -->
-    <div id="settingsPanel" class="settings-panel hidden">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h3>⚙️ 系统设置</h3>
-                <button class="close-btn" id="closeSettings">&times;</button>
+    <!-- 主内容区域 -->
+    <main class="dashboard-main">
+        <!-- 关键指标概览 -->
+        <section class="metrics-overview">
+            <div class="section-header">
+                <h2>📊 系统运行概览</h2>
             </div>
-            <div class="settings-body">
-                <div class="setting-group">
-                    <label for="refreshInterval">自动刷新间隔</label>
-                    <select id="refreshInterval">
-                        <option value="60000">1分钟</option>
-                        <option value="300000" selected>5分钟</option>
-                        <option value="600000">10分钟</option>
-                    </select>
+            <div class="metrics-grid">
+                <!-- 系统健康度 -->
+                <div class="metric-card health-card">
+                    <div class="metric-header">
+                        <h3>📊 系统健康度</h3>
+                        <span class="metric-icon" id="healthIcon">💚</span>
+                    </div>
+                    <div class="metric-value" id="systemHealth">--</div>
+                    <div class="metric-trend" id="systemHealthTrend">系统初始化中</div>
+                    <div class="metric-detail">正在检测系统状态</div>
+                    <div class="loading-progress">
+                        <div class="progress-bar" id="healthProgressBar"></div>
+                    </div>
                 </div>
-                <div class="setting-group">
-                    <label for="timeRangeSelect">时间范围</label>
-                    <select id="timeRangeSelect">
-                        <option value="24h" selected>24小时</option>
-                        <option value="7d">7天</option>
-                        <option value="30d">30天</option>
-                    </select>
+
+                <!-- 今日洞察 -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>📈 今日洞察</h3>
+                        <span class="metric-icon">🎯</span>
+                    </div>
+                    <div class="metric-value" id="todayInsights">--</div>
+                    <div class="metric-trend neutral" id="todayInsightsTrend">👆 与昨日对比</div>
+                    <div class="metric-detail">包含高价值洞察 <span id="highValueCount">--</span> 条</div>
                 </div>
-                <div class="setting-group">
-                    <label for="rankingCriteria">排行标准</label>
-                    <select id="rankingCriteria">
-                        <option value="signal_strength" selected>信号强度</option>
-                        <option value="commercial_value">商业价值</option>
-                        <option value="breakthrough_score">技术突破性</option>
-                    </select>
+
+                <!-- 告警数量 -->
+                <div class="metric-card alert-card">
+                    <div class="metric-header">
+                        <h3>⚠️ 告警数量</h3>
+                        <span class="metric-icon">🚨</span>
+                    </div>
+                    <div class="metric-value" id="alertCount">--</div>
+                    <div class="metric-trend neutral" id="alertCountTrend">👆 需要关注</div>
+                    <div class="metric-detail"><span id="alertCount">--</span> 个高优先级告警</div>
                 </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="chartAnimation" checked>
-                        启用动画效果
-                    </label>
-                </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="darkMode">
-                        深色模式
-                    </label>
+
+                <!-- 运行状态 -->
+                <div class="metric-card workflow-card">
+                    <div class="metric-header">
+                        <h3>🔄 运行状态</h3>
+                        <span class="metric-icon">⚡</span>
+                    </div>
+                    <div class="metric-value" id="runningWorkflows">运行中</div>
+                    <div class="metric-trend neutral" id="runningWorkflowsTrend"><span id="runningWorkflows">--</span> 个工作流</div>
+                    <div class="metric-detail">系统正常运行</div>
                 </div>
             </div>
-            <div class="settings-footer">
-                <button class="btn-save" id="saveSettings">💾 保存</button>
-                <button class="btn-reset" id="resetSettings">🔄 重置</button>
+        </section>
+
+        <!-- 核心业务可视化 -->
+        <section class="business-visualization">
+            <div class="section-header">
+                <h2>📊 核心业务可视化</h2>
             </div>
-        </div>
-    </div>
-
-    <!-- 主仪表板容器 -->
-    <div class="dashboard-container">
-        <!-- 头部区域 -->
-        <header class="dashboard-header">
-            <div class="header-left">
-                <h1>🎯 技术洞察系统</h1>
-                <div class="system-status">
-                    <span class="status-indicator" id="systemStatus">🔄 系统状态：正在初始化...</span>
+            
+            <!-- 数据流转分析 -->
+            <div class="data-flow-grid">
+                <div class="funnel-chart-panel">
+                    <div class="panel-header">
+                        <h3>数据收敛流转分析</h3>
+                        <div class="chart-controls">
+                            <span class="panel-subtitle">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- 流转统计 -->
+                        <div class="flow-stats">
+                            <div class="flow-stat">转化率 <strong id="conversionRate">--</strong></div>
+                            <div class="flow-stat">处理效率 <strong id="processingEfficiency">--</strong></div>
+                            <div class="flow-stat">总输入 <strong id="totalInput">--</strong></div>
+                            <div class="flow-stat">总输出 <strong id="totalOutput">--</strong></div>
+                        </div>
+                        
+                        <!-- 流转步骤 -->
+                        <div class="funnel-steps">
+                            <div class="funnel-step">
+                                <div class="step-header">
+                                    <span class="step-icon">📥</span>
+                                    <span class="step-label">原始数据</span>
+                                    <span class="step-tag">RAW</span>
+                                </div>
+                                <div class="step-value" id="rawDataCount">355</div>
+                                <div class="step-desc">学术论文、专利、新闻等</div>
+                                <div class="step-arrow">87%</div>
+                            </div>
+                            
+                            <div class="funnel-step">
+                                <div class="step-header">
+                                    <span class="step-icon">🧠</span>
+                                    <span class="step-label">智能洞察</span>
+                                    <span class="step-tag">Intelligence</span>
+                                </div>
+                                <div class="step-value" id="intelligenceCount">16</div>
+                                <div class="step-desc">AI识别的技术信号</div>
+                                <div class="step-arrow">78%</div>
+                            </div>
+                            
+                            <div class="funnel-step">
+                                <div class="step-header">
+                                    <span class="step-icon">🔍</span>
+                                    <span class="step-label">技术线索</span>
+                                    <span class="step-tag">Clues</span>
+                                </div>
+                                <div class="step-value" id="cluesCount">--</div>
+                                <div class="step-desc">验证通过的有效线索</div>
+                                <div class="step-arrow">65%</div>
+                            </div>
+                            
+                            <div class="funnel-step">
+                                <div class="step-header">
+                                    <span class="step-icon">🎯</span>
+                                    <span class="step-label">行动建议</span>
+                                    <span class="step-tag">Actions</span>
+                                </div>
+                                <div class="step-value" id="actionsCount">--</div>
+                                <div class="step-desc">可执行的决策建议</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="version-info">监控仪表板 v1.0.0 - 业务版</div>
+
+                <!-- 质量监控 -->
+                <div class="quality-metrics-panel">
+                    <div class="panel-header">
+                        <h3>数据质量监控</h3>
+                    </div>
+                    <div class="quality-grid">
+                        <div class="quality-item">
+                            <span class="quality-label">准确性</span>
+                            <span class="quality-value">95.2%</span>
+                        </div>
+                        <div class="quality-item">
+                            <span class="quality-label">完整性</span>
+                            <span class="quality-value">88.7%</span>
+                        </div>
+                        <div class="quality-item">
+                            <span class="quality-label">及时性</span>
+                            <span class="quality-value">92.1%</span>
+                        </div>
+                        <div class="quality-item">
+                            <span class="quality-label">一致性</span>
+                            <span class="quality-value">89.3%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="header-controls">
-                <div class="last-update" id="lastUpdate">最后更新: --</div>
-                <button class="btn-refresh" id="refreshBtn">🔄 刷新</button>
-                <button class="btn-settings" id="settingsBtn">⚙️</button>
+        </section>
+
+        <!-- 工作流状态监控 -->
+        <section class="workflow-monitoring">
+            <div class="section-header">
+                <h2>🔄 工作流实时状态监控</h2>
+                <div class="section-controls">
+                    <span class="panel-subtitle">🔄 显示当前所有工作流的最新执行状态和时间信息</span>
+                </div>
             </div>
-        </header>
-
-        <!-- 主内容区域 -->
-        <main class="dashboard-main">
-            <!-- 核心指标卡片网格 -->
-            <section class="metrics-section">
-                <div class="metrics-grid">
-                    <!-- 系统健康度卡片 -->
-                    <div class="metric-card health-card">
-                        <div class="metric-header">
-                            <h3>📊 系统健康度</h3>
-                            <div class="metric-icon" id="healthIcon">💚</div>
-                        </div>
-                        <div class="metric-value" id="systemHealth">--</div>
-                        <div class="metric-trend neutral" id="healthTrend">系统初始化中</div>
-                        <div class="metric-detail" id="healthDetail">正在检测系统状态</div>
-                        <div class="health-progress">
-                            <div class="progress-bar" id="healthProgressBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <!-- 今日洞察卡片 -->
-                    <div class="metric-card insights-card">
-                        <div class="metric-header">
-                            <h3>📈 今日洞察</h3>
-                            <div class="metric-icon">📊</div>
-                        </div>
-                        <div class="metric-value" id="todayInsights">--</div>
-                        <div class="metric-trend positive" id="insightsTrend">👆 与昨日对比</div>
-                        <div class="metric-detail" id="insightsDetail">包含高价值洞察 -- 条</div>
-                    </div>
-
-                    <!-- 告警数量卡片 -->
-                    <div class="metric-card alert-card">
-                        <div class="metric-header">
-                            <h3>⚠️ 告警数量</h3>
-                            <div class="metric-icon">🚨</div>
-                        </div>
-                        <div class="metric-value" id="alertCount">--</div>
-                        <div class="metric-trend neutral" id="alertTrend">👆 需要关注</div>
-                        <div class="metric-detail" id="alertDetail">-- 个高优先级告警</div>
-                    </div>
-
-                    <!-- 运行状态卡片 -->
-                    <div class="metric-card workflow-card">
-                        <div class="metric-header">
-                            <h3>🔄 运行状态</h3>
-                            <div class="metric-icon">⚡</div>
-                        </div>
-                        <div class="metric-value" id="runningWorkflows">运行中</div>
-                        <div class="metric-trend positive" id="workflowTrend">-- 个工作流</div>
-                        <div class="metric-detail" id="workflowDetail">系统正常运行</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 数据流转分析 - 横向优化版 -->
-            <section class="data-flow-section">
-                <div class="section-header">
-                    <h2>📊 核心业务可视化</h2>
-                </div>
-                <div class="section-subtitle">数据收敛流转分析</div>
-                <div class="flow-description">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</div>
-                
-                <!-- 数据流转统计 -->
-                <div class="data-flow-stats">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">转化率</div>
-                            <div class="stat-value" id="conversionRate">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">处理效率</div>
-                            <div class="stat-value" id="processingEfficiency">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">总输入</div>
-                            <div class="stat-value" id="totalInput">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">总输出</div>
-                            <div class="stat-value" id="totalOutput">--</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 横向流转步骤展示 -->
-                <div class="flow-pipeline">
-                    <div class="pipeline-container">
-                        <div class="pipeline-step" id="rawDataStep">
-                            <div class="step-header">
-                                <div class="step-icon">📥</div>
-                                <h4>原始数据</h4>
-                                <span class="step-tag">RAW</span>
-                            </div>
-                            <div class="step-value" id="rawDataCount">355</div>
-                            <div class="step-detail">学术论文、专利、新闻等</div>
-                            <div class="step-progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-
-                        <div class="pipeline-arrow">
-                            <div class="arrow-line"></div>
-                            <div class="arrow-head">▶</div>
-                            <div class="conversion-rate" id="rawToIntel">87%</div>
-                        </div>
-
-                        <div class="pipeline-step" id="intelligenceStep">
-                            <div class="step-header">
-                                <div class="step-icon">🧠</div>
-                                <h4>智能洞察</h4>
-                                <span class="step-tag">Intelligence</span>
-                            </div>
-                            <div class="step-value" id="intelligenceCount">16</div>
-                            <div class="step-detail">AI识别的技术信号</div>
-                            <div class="step-progress-bar">
-                                <div class="progress-fill" style="width: 87%"></div>
-                            </div>
-                        </div>
-
-                        <div class="pipeline-arrow">
-                            <div class="arrow-line"></div>
-                            <div class="arrow-head">▶</div>
-                            <div class="conversion-rate" id="intelToClues">78%</div>
-                        </div>
-
-                        <div class="pipeline-step" id="cluesStep">
-                            <div class="step-header">
-                                <div class="step-icon">🔍</div>
-                                <h4>技术线索</h4>
-                                <span class="step-tag">Clues</span>
-                            </div>
-                            <div class="step-value" id="cluesCount">9</div>
-                            <div class="step-detail">验证通过的有效线索</div>
-                            <div class="step-progress-bar">
-                                <div class="progress-fill" style="width: 78%"></div>
-                            </div>
-                        </div>
-
-                        <div class="pipeline-arrow">
-                            <div class="arrow-line"></div>
-                            <div class="arrow-head">▶</div>
-                            <div class="conversion-rate" id="cluesToActions">65%</div>
-                        </div>
-
-                        <div class="pipeline-step" id="actionsStep">
-                            <div class="step-header">
-                                <div class="step-icon">🎯</div>
-                                <h4>行动建议</h4>
-                                <span class="step-tag">Actions</span>
-                            </div>
-                            <div class="step-value" id="actionsCount">0</div>
-                            <div class="step-detail">可执行的决策建议</div>
-                            <div class="step-progress-bar">
-                                <div class="progress-fill" style="width: 65%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 工作流状态监控 - 优化为一页显示 -->
-            <section class="workflow-section">
-                <div class="section-header">
-                    <h2>工作流实时状态监控</h2>
-                </div>
-                <div class="section-subtitle">🔄 显示当前所有工作流的最新执行状态和时间信息</div>
-
+            
+            <div class="workflow-grid">
                 <div class="workflow-status-panel">
                     <div class="panel-header">
                         <h3>当前工作流状态</h3>
@@ -300,59 +225,60 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 工作流网格布局 -->
-                    <div class="workflow-grid" id="workflowList">
+                    <div class="workflow-list" id="workflowList">
                         <div class="loading">正在加载工作流状态...</div>
                     </div>
                 </div>
-            </section>
 
-            <!-- 业务价值分析 -->
-            <section class="value-section">
-                <div class="section-header">
-                    <h2>💰 业务价值分析</h2>
-                </div>
-
-                <div class="value-stats">
-                    <div class="value-stat-item">
-                        <div class="stat-icon">🎯</div>
-                        <div class="stat-content">
-                            <div class="stat-label">高价值洞察</div>
-                            <div class="stat-value" id="highValueCount">--</div>
-                        </div>
+                <div class="workflow-timeline-panel">
+                    <div class="panel-header">
+                        <h3>执行时间线</h3>
                     </div>
-                    <div class="value-stat-item">
-                        <div class="stat-icon">💎</div>
-                        <div class="stat-content">
-                            <div class="stat-label">投资机会</div>
-                            <div class="stat-value" id="investmentOpportunities">--</div>
-                        </div>
+                    <div class="chart-container">
+                        <div class="loading">时间线图表加载中...</div>
                     </div>
                 </div>
+            </div>
+        </section>
 
+        <!-- 业务价值分析 -->
+        <section class="business-value">
+            <div class="section-header">
+                <h2>💰 业务价值分析</h2>
+            </div>
+            
+            <div class="value-grid">
                 <div class="top-intelligence-panel">
                     <div class="panel-header">
                         <h3>TOP 洞察排行</h3>
-                        <div class="chart-controls">
-                            <select id="rankingSelect">
-                                <option value="signal_strength">信号强度</option>
-                                <option value="commercial_value">商业价值</option>
-                                <option value="breakthrough_score">技术突破性</option>
-                            </select>
+                        <div class="value-summary">
+                            <div class="value-stat">高价值洞察 <strong id="highValueCount">--</strong></div>
+                            <div class="value-stat">投资机会 <strong id="investmentOpportunities">--</strong></div>
                         </div>
                     </div>
                     <div class="intelligence-list" id="intelligenceList">
                         <div class="loading">正在加载洞察数据...</div>
                     </div>
                 </div>
-            </section>
 
-            <!-- 技术趋势分析 -->
-            <section class="trends-section">
-                <div class="section-header">
-                    <h2>🔥 技术趋势分析</h2>
+                <div class="value-matrix-panel">
+                    <div class="panel-header">
+                        <h3>价值矩阵</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div class="loading">价值矩阵加载中...</div>
+                    </div>
                 </div>
+            </div>
+        </section>
 
+        <!-- 技术趋势分析 -->
+        <section class="tech-trends">
+            <div class="section-header">
+                <h2>🔥 技术趋势分析</h2>
+            </div>
+            
+            <div class="trends-grid">
                 <div class="trends-stats-panel">
                     <div class="panel-header">
                         <h3>趋势统计</h3>
@@ -361,348 +287,237 @@
                         <div class="loading">正在分析趋势...</div>
                     </div>
                 </div>
-            </section>
 
-            <!-- 系统控制面板 -->
-            <section class="control-section">
-                <div class="panel-header">
-                    <h3>🎛️ 系统控制</h3>
-                </div>
-                <div class="control-buttons">
-                    <button class="control-btn primary" id="processBtn">
-                        🔄 处理请求
-                    </button>
-                    <button class="control-btn secondary" id="resetBtn">
-                        🔄 重置系统
-                    </button>
-                    <button class="control-btn info" id="exportBtn">
-                        📤 导出数据
-                    </button>
-                </div>
-                <div class="control-status" id="controlStatus">
-                    <div class="status-message">
-                        <span class="status-icon">✅</span>
-                        <span class="status-text">系统运行正常 - 所有服务已启动</span>
+                <div class="heatmap-panel">
+                    <div class="panel-header">
+                        <h3>技术热度图</h3>
+                    </div>
+                    <div class="heatmap-container">
+                        <div class="loading">热度图加载中...</div>
                     </div>
                 </div>
-            </section>
-        </main>
+            </div>
+        </section>
 
-        <!-- 页脚 -->
-        <footer class="dashboard-footer">
-            <div class="footer-content">
-                <div class="footer-left">
-                    <p>© 2024 技术洞察决策引擎 | 实时监控仪表板 | 数据源: Google Sheets | v1.0.0 - 业务版</p>
-                </div>
-                <div class="footer-right">
-                    <span>部署时间: <span id="deployTime">2024-06-22 08:00:00</span></span>
-                    <span class="separator">|</span>
-                    <span>最后更新: <span id="footerUpdate">--</span></span>
-                    <span class="separator">|</span>
-                    <span>API状态: <span class="api-status" id="apiStatus">检测中</span></span>
-                    <span class="separator">|</span>
-                    <span>数据条数: <span id="dataCount">0</span></span>
+        <!-- 系统控制 -->
+        <section class="system-control">
+            <div class="section-header">
+                <h2>🎛️ 系统控制</h2>
+            </div>
+            <div class="control-panel">
+                <div class="control-status">
+                    <span id="systemStatus">✅ 系统运行正常 - 所有服务已启动</span>
                 </div>
             </div>
-        </footer>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <p>技术洞察系统监控仪表板 - 数据条数: <span id="dataCount">--</span></p>
+            </div>
+            <div class="footer-right">
+                <span id="footerUpdate">--</span>
+                <span class="separator">|</span>
+                <span id="apiStatus" class="api-status">API连接检测中</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 加载遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>技术洞察系统</h3>
+            <p id="loadingMessage">正在初始化系统...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- 脚本按顺序加载 -->
-    <script src="config/config.js"></script>
-    <script src="assets/js/utils.js"></script>
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/app.js"></script>
+    <!-- 错误模态框 -->
+    <div class="error-modal hidden" id="errorModal">
+        <div class="error-content">
+            <div class="error-header">
+                <h3>⚠️ 系统错误</h3>
+                <button class="close-btn" id="closeError">×</button>
+            </div>
+            <div class="error-body">
+                <p id="errorMessage">发生未知错误</p>
+                <div class="error-details" id="errorDetails" style="display: none;">
+                    <details>
+                        <summary>查看详细信息</summary>
+                        <pre id="errorStack"></pre>
+                    </details>
+                </div>
+            </div>
+            <div class="error-footer">
+                <button class="btn-retry" id="retryBtn">重试</button>
+                <button class="btn-report">报告问题</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- 优化后的样式 -->
+    <!-- 设置面板 -->
+    <div class="settings-panel hidden" id="settingsPanel">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3>⚙️ 系统设置</h3>
+                <button class="close-btn" id="closeSettings">×</button>
+            </div>
+            <div class="settings-body">
+                <div class="setting-group">
+                    <label for="refreshInterval">自动刷新间隔 (秒)</label>
+                    <select id="refreshInterval">
+                        <option value="15000">15秒</option>
+                        <option value="30000">30秒</option>
+                        <option value="60000">1分钟</option>
+                        <option value="300000">5分钟</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="timeRangeSelect">时间范围</label>
+                    <select id="timeRangeSelect">
+                        <option value="1h">1小时</option>
+                        <option value="6h">6小时</option>
+                        <option value="24h">24小时</option>
+                        <option value="7d">7天</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="rankingCriteria">排序标准</label>
+                    <select id="rankingCriteria">
+                        <option value="signal_strength">信号强度</option>
+                        <option value="commercial_value">商业价值</option>
+                        <option value="breakthrough_score">技术突破性</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="chartAnimation">
+                        启用图表动画
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="darkMode">
+                        深色模式
+                    </label>
+                </div>
+            </div>
+            <div class="settings-footer">
+                <button class="btn-save" id="saveSettings">保存设置</button>
+                <button class="btn-reset" id="resetSettings">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript文件 -->
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="api.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+
+    <!-- 内联样式补充 -->
     <style>
-        /* 横向流转管道样式 */
-        .flow-pipeline {
-            margin: 2rem 0;
-            padding: 2rem;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 1rem;
-            border: 1px solid var(--border-color, #e2e8f0);
-        }
-
-        .pipeline-container {
+        .funnel-steps {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 1rem;
-            overflow-x: auto;
-            padding: 1rem 0;
+            margin-top: 1rem;
         }
-
-        .pipeline-step {
-            flex: 1;
-            min-width: 200px;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            text-align: center;
+        
+        .funnel-step {
+            background: var(--background-secondary);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary-color);
         }
-
-        .pipeline-step:hover {
-            border-color: var(--primary-color, #2563eb);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
+        
         .step-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .step-icon {
-            font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
-
-        .step-header h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            margin: 0;
+        
+        .step-icon {
+            font-size: 1.25rem;
         }
-
+        
+        .step-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
         .step-tag {
-            background: var(--primary-color, #2563eb);
+            background: var(--primary-color);
             color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
             font-size: 0.75rem;
+        }
+        
+        .step-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .step-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-arrow {
+            font-size: 0.75rem;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .control-panel {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .control-status {
+            font-size: 1rem;
+            color: var(--success-color);
             font-weight: 500;
         }
-
-        .step-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color, #2563eb);
-            margin: 0.5rem 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .step-detail {
-            font-size: 0.875rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 1rem;
-        }
-
-        .step-progress-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--bg-tertiary, #f1f5f9);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color, #2563eb), var(--primary-light, #3b82f6));
-            border-radius: 3px;
-            transition: width 0.8s ease;
-        }
-
-        .pipeline-arrow {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .arrow-line {
-            width: 40px;
-            height: 2px;
-            background: var(--primary-color, #2563eb);
-            margin-bottom: 0.25rem;
-        }
-
-        .arrow-head {
-            font-size: 1.5rem;
-            color: var(--primary-color, #2563eb);
-            margin-bottom: 0.25rem;
-        }
-
-        .conversion-rate {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--success-color, #10b981);
-            background: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 工作流网格布局 */
-        .workflow-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            padding: 1rem;
-            max-height: none; /* 移除高度限制，显示所有工作流 */
-        }
-
+        
         .workflow-card {
-            background: white;
+            background: var(--background-secondary);
             padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color, #e2e8f0);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
         }
-
-        .workflow-card:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
-        }
-
+        
         .workflow-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
-
-        .workflow-name {
-            font-weight: 600;
-            color: var(--text-primary, #1e293b);
-            font-size: 0.875rem;
-        }
-
-        .workflow-status {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
+        
         .workflow-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 1rem;
             font-size: 0.75rem;
-            color: var(--text-secondary, #64748b);
-        }
-
-        .workflow-time {
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* 响应式优化 */
-        @media (max-width: 768px) {
-            .pipeline-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .pipeline-arrow {
-                transform: rotate(90deg);
-                margin: 0.5rem 0;
-            }
-
-            .arrow-line {
-                width: 30px;
-            }
-
-            .workflow-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .pipeline-step {
-                min-width: auto;
-                width: 100%;
-            }
-        }
-
-        /* 其他现有样式保持不变 */
-        .data-flow-stats {
-            margin: 2rem 0;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-item {
-            background: var(--bg-secondary, #f1f5f9);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
-            border: 1px solid var(--border-color, #e2e8f0);
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary, #64748b);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color, #2563eb);
-        }
-        
-        .value-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .value-stat-item {
-            background: var(--bg-card, #ffffff);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color, #e2e8f0);
-        }
-        
-        .stat-icon {
-            font-size: 2rem;
-            opacity: 0.8;
-        }
-        
-        .stat-content .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary, #64748b);
-        }
-        
-        .stat-content .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary, #1e293b);
-        }
-        
-        .health-progress {
-            width: 100%;
-            height: 4px;
-            background: var(--bg-tertiary, #f1f5f9);
-            border-radius: 0.25rem;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success-color, #10b981), var(--success-light, #34d399));
-            border-radius: 0.25rem;
-            transition: width 0.5s ease-in-out;
+            color: var(--text-secondary);
         }
     </style>
 </body>
