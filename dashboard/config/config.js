@@ -235,7 +235,7 @@ CONFIG.validate = function() {
     };
 };
 
-// 获取嵌套配置值 - 修复了语法错误
+// 获取嵌套配置值 - 修复语法错误
 CONFIG.getNestedValue = function(path) {
     return path.split('.').reduce((obj, key) => obj && obj[key], this);
 };
