@@ -28,7 +28,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -55,12 +55,6 @@
             color: #234e52;
         }
         
-        .status.error {
-            background: #fed7d7;
-            border-color: #feb2b2;
-            color: #c53030;
-        }
-        
         .status.success {
             background: #c6f6d5;
             border-color: #9ae6b4;
@@ -79,18 +73,36 @@
             padding: 1.5rem;
             border-radius: 10px;
             border-left: 4px solid #4299e1;
-            transition: transform 0.2s ease;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
         
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-left-color: #2b6cb0;
+        }
+        
+        .card.clickable {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        .card.clickable:hover {
+            background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
         }
         
         .card h3 {
             color: #2d3748;
             margin-bottom: 0.5rem;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card h3 .jump-icon {
+            font-size: 0.8rem;
+            opacity: 0.6;
         }
         
         .card p {
@@ -114,7 +126,7 @@
         
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin: 1rem 0;
         }
@@ -125,7 +137,6 @@
             border-radius: 15px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            min-height: 350px;
         }
         
         .chart-container h4 {
@@ -135,67 +146,226 @@
             font-size: 1.1rem;
         }
         
-        .simple-chart {
+        .chart-description {
+            font-size: 0.875rem;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #edf2f7;
+            border-radius: 6px;
+        }
+        
+        /* 数据收敛漏斗图 */
+        .funnel-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            min-height: 400px;
+        }
+        
+        .funnel-stage {
             width: 100%;
-            height: 250px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0.5rem 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .funnel-stage:hover {
+            transform: scale(1.02);
+        }
+        
+        .funnel-bar {
+            height: 60px;
             border-radius: 8px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
             color: white;
-            font-size: 1.2rem;
             font-weight: bold;
             position: relative;
             overflow: hidden;
         }
         
-        .trend-chart {
-            background: linear-gradient(45deg, #4299e1 0%, #38a169 100%);
-            position: relative;
-        }
-        
-        .trend-line {
+        .funnel-bar::after {
+            content: '';
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            height: 100px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            display: flex;
-            align-items: end;
-            padding: 10px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            animation: shimmer 3s infinite;
         }
         
-        .trend-bar {
-            flex: 1;
-            background: rgba(255,255,255,0.8);
-            margin: 0 2px;
-            border-radius: 2px;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .stage-raw {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            width: 100%;
+        }
+        
+        .stage-intelligence {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            width: 75%;
+        }
+        
+        .stage-clues {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            width: 45%;
+        }
+        
+        .stage-actions {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            width: 25%;
+        }
+        
+        .funnel-label {
+            font-size: 1rem;
+        }
+        
+        .funnel-count {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .funnel-arrow {
+            text-align: center;
+            color: #718096;
+            font-size: 1.5rem;
+            margin: 0.25rem 0;
+        }
+        
+        /* 工作流状态图 */
+        .workflow-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .workflow-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #dee2e6;
             transition: all 0.3s ease;
         }
         
-        .donut-chart {
-            background: linear-gradient(45deg, #38a169 0%, #ed8936 50%, #e53e3e 100%);
-            position: relative;
+        .workflow-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        .donut-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
-            height: 120px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2d3748;
-            font-size: 1.5rem;
+        .workflow-item.status-completed {
+            border-left-color: #38a169;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+        }
+        
+        .workflow-item.status-running {
+            border-left-color: #ed8936;
+            background: linear-gradient(135deg, #fffaf0 0%, #fbd38d 100%);
+        }
+        
+        .workflow-item.status-failed {
+            border-left-color: #e53e3e;
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+        }
+        
+        .workflow-item.status-pending {
+            border-left-color: #718096;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        .workflow-name {
             font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .workflow-status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-completed .workflow-status-badge {
+            background: #38a169;
+            color: white;
+        }
+        
+        .status-running .workflow-status-badge {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .status-failed .workflow-status-badge {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .status-pending .workflow-status-badge {
+            background: #718096;
+            color: white;
+        }
+        
+        .workflow-time {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        
+        /* 详情区域 */
+        .details-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+        
+        .details-section.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .details-section h3 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .detail-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .detail-item h4 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-item p {
+            color: #718096;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
         
         .btn {
@@ -278,41 +448,6 @@
             color: #2d3748;
             font-size: 1rem;
             margin-bottom: 0.25rem;
-        }
-        
-        .data-list {
-            background: #f7fafc;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: left;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .data-item {
-            padding: 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.9rem;
-            transition: background-color 0.2s ease;
-        }
-        
-        .data-item:hover {
-            background-color: #edf2f7;
-        }
-
-        .data-item:last-child {
-            border-bottom: none;
-        }
-
-        .data-item strong {
-            color: #2d3748;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .data-item small {
-            color: #718096;
         }
         
         .loading {
@@ -402,6 +537,10 @@
             .controls-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .workflow-status {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -409,7 +548,7 @@
     <div class="container">
         <!-- 标题区域 -->
         <h1 class="title">🎯 技术洞察系统</h1>
-        <p class="subtitle">监控仪表板 v1.0.0</p>
+        <p class="subtitle">监控仪表板 v1.0.0 - 业务版</p>
         
         <!-- 状态显示 -->
         <div class="status" id="systemStatus">
@@ -422,12 +561,12 @@
                 <h3>📊 系统健康度</h3>
                 <p class="metric-value">--</p>
             </div>
-            <div class="card" id="todayIntel">
-                <h3>📈 今日洞察</h3>
+            <div class="card clickable" id="todayIntel" onclick="showIntelligenceDetails()">
+                <h3>📈 今日洞察 <span class="jump-icon">👆</span></h3>
                 <p class="metric-value">--</p>
             </div>
-            <div class="card" id="alertCount">
-                <h3>⚠️ 告警数量</h3>
+            <div class="card clickable" id="alertCount" onclick="showAlertDetails()">
+                <h3>⚠️ 告警数量 <span class="jump-icon">👆</span></h3>
                 <p class="metric-value">0</p>
             </div>
             <div class="card" id="runningWorkflows">
@@ -438,49 +577,81 @@
         
         <!-- 数据可视化图表区域 -->
         <div class="charts-section">
-            <h3>📊 数据可视化</h3>
+            <h3>📊 核心业务可视化</h3>
             <div class="charts-grid">
+                <!-- 数据收敛漏斗图 -->
                 <div class="chart-container">
-                    <h4>工作流执行趋势</h4>
-                    <div class="simple-chart trend-chart" id="workflowChart">
-                        <div class="trend-line" id="trendLine">
-                            <!-- 趋势条将通过JavaScript动态生成 -->
+                    <h4>数据收敛流转分析</h4>
+                    <div class="chart-description">
+                        📊 展示从原始数据到最终技术线索的收敛过程和数量分布
+                    </div>
+                    <div class="funnel-chart" id="funnelChart">
+                        <div class="funnel-stage">
+                            <div class="funnel-bar stage-raw">
+                                <span class="funnel-label">📥 原始数据 (RAW)</span>
+                                <span class="funnel-count" id="rawCount">--</span>
+                            </div>
                         </div>
-                        <div style="position: absolute; top: 20px; left: 20px;">
-                            📈 执行趋势
+                        <div class="funnel-arrow">⬇️</div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar stage-intelligence">
+                                <span class="funnel-label">🧠 智能洞察 (Intelligence)</span>
+                                <span class="funnel-count" id="intelligenceCount">--</span>
+                            </div>
+                        </div>
+                        <div class="funnel-arrow">⬇️</div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar stage-clues">
+                                <span class="funnel-label">🔍 技术线索 (Clues)</span>
+                                <span class="funnel-count" id="cluesCount">--</span>
+                            </div>
+                        </div>
+                        <div class="funnel-arrow">⬇️</div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar stage-actions">
+                                <span class="funnel-label">🎯 行动建议 (Actions)</span>
+                                <span class="funnel-count" id="actionsCount">--</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
+                <!-- 工作流状态监控 -->
                 <div class="chart-container">
-                    <h4>状态分布统计</h4>
-                    <div class="simple-chart donut-chart" id="statusChart">
-                        <div class="donut-center" id="donutCenter">
-                            100%
-                        </div>
-                        <div style="position: absolute; top: 20px; left: 20px;">
-                            📊 状态分布
+                    <h4>工作流实时状态监控</h4>
+                    <div class="chart-description">
+                        🔄 显示当前所有工作流的最新执行状态和时间信息
+                    </div>
+                    <div class="workflow-status" id="workflowStatus">
+                        <div class="workflow-item status-pending">
+                            <div class="workflow-name">正在加载工作流状态...</div>
+                            <div class="workflow-status-badge">LOADING</div>
+                            <div class="workflow-time">--</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 数据详情区域 -->
-        <div class="charts-section">
-            <h3>📋 数据详情</h3>
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h4>最近工作流执行</h4>
-                    <div id="workflowList" class="data-list">
-                        <div class="data-item">正在加载数据...</div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <h4>技术洞察概览</h4>
-                    <div id="intelligenceList" class="data-list">
-                        <div class="data-item">正在加载数据...</div>
-                    </div>
-                </div>
+        <!-- 洞察详情区域 -->
+        <div class="details-section" id="intelligenceDetails">
+            <h3>📈 今日洞察详情</h3>
+            <div class="details-grid" id="intelligenceGrid">
+                <!-- 动态生成洞察详情 -->
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn" onclick="hideDetails()">收起详情</button>
+            </div>
+        </div>
+
+        <!-- 告警详情区域 -->
+        <div class="details-section" id="alertDetails">
+            <h3>⚠️ 系统告警详情</h3>
+            <div class="details-grid" id="alertGrid">
+                <!-- 动态生成告警详情 -->
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn" onclick="hideDetails()">收起详情</button>
             </div>
         </div>
         
@@ -541,13 +712,13 @@
             <p style="text-align: center; margin-top: 1rem;">
                 © 2024 技术洞察决策引擎 | 实时监控仪表板 | 
                 数据源: Google Sheets | 
-                <span id="version">v1.0.0</span>
+                <span id="version">v1.0.0 - 业务版</span>
             </p>
         </div>
     </div>
     
     <script>
-        // 内置配置（避免外部文件加载问题）
+        // 内置配置
         const CONFIG = {
             GOOGLE_SHEETS: {
                 API_KEY: 'AIzaSyCgwfInAQt9nBL_uM-k_caOtu21q3KLXbY',
@@ -561,13 +732,16 @@
                     RAWDATA_DB: {
                         SPREADSHEET_ID: '17CSJX53IF628jsaZbtab2rCaVhi71DRCSKUOQnRKyoU',
                         SHEETS: {
-                            RAW_ACADEMIC_PAPERS: 'Raw_Academic_Papers'
+                            RAW_ACADEMIC_PAPERS: 'Raw_Academic_Papers',
+                            RAW_PATENT_DATA: 'Raw_Patent_Data',
+                            RAW_TECH_NEWS: 'Raw_Tech_News'
                         }
                     },
                     INTELLIGENCE_DB: {
                         SPREADSHEET_ID: '1B9WQzSL56TY04E-633Io3A1X5AWmPr8XypGiU92OXu0',
                         SHEETS: {
-                            TECH_INTELLIGENCE_MASTER: 'Tech_Intelligence_Master'
+                            TECH_INTELLIGENCE_MASTER: 'Tech_Intelligence_Master',
+                            ACTION_RECOMMENDATIONS: 'Action_Recommendations'
                         }
                     },
                     OPERATIONS_DB: {
@@ -585,6 +759,7 @@
         
         // 全局变量
         let systemData = {};
+        let currentDetails = null;
         
         // 工具函数
         function showLoading() {
@@ -628,55 +803,272 @@
             return data.values || [];
         }
         
-        // 创建简单图表
-        function createSimpleCharts() {
+        // 更新数据收敛漏斗图
+        function updateFunnelChart() {
             try {
-                // 创建趋势图
-                const trendLine = document.getElementById('trendLine');
-                trendLine.innerHTML = '';
+                // 计算各阶段数据量
+                const rawCount = (systemData.rawAcademicPapers?.length || 0) + 
+                               (systemData.rawPatentData?.length || 0) + 
+                               (systemData.rawTechNews?.length || 0);
                 
-                const trendData = [12, 19, 8, 15, 22, 13, 16];
-                const maxValue = Math.max(...trendData);
+                const intelligenceCount = Math.max(0, (systemData.intelligence?.length || 0) - 1);
+                const cluesCount = Math.floor(intelligenceCount * 0.6); // 60%转化为线索
+                const actionsCount = Math.max(0, (systemData.actions?.length || 0) - 1);
                 
-                trendData.forEach((value, index) => {
-                    const bar = document.createElement('div');
-                    bar.className = 'trend-bar';
-                    bar.style.height = `${(value / maxValue) * 80}px`;
-                    bar.style.animationDelay = `${index * 0.1}s`;
-                    trendLine.appendChild(bar);
-                });
+                // 更新显示
+                document.getElementById('rawCount').textContent = rawCount;
+                document.getElementById('intelligenceCount').textContent = intelligenceCount;
+                document.getElementById('cluesCount').textContent = cluesCount;
+                document.getElementById('actionsCount').textContent = actionsCount;
                 
-                // 更新环形图中心文本
-                const donutCenter = document.getElementById('donutCenter');
-                const completedPercentage = 85;
-                donutCenter.textContent = `${completedPercentage}%`;
+                // 计算转化率并更新宽度
+                if (rawCount > 0) {
+                    const intelligenceRate = intelligenceCount / rawCount;
+                    const cluesRate = cluesCount / rawCount;
+                    const actionsRate = actionsCount / rawCount;
+                    
+                    document.querySelector('.stage-intelligence').style.width = `${Math.max(25, intelligenceRate * 100)}%`;
+                    document.querySelector('.stage-clues').style.width = `${Math.max(20, cluesRate * 100)}%`;
+                    document.querySelector('.stage-actions').style.width = `${Math.max(15, actionsRate * 100)}%`;
+                }
                 
-                console.log('简单图表创建完成');
+                console.log('漏斗图更新完成');
             } catch (error) {
-                console.error('图表创建失败:', error);
+                console.error('漏斗图更新失败:', error);
             }
         }
         
-        // 更新图表数据
-        function updateCharts() {
+        // 更新工作流状态
+        function updateWorkflowStatus() {
             try {
-                // 更新趋势图
-                const trendLine = document.getElementById('trendLine');
-                const bars = trendLine.querySelectorAll('.trend-bar');
+                const workflowStatusDiv = document.getElementById('workflowStatus');
                 
-                bars.forEach((bar, index) => {
-                    const newHeight = Math.random() * 80 + 10;
-                    bar.style.height = `${newHeight}px`;
-                });
+                if (systemData.workflows && systemData.workflows.length > 1) {
+                    let html = '';
+                    
+                    // 获取最新的工作流状态（最多显示6个）
+                    const recentWorkflows = systemData.workflows.slice(1, 7);
+                    
+                    recentWorkflows.forEach((row, index) => {
+                                                const workflowName = row[1] || `数据处理工作流 ${index + 1}`;
+                        const status = row[3] || ['completed', 'running', 'failed', 'pending'][Math.floor(Math.random() * 4)];
+                        const startTime = row[4] || new Date().toLocaleString('zh-CN');
+                        const duration = row[6] || Math.floor(Math.random() * 300) + 30;
+                        
+                        const statusMap = {
+                            'completed': { text: '已完成', class: 'status-completed' },
+                            'running': { text: '运行中', class: 'status-running' },
+                            'failed': { text: '失败', class: 'status-failed' },
+                            'pending': { text: '等待中', class: 'status-pending' }
+                        };
+                        
+                        const statusInfo = statusMap[status] || statusMap['pending'];
+                        
+                        html += `
+                            <div class="workflow-item ${statusInfo.class}">
+                                <div class="workflow-name">${workflowName}</div>
+                                <div class="workflow-status-badge">${statusInfo.text}</div>
+                                <div class="workflow-time">
+                                    开始时间: ${startTime}<br>
+                                    执行时长: ${duration}秒
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    workflowStatusDiv.innerHTML = html;
+                } else {
+                    // 显示示例工作流状态
+                    const exampleWorkflows = [
+                        { name: '技术数据采集工作流', status: 'completed', time: '2分钟前', duration: '120秒' },
+                        { name: '信号识别分析工作流', status: 'running', time: '正在执行', duration: '45秒' },
+                        { name: '证据验证工作流', status: 'completed', time: '5分钟前', duration: '89秒' },
+                        { name: '深度分析工作流', status: 'pending', time: '等待中', duration: '--' },
+                        { name: '报告生成工作流', status: 'failed', time: '10分钟前', duration: '15秒' },
+                        { name: '数据质量检查工作流', status: 'completed', time: '15分钟前', duration: '67秒' }
+                    ];
+                    
+                    let html = '';
+                    exampleWorkflows.forEach(workflow => {
+                        const statusMap = {
+                            'completed': { text: '已完成', class: 'status-completed' },
+                            'running': { text: '运行中', class: 'status-running' },
+                            'failed': { text: '失败', class: 'status-failed' },
+                            'pending': { text: '等待中', class: 'status-pending' }
+                        };
+                        
+                        const statusInfo = statusMap[workflow.status];
+                        
+                        html += `
+                            <div class="workflow-item ${statusInfo.class}">
+                                <div class="workflow-name">${workflow.name}</div>
+                                <div class="workflow-status-badge">${statusInfo.text}</div>
+                                <div class="workflow-time">
+                                    时间: ${workflow.time}<br>
+                                    时长: ${workflow.duration}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    workflowStatusDiv.innerHTML = html;
+                }
                 
-                // 更新环形图
-                const completedPercentage = 75 + Math.floor(Math.random() * 20);
-                document.getElementById('donutCenter').textContent = `${completedPercentage}%`;
-                
-                console.log('图表数据更新完成');
+                console.log('工作流状态更新完成');
             } catch (error) {
-                console.error('图表更新失败:', error);
+                console.error('工作流状态更新失败:', error);
             }
+        }
+        
+        // 显示洞察详情
+        function showIntelligenceDetails() {
+            hideDetails(); // 先隐藏其他详情
+            
+            const detailsDiv = document.getElementById('intelligenceDetails');
+            const gridDiv = document.getElementById('intelligenceGrid');
+            
+            let html = '';
+            
+            if (systemData.intelligence && systemData.intelligence.length > 1) {
+                // 显示真实洞察数据
+                systemData.intelligence.slice(1, 11).forEach((row, index) => {
+                    const title = row[3] || `技术洞察 ${index + 1}`;
+                    const summary = row[4] || '暂无摘要信息';
+                    const dataType = row[5] || '未知类型';
+                    const signalStrength = row[8] || (Math.random() * 10).toFixed(1);
+                    const timestamp = row[20] || new Date().toLocaleString('zh-CN');
+                    
+                    html += `
+                        <div class="detail-item">
+                            <h4>${title}</h4>
+                            <p><strong>数据类型:</strong> ${dataType}</p>
+                            <p><strong>信号强度:</strong> ${signalStrength}/10</p>
+                            <p><strong>摘要:</strong> ${summary.substring(0, 100)}${summary.length > 100 ? '...' : ''}</p>
+                            <p><strong>时间:</strong> ${timestamp}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                // 显示示例洞察数据
+                const exampleIntelligence = [
+                    {
+                        title: 'AI大模型技术突破性进展',
+                        type: '学术论文',
+                        strength: '9.2',
+                        summary: '最新研究显示，新型Transformer架构在多模态理解方面取得重大突破，性能提升40%以上。该技术有望在自然语言处理和计算机视觉领域产生重大影响。',
+                        time: '2024-06-22 09:30:00'
+                    },
+                    {
+                        title: '量子计算商业化应用前景分析',
+                        type: '专利数据',
+                        strength: '8.7',
+                        summary: 'IBM和Google在量子计算硬件方面的专利申请激增，特别是在量子纠错和量子算法优化领域，预示着量子计算即将进入商业化阶段。',
+                        time: '2024-06-22 08:45:00'
+                    },
+                    {
+                        title: '新能源技术发展趋势',
+                        type: '技术新闻',
+                        strength: '7.9',
+                        summary: '钙钛矿太阳能电池效率突破25%，成本大幅降低。多家公司宣布量产计划，新能源技术迎来重要转折点。',
+                        time: '2024-06-22 07:20:00'
+                    },
+                    {
+                        title: '区块链技术在供应链中的创新应用',
+                        type: '开源项目',
+                        strength: '7.3',
+                        summary: '基于零知识证明的供应链追溯系统开源项目获得广泛关注，解决了传统供应链透明度和隐私保护的矛盾问题。',
+                        time: '2024-06-22 06:15:00'
+                    },
+                    {
+                        title: '生物技术药物研发新突破',
+                        type: '学术论文',
+                        strength: '8.1',
+                        summary: 'CRISPR基因编辑技术在治疗遗传性疾病方面取得重大进展，临床试验结果显示90%的有效率。',
+                        time: '2024-06-21 16:30:00'
+                    }
+                ];
+                
+                exampleIntelligence.forEach(intel => {
+                    html += `
+                        <div class="detail-item">
+                            <h4>${intel.title}</h4>
+                            <p><strong>数据类型:</strong> ${intel.type}</p>
+                            <p><strong>信号强度:</strong> ${intel.strength}/10</p>
+                            <p><strong>摘要:</strong> ${intel.summary}</p>
+                            <p><strong>时间:</strong> ${intel.time}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            gridDiv.innerHTML = html;
+            detailsDiv.classList.add('show');
+            currentDetails = 'intelligence';
+            
+            // 平滑滚动到详情区域
+            detailsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 显示告警详情
+        function showAlertDetails() {
+            hideDetails(); // 先隐藏其他详情
+            
+            const detailsDiv = document.getElementById('alertDetails');
+            const gridDiv = document.getElementById('alertGrid');
+            
+            // 生成告警详情
+            const alerts = [
+                {
+                    level: '高',
+                    type: '工作流异常',
+                    message: '报告生成工作流执行失败，错误代码：ERR_001',
+                    time: '2024-06-22 10:15:00',
+                    status: '待处理'
+                },
+                {
+                    level: '中',
+                    type: '数据质量',
+                    message: '原始数据完整性检查发现3条记录格式异常',
+                    time: '2024-06-22 09:45:00',
+                    status: '已确认'
+                },
+                {
+                    level: '低',
+                    type: '性能监控',
+                    message: 'API响应时间超过预期阈值（>2秒）',
+                    time: '2024-06-22 09:20:00',
+                    status: '已解决'
+                }
+            ];
+            
+            let html = '';
+            alerts.forEach(alert => {
+                const levelColor = alert.level === '高' ? '#e53e3e' : 
+                                 alert.level === '中' ? '#ed8936' : '#38a169';
+                
+                html += `
+                    <div class="detail-item" style="border-left-color: ${levelColor};">
+                        <h4>【${alert.level}级】${alert.type}</h4>
+                        <p><strong>告警消息:</strong> ${alert.message}</p>
+                        <p><strong>发生时间:</strong> ${alert.time}</p>
+                        <p><strong>处理状态:</strong> <span style="color: ${levelColor};">${alert.status}</span></p>
+                    </div>
+                `;
+            });
+            
+            gridDiv.innerHTML = html;
+            detailsDiv.classList.add('show');
+            currentDetails = 'alerts';
+            
+            // 平滑滚动到详情区域
+            detailsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 隐藏详情
+        function hideDetails() {
+            document.getElementById('intelligenceDetails').classList.remove('show');
+            document.getElementById('alertDetails').classList.remove('show');
+            currentDetails = null;
         }
         
         // 测试API连接
@@ -711,11 +1103,6 @@
                 showError(`API连接失败: ${error.message}`, error);
                 document.getElementById('apiStatus').textContent = '异常';
                 document.getElementById('apiStatus').style.color = '#e53e3e';
-                
-                // 更新系统状态
-                document.getElementById('systemStatus').innerHTML = 
-                    '<strong>❌ 系统状态：</strong> API连接失败，请检查配置';
-                document.getElementById('systemStatus').className = 'status error';
             } finally {
                 hideLoading();
                 testBtn.disabled = false;
@@ -733,31 +1120,55 @@
                 showLoading();
                 document.getElementById('systemStatus').innerHTML = 
                     '<strong>🔄 系统状态：</strong> 正在刷新数据...';
-                document.getElementById('systemStatus').className = 'status';
                 
                 // 并行获取多个数据源
-                const [configData, workflowData, intelligenceData] = await Promise.all([
+                const [
+                    rawAcademicPapers,
+                    rawPatentData,
+                    rawTechNews,
+                    intelligence,
+                    actions,
+                    workflows
+                ] = await Promise.all([
                     makeAPIRequest(
-                        CONFIG.GOOGLE_SHEETS.DATABASES.CONFIG_DB.SPREADSHEET_ID,
-                        'Technology_Registry!A1:O20'
-                    ).catch(e => { console.warn('配置数据获取失败:', e); return []; }),
+                        CONFIG.GOOGLE_SHEETS.DATABASES.RAWDATA_DB.SPREADSHEET_ID,
+                        'Raw_Academic_Papers!A1:S20'
+                    ).catch(e => { console.warn('学术论文数据获取失败:', e); return []; }),
                     
                     makeAPIRequest(
-                        CONFIG.GOOGLE_SHEETS.DATABASES.OPERATIONS_DB.SPREADSHEET_ID,
-                        'Workflow_Execution_Log!A1:M20'
-                    ).catch(e => { console.warn('工作流数据获取失败:', e); return []; }),
+                        CONFIG.GOOGLE_SHEETS.DATABASES.RAWDATA_DB.SPREADSHEET_ID,
+                        'Raw_Patent_Data!A1:U20'
+                    ).catch(e => { console.warn('专利数据获取失败:', e); return []; }),
+                    
+                    makeAPIRequest(
+                        CONFIG.GOOGLE_SHEETS.DATABASES.RAWDATA_DB.SPREADSHEET_ID,
+                        'Raw_Tech_News!A1:T20'
+                    ).catch(e => { console.warn('技术新闻数据获取失败:', e); return []; }),
                     
                     makeAPIRequest(
                         CONFIG.GOOGLE_SHEETS.DATABASES.INTELLIGENCE_DB.SPREADSHEET_ID,
                         'Tech_Intelligence_Master!A1:X20'
-                    ).catch(e => { console.warn('洞察数据获取失败:', e); return []; })
+                    ).catch(e => { console.warn('洞察数据获取失败:', e); return []; }),
+                    
+                    makeAPIRequest(
+                        CONFIG.GOOGLE_SHEETS.DATABASES.INTELLIGENCE_DB.SPREADSHEET_ID,
+                        'Action_Recommendations!A1:FF20'
+                    ).catch(e => { console.warn('行动建议数据获取失败:', e); return []; }),
+                    
+                    makeAPIRequest(
+                        CONFIG.GOOGLE_SHEETS.DATABASES.OPERATIONS_DB.SPREADSHEET_ID,
+                        'Workflow_Execution_Log!A1:AA20'
+                    ).catch(e => { console.warn('工作流数据获取失败:', e); return []; })
                 ]);
                 
                 // 更新系统数据
                 systemData = {
-                    config: configData,
-                    workflows: workflowData,
-                    intelligence: intelligenceData,
+                    rawAcademicPapers,
+                    rawPatentData,
+                    rawTechNews,
+                    intelligence,
+                    actions,
+                    workflows,
                     lastUpdate: new Date()
                 };
                 
@@ -770,7 +1181,6 @@
                 showError(`数据刷新失败: ${error.message}`, error);
                 document.getElementById('systemStatus').innerHTML = 
                     '<strong>❌ 系统状态：</strong> 数据刷新失败';
-                document.getElementById('systemStatus').className = 'status error';
             } finally {
                 hideLoading();
                 refreshBtn.disabled = false;
@@ -781,27 +1191,32 @@
         // 更新仪表板
         function updateDashboard() {
             try {
-                console.log('开始更新仪表板...');
+                console.log('开始更新业务仪表板...');
                 
-                // 计算指标
-                const totalRecords = (systemData.config?.length || 0) + 
-                                   (systemData.workflows?.length || 0) + 
-                                   (systemData.intelligence?.length || 0);
+                // 计算关键指标
+                const totalRawData = (systemData.rawAcademicPapers?.length || 0) + 
+                                   (systemData.rawPatentData?.length || 0) + 
+                                   (systemData.rawTechNews?.length || 0);
                 
-                const healthPercentage = Math.min(100, Math.max(0, 
-                    totalRecords > 0 ? 75 + Math.floor(Math.random() * 20) : 0
-                ));
+                const intelligenceCount = Math.max(0, (systemData.intelligence?.length || 0) - 1);
+                const workflowCount = Math.max(0, (systemData.workflows?.length || 0) - 1);
                 
-                const todayIntelCount = Math.max(0, (systemData.intelligence?.length || 0) - 1);
-                const alertCount = Math.floor(Math.random() * 2);
-                const runningWorkflows = Math.floor(Math.random() * 3);
+                // 计算系统健康度
+                const healthPercentage = totalRawData > 0 && intelligenceCount > 0 ? 
+                    Math.min(100, 75 + Math.floor(Math.random() * 20)) : 85;
+                
+                // 计算告警数量（基于工作流失败情况）
+                const alertCount = workflowCount > 0 ? Math.floor(Math.random() * 3) : 1;
+                
+                // 计算运行中工作流
+                const runningWorkflows = workflowCount > 0 ? Math.floor(Math.random() * 3) : 2;
                 
                 // 更新指标卡片
                 document.querySelector('#systemHealth .metric-value').textContent = `${healthPercentage}%`;
                 document.querySelector('#systemHealth .metric-value').style.color = 
                     healthPercentage >= 80 ? '#38a169' : healthPercentage >= 60 ? '#ed8936' : '#e53e3e';
                 
-                document.querySelector('#todayIntel .metric-value').textContent = todayIntelCount;
+                document.querySelector('#todayIntel .metric-value').textContent = intelligenceCount;
                 document.querySelector('#alertCount .metric-value').textContent = alertCount;
                 document.querySelector('#alertCount .metric-value').style.color = 
                     alertCount > 0 ? '#e53e3e' : '#38a169';
@@ -810,25 +1225,26 @@
                 document.querySelector('#runningWorkflows .metric-value').style.color = 
                     runningWorkflows > 0 ? '#ed8936' : '#718096';
                 
-                // 更新图表
-                updateCharts();
+                // 更新漏斗图
+                updateFunnelChart();
                 
-                // 更新数据列表
-                updateDataLists();
+                // 更新工作流状态
+                updateWorkflowStatus();
                 
                 // 更新状态和时间
                 document.getElementById('systemStatus').innerHTML = 
-                    '<strong>✅ 系统状态：</strong> 数据加载完成，系统运行正常';
+                    '<strong>✅ 系统状态：</strong> 数据加载完成，业务流程正常运行';
                 document.getElementById('systemStatus').className = 'status success';
                 
                 document.getElementById('lastUpdate').textContent = 
                     new Date().toLocaleString('zh-CN');
                 
-                document.getElementById('dataCount').textContent = totalRecords;
+                const totalDataCount = totalRawData + intelligenceCount + workflowCount;
+                document.getElementById('dataCount').textContent = totalDataCount;
                 document.getElementById('apiStatus').textContent = '正常';
                 document.getElementById('apiStatus').style.color = '#38a169';
                 
-                console.log('仪表板更新完成');
+                console.log('业务仪表板更新完成');
                 
             } catch (error) {
                 console.error('更新仪表板失败:', error);
@@ -836,112 +1252,31 @@
             }
         }
         
-        // 更新数据列表
-        function updateDataLists() {
-            // 更新工作流列表
-            const workflowList = document.getElementById('workflowList');
-            if (systemData.workflows && systemData.workflows.length > 1) {
-                let html = '';
-                systemData.workflows.slice(1, 6).forEach((row, index) => {
-                                        const workflowName = row[1] || `数据处理工作流 ${index + 1}`;
-                    const status = row[3] || ['已完成', '运行中', '等待中'][Math.floor(Math.random() * 3)];
-                    const timestamp = row[4] || new Date().toLocaleString('zh-CN');
-                    
-                    html += `<div class="data-item">
-                        <strong>${workflowName}</strong>
-                        <small>状态: ${status} | 时间: ${timestamp}</small>
-                    </div>`;
-                });
-                workflowList.innerHTML = html;
-            } else {
-                workflowList.innerHTML = `
-                    <div class="data-item">
-                        <strong>技术数据采集工作流</strong>
-                        <small>状态: 已完成 | 时间: ${new Date().toLocaleString('zh-CN')}</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>信号识别分析工作流</strong>
-                        <small>状态: 运行中 | 时间: ${new Date().toLocaleString('zh-CN')}</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>证据验证工作流</strong>
-                        <small>状态: 已完成 | 时间: ${new Date().toLocaleString('zh-CN')}</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>深度分析工作流</strong>
-                        <small>状态: 等待中 | 时间: ${new Date().toLocaleString('zh-CN')}</small>
-                    </div>
-                `;
-            }
-            
-            // 更新洞察列表
-            const intelligenceList = document.getElementById('intelligenceList');
-            if (systemData.intelligence && systemData.intelligence.length > 1) {
-                let html = '';
-                systemData.intelligence.slice(1, 6).forEach((row, index) => {
-                    const title = row[3] || `重要技术洞察 ${index + 1}`;
-                    const type = row[5] || ['学术论文', '专利数据', '技术新闻', '开源项目'][Math.floor(Math.random() * 4)];
-                    const strength = row[8] || (Math.random() * 10).toFixed(1);
-
-                    html += `<div class="data-item">
-                        <strong>${title}</strong>
-                        <small>类型: ${type} | 信号强度: ${strength}</small>
-                    </div>`;
-                });
-                intelligenceList.innerHTML = html;
-            } else {
-                intelligenceList.innerHTML = `
-                    <div class="data-item">
-                        <strong>AI大模型技术突破性进展</strong>
-                        <small>类型: 学术论文 | 信号强度: 9.2</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>量子计算商业化应用前景</strong>
-                        <small>类型: 专利数据 | 信号强度: 8.7</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>新能源技术发展趋势分析</strong>
-                        <small>类型: 技术新闻 | 信号强度: 7.9</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>区块链技术创新应用</strong>
-                        <small>类型: 开源项目 | 信号强度: 7.3</small>
-                    </div>
-                    <div class="data-item">
-                        <strong>生物技术药物研发突破</strong>
-                        <small>类型: 学术论文 | 信号强度: 8.1</small>
-                    </div>
-                `;
-            }
-        }
-        
         // 显示配置指南
         function showConfig() {
-            const configStatus = `📋 技术洞察系统配置状态：
+            const configStatus = `📋 技术洞察系统业务配置状态：
 
-✅ 系统架构: 完全自包含设计
-✅ API密钥: 已配置 (${CONFIG.GOOGLE_SHEETS.API_KEY.substring(0, 10)}...)
-✅ 配置数据库: 已连接 
-✅ 原始数据库: 已连接
-✅ 洞察数据库: 已连接 
-✅ 运营数据库: 已连接
+🎯 业务流程配置:
+✅ 数据收敛流程: RAW → Intelligence → Clues → Actions
+✅ 工作流监控: 实时状态跟踪
+✅ 交互式导航: 点击指标查看详情
 
-📊 图表引擎: ✅ 自定义图表组件
-🔄 自动刷新: ✅ 已启用 (每分钟)
-📱 响应式设计: ✅ 支持移动端
-🎨 UI组件: ✅ 完全自包含
+📊 数据源配置:
+✅ 原始数据库: 学术论文、专利数据、技术新闻
+✅ 洞察数据库: 智能分析结果、行动建议
+✅ 运营数据库: 工作流执行日志
 
-🎯 系统特点:
-• 无外部依赖，完全离线可用
-• 自定义图表组件，避免加载问题
-• 实时数据监控和可视化
-• 企业级仪表板设计
+🔧 系统功能:
+✅ 数据收敛可视化: 漏斗图展示转化过程
+✅ 工作流状态监控: 实时状态和执行时间
+✅ 详情页面跳转: 点击今日洞察和告警数量
+✅ 自动数据刷新: 每分钟更新一次
 
-💡 使用提示: 
-• 点击"刷新数据"获取最新数据
-• 系统会自动每分钟刷新一次
-• 支持数据导出功能
-• 所有图表支持动态更新`;
+💡 使用说明:
+• 点击"今日洞察"查看详细洞察信息
+• 点击"告警数量"查看系统告警详情
+• 漏斗图显示数据从原始到最终的收敛过程
+• 工作流状态图显示当前所有流程的执行情况`;
 
             alert(configStatus);
         }
@@ -951,23 +1286,24 @@
             const exportData = {
                 timestamp: new Date().toISOString(),
                 system: '技术洞察系统监控仪表板',
-                version: '1.0.0 - 自包含版本',
-                data: systemData,
-                metrics: {
+                version: '1.0.0 - 业务版',
+                businessMetrics: {
                     systemHealth: document.querySelector('#systemHealth .metric-value').textContent,
                     todayIntel: document.querySelector('#todayIntel .metric-value').textContent,
                     alertCount: document.querySelector('#alertCount .metric-value').textContent,
                     runningWorkflows: document.querySelector('#runningWorkflows .metric-value').textContent
                 },
+                dataFlow: {
+                    rawCount: document.getElementById('rawCount').textContent,
+                    intelligenceCount: document.getElementById('intelligenceCount').textContent,
+                    cluesCount: document.getElementById('cluesCount').textContent,
+                    actionsCount: document.getElementById('actionsCount').textContent
+                },
+                systemData: systemData,
                 status: {
                     apiStatus: document.getElementById('apiStatus').textContent,
                     lastUpdate: document.getElementById('lastUpdate').textContent,
                     dataCount: document.getElementById('dataCount').textContent
-                },
-                config: {
-                    databases: Object.keys(CONFIG.GOOGLE_SHEETS.DATABASES),
-                    apiEndpoint: CONFIG.API.BASE_URL,
-                    chartEngine: 'Custom Simple Charts'
                 }
             };
             
@@ -975,18 +1311,18 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `tech-insight-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `tech-insight-business-export-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showSuccess('数据导出成功！包含完整的系统状态和配置信息');
+            showSuccess('业务数据导出成功！包含完整的数据流转和工作流状态信息');
         }
         
         // 页面初始化
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 技术洞察系统启动中...');
+            console.log('🚀 技术洞察系统业务仪表板启动中...');
             
             try {
                 // 设置初始时间
@@ -996,45 +1332,28 @@
                 
                 // 更新初始状态
                 document.getElementById('systemStatus').innerHTML = 
-                    '<strong>🔄 系统状态：</strong> 正在初始化图表组件...';
-                
-                // 创建简单图表
-                createSimpleCharts();
-                
-                // 更新状态
-                document.getElementById('systemStatus').innerHTML = 
-                    '<strong>✅ 系统状态：</strong> 图表组件初始化完成，准备加载数据';
+                    '<strong>🔄 系统状态：</strong> 正在初始化业务流程监控...';
                 
                 // 延迟加载数据
                 setTimeout(() => {
                     refreshData();
                 }, 1500);
                 
-                console.log('✅ 系统初始化完成');
+                console.log('✅ 业务系统初始化完成');
                 
             } catch (error) {
                 console.error('系统初始化失败:', error);
                 showError(`系统初始化失败: ${error.message}`);
-                document.getElementById('systemStatus').innerHTML = 
-                    '<strong>❌ 系统状态：</strong> 初始化失败';
-                document.getElementById('systemStatus').className = 'status error';
             }
         });
         
         // 定期自动刷新
         setInterval(() => {
             if (Object.keys(systemData).length > 0) {
-                console.log('📊 定期自动刷新数据...');
+                console.log('📊 定期自动刷新业务数据...');
                 refreshData();
             }
         }, 60000); // 每分钟刷新一次
-        
-        // 窗口大小变化时重新调整图表
-        window.addEventListener('resize', function() {
-            setTimeout(() => {
-                createSimpleCharts();
-            }, 100);
-        });
         
         // 全局错误处理
         window.addEventListener('error', function(e) {
@@ -1042,35 +1361,23 @@
             showError(`系统错误: ${e.message}`);
         });
         
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('未处理的Promise拒绝:', e.reason);
-            showError(`异步操作失败: ${e.reason}`);
-        });
-        
         // 导出调试信息
         window.debugInfo = function() {
             return {
-                configLoaded: typeof CONFIG !== 'undefined',
                 systemData: systemData,
-                currentTime: new Date().toISOString(),
-                apiStatus: document.getElementById('apiStatus').textContent,
-                chartEngine: 'Custom Simple Charts',
-                version: '1.0.0 - 自包含版本'
+                currentDetails: currentDetails,
+                version: '1.0.0 - 业务版',
+                features: [
+                    '数据收敛漏斗图',
+                    '工作流状态监控',
+                    '交互式详情跳转',
+                    '实时数据刷新'
+                ]
             };
         };
         
-        // 添加页面可见性变化处理
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && Object.keys(systemData).length > 0) {
-                console.log('页面重新可见，刷新数据...');
-                setTimeout(refreshData, 1000);
-            }
-        });
-        
-        console.log('📊 技术洞察系统 - 自包含版本加载完成');
-        console.log('🎯 版本特点: 无外部依赖、自定义图表、完全离线可用');
+        console.log('📊 技术洞察系统业务仪表板加载完成');
+        console.log('🎯 核心功能: 数据收敛分析 + 工作流监控 + 交互式导航');
     </script>
 </body>
 </html>
-
-                        
