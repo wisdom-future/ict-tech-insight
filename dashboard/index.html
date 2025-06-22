@@ -6,23 +6,11 @@
     <title>🎯 技术洞察系统 - 监控仪表板</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="技术洞察系统实时监控仪表板，提供数据流转分析、工作流状态监控和业务洞察展示">
+    <meta name="description" content="技术洞察系统实时监控仪表板">
     
-    <!-- 修复后的图标引用 -->
-    <link rel="icon" type="image/png" href="assets/images/icons/favicon.ico">
-    <link rel="apple-touch-icon" sizes="192x192" href="assets/images/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="assets/images/icons/icon-512.png">
-    
-    <!-- PWA 支持 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="洞察仪表板">
-    
-    <!-- 预加载关键资源 -->
-    <link rel="preload" href="config/config.js" as="script">
-    <link rel="preload" href="assets/js/utils.js" as="script">
+    <!-- 简化图标引用，避免404错误 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 </head>
 <body>
     <!-- 加载遮罩层 -->
@@ -71,10 +59,9 @@
                 <div class="setting-group">
                     <label for="refreshInterval">自动刷新间隔 (秒)</label>
                     <select id="refreshInterval">
-                        <option value="15000">15秒</option>
-                        <option value="30000" selected>30秒</option>
                         <option value="60000">1分钟</option>
-                        <option value="300000">5分钟</option>
+                        <option value="300000" selected>5分钟</option>
+                        <option value="600000">10分钟</option>
                     </select>
                 </div>
                 <div class="setting-group">
@@ -145,9 +132,6 @@
                         <div class="metric-value" id="systemHealth">--</div>
                         <div class="metric-trend neutral" id="healthTrend">系统初始化中</div>
                         <div class="metric-detail" id="healthDetail">正在检测系统状态</div>
-                        <div class="health-progress">
-                            <div class="progress-bar" id="healthProgressBar" style="width: 0%"></div>
-                        </div>
                     </div>
 
                     <!-- 今日洞察卡片 -->
@@ -189,50 +173,10 @@
             <section class="data-flow-section">
                 <div class="section-header">
                     <h2>📊 核心业务可视化</h2>
-                    <div class="section-controls">
-                        <button class="btn-toggle" id="flowToggle">详细视图</button>
-                    </div>
                 </div>
                 <div class="section-subtitle">数据收敛流转分析</div>
                 <div class="flow-description">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</div>
                 
-                <div class="data-flow-grid">
-                    <div class="funnel-chart-panel">
-                        <div class="panel-header">
-                            <h3>数据处理流转漏斗</h3>
-                            <div class="chart-controls">
-                                <select id="funnelTimeRange">
-                                    <option value="today">今日</option>
-                                    <option value="week">本周</option>
-                                    <option value="month">本月</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="funnelChart"></canvas>
-                        </div>
-                        <div class="funnel-summary">
-                            <div class="summary-item">转化率: <strong id="conversionRate">--</strong></div>
-                            <div class="summary-item">处理效率: <strong id="processingEfficiency">--</strong></div>
-                            <div class="summary-item">总输入: <strong id="totalInput">--</strong></div>
-                            <div class="summary-item">总输出: <strong id="totalOutput">--</strong></div>
-                        </div>
-                    </div>
-
-                    <div class="quality-metrics-panel">
-                        <div class="panel-header">
-                            <h3>数据质量监控</h3>
-                        </div>
-                        <div class="quality-score" id="overallQuality">
-                            <div class="score-label">综合评分</div>
-                            <div class="score-value">--/10</div>
-                        </div>
-                        <div class="quality-grid" id="qualityGrid">
-                            <div class="loading">正在加载质量数据...</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- 流转步骤展示 -->
                 <div class="flow-steps-container">
                     <div class="flow-step" id="rawDataStep">
@@ -241,9 +185,6 @@
                             <h4>原始数据 (RAW)</h4>
                             <div class="step-value" id="rawDataCount">--</div>
                             <div class="step-detail">来源: 学术论文、专利、新闻等</div>
-                        </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 100%"></div>
                         </div>
                     </div>
 
@@ -257,9 +198,6 @@
                             <div class="step-value" id="intelligenceCount">--</div>
                             <div class="step-detail">AI识别的技术信号</div>
                         </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 87%"></div>
-                        </div>
                     </div>
 
                     <div class="flow-arrow">⬇️</div>
@@ -271,9 +209,6 @@
                             <h4>技术线索 (Clues)</h4>
                             <div class="step-value" id="cluesCount">--</div>
                             <div class="step-detail">验证通过的有效线索</div>
-                        </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 78%"></div>
                         </div>
                     </div>
 
@@ -287,9 +222,6 @@
                             <div class="step-value" id="actionsCount">--</div>
                             <div class="step-detail">可执行的决策建议</div>
                         </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 65%"></div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -298,119 +230,33 @@
             <section class="workflow-section">
                 <div class="section-header">
                     <h2>工作流实时状态监控</h2>
-                    <div class="section-controls">
-                        <button class="btn-toggle" id="workflowToggle">简化视图</button>
-                    </div>
                 </div>
                 <div class="section-subtitle">🔄 显示当前所有工作流的最新执行状态和时间信息</div>
 
-                <div class="workflow-grid">
-                    <div class="workflow-status-panel">
-                        <div class="panel-header">
-                            <h3>当前工作流状态</h3>
-                            <div class="status-legend">
-                                <div class="legend-item">
-                                    <div class="dot success"></div>
-                                    <span>已完成</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="dot warning"></div>
-                                    <span>运行中</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="dot danger"></div>
-                                    <span>失败</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="dot secondary"></div>
-                                    <span>等待中</span>
-                                </div>
+                <div class="workflow-status-panel">
+                    <div class="panel-header">
+                        <h3>当前工作流状态</h3>
+                        <div class="status-legend">
+                            <div class="legend-item">
+                                <div class="dot success"></div>
+                                <span>已完成</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="dot warning"></div>
+                                <span>运行中</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="dot danger"></div>
+                                <span>失败</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="dot secondary"></div>
+                                <span>等待中</span>
                             </div>
                         </div>
-                        <div class="workflow-list" id="workflowList">
-                            <div class="loading">正在加载工作流状态...</div>
-                        </div>
                     </div>
-
-                    <div class="workflow-timeline-panel">
-                        <div class="panel-header">
-                            <h3>执行时间趋势</h3>
-                            <div class="chart-controls">
-                                <select id="timelineRange">
-                                    <option value="24h">24小时</option>
-                                    <option value="7d">7天</option>
-                                    <option value="30d">30天</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="timelineChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 业务价值分析 -->
-            <section class="value-section">
-                <div class="section-header">
-                    <h2>💰 业务价值分析</h2>
-                </div>
-
-                <div class="value-grid">
-                    <div class="value-matrix-panel">
-                        <div class="panel-header">
-                            <h3>洞察价值分布矩阵</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="scatterChart"></canvas>
-                        </div>
-                        <div class="value-summary">
-                            <div class="value-stat">高价值洞察: <strong id="highValueCount">--</strong></div>
-                            <div class="value-stat">投资机会: <strong id="investmentOpportunities">--</strong></div>
-                        </div>
-                    </div>
-
-                    <div class="top-intelligence-panel">
-                        <div class="panel-header">
-                            <h3>TOP 洞察排行</h3>
-                            <div class="chart-controls">
-                                <select id="rankingSelect">
-                                    <option value="signal_strength">信号强度</option>
-                                    <option value="commercial_value">商业价值</option>
-                                    <option value="breakthrough_score">技术突破性</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="intelligence-list" id="intelligenceList">
-                            <div class="loading">正在加载洞察数据...</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 技术趋势分析 -->
-            <section class="trends-section">
-                <div class="section-header">
-                    <h2>🔥 技术趋势分析</h2>
-                </div>
-
-                <div class="trends-grid">
-                    <div class="heatmap-panel">
-                        <div class="panel-header">
-                            <h3>技术热度图</h3>
-                        </div>
-                        <div class="heatmap-container" id="heatmapContainer">
-                            <div class="loading">正在生成热度图...</div>
-                        </div>
-                    </div>
-
-                    <div class="trends-stats-panel">
-                        <div class="panel-header">
-                            <h3>趋势统计</h3>
-                        </div>
-                        <div class="trends-list" id="trendsList">
-                            <div class="loading">正在分析趋势...</div>
-                        </div>
+                    <div class="workflow-list" id="workflowList">
+                        <div class="loading">正在加载工作流状态...</div>
                     </div>
                 </div>
             </section>
@@ -453,9 +299,6 @@
                     <button class="control-btn info" id="exportBtn">
                         📤 导出数据
                     </button>
-                    <button class="control-btn warning" id="maintenanceBtn">
-                        🔧 维护模式
-                    </button>
                 </div>
                 <div class="control-status" id="controlStatus">
                     <div class="status-message">
@@ -488,117 +331,196 @@
     <!-- Toast 通知容器 -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- 脚本文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <!-- 修复后的脚本加载 -->
     <script>
-        // 确保Chart.js加载完成
-        console.log('Chart.js版本:', Chart.version);
+        // 全局变量声明
+        window.Chart = null;
+        window.CONFIG = null;
+        window.Utils = null;
+        window.api = null;
+        window.app = null;
+        
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('全局错误:', e.error);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Promise错误:', e.reason);
+        });
     </script>
-    
-    <!-- 配置和核心脚本 -->
-    <script src="config/config.js"></script>
-    <script src="assets/js/utils.js"></script>
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/app.js"></script>
 
-    <!-- 增强的初始化脚本 -->
+    <!-- 按顺序加载脚本，避免依赖问题 -->
     <script>
-        // 调试和初始化脚本
-        console.log('=== 技术洞察系统启动 ===');
-        
-        // 检查所有依赖
-        const dependencies = {
-            CONFIG: typeof CONFIG !== 'undefined',
-            Utils: typeof Utils !== 'undefined',
-            SheetsAPI: typeof SheetsAPI !== 'undefined',
-            api: typeof api !== 'undefined',
-            DashboardCharts: typeof DashboardCharts !== 'undefined',
-            dashboardCharts: typeof dashboardCharts !== 'undefined',
-            TechIntelligenceApp: typeof TechIntelligenceApp !== 'undefined',
-            app: typeof app !== 'undefined',
-            Chart: typeof Chart !== 'undefined'
+        // 1. 首先加载配置
+        const script1 = document.createElement('script');
+        script1.src = 'config/config.js';
+        script1.onload = function() {
+            console.log('✅ CONFIG已加载');
+            loadUtils();
         };
+        script1.onerror = function() {
+            console.error('❌ CONFIG加载失败');
+            showError('配置文件加载失败');
+        };
+        document.head.appendChild(script1);
         
-        console.log('依赖检查:', dependencies);
+        function loadUtils() {
+            // 2. 加载工具函数
+            const script2 = document.createElement('script');
+            script2.src = 'assets/js/utils.js';
+            script2.onload = function() {
+                console.log('✅ Utils已加载');
+                loadAPI();
+            };
+            script2.onerror = function() {
+                console.error('❌ Utils加载失败');
+                showError('工具函数加载失败');
+            };
+            document.head.appendChild(script2);
+        }
         
-        // 检查是否所有依赖都已加载
-        const allLoaded = Object.values(dependencies).every(loaded => loaded);
+        function loadAPI() {
+            // 3. 加载API模块
+            const script3 = document.createElement('script');
+            script3.src = 'assets/js/api.js';
+            script3.onload = function() {
+                console.log('✅ API已加载');
+                loadCharts();
+            };
+            script3.onerror = function() {
+                console.error('❌ API加载失败');
+                showError('API模块加载失败');
+            };
+            document.head.appendChild(script3);
+        }
         
-        if (allLoaded) {
-            console.log('✅ 所有依赖已加载，开始初始化应用');
-            
-            // 确保DOM完全加载后再初始化
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initializeApp);
-            } else {
+        function loadCharts() {
+            // 4. 加载图表模块（简化版，不依赖Chart.js）
+            const script4 = document.createElement('script');
+            script4.src = 'assets/js/charts.js';
+            script4.onload = function() {
+                console.log('✅ Charts已加载');
+                loadApp();
+            };
+            script4.onerror = function() {
+                console.error('❌ Charts加载失败');
+                // 图表模块失败不阻塞应用启动
+                loadApp();
+            };
+            document.head.appendChild(script4);
+        }
+        
+        function loadApp() {
+            // 5. 最后加载主应用
+            const script5 = document.createElement('script');
+            script5.src = 'assets/js/app.js';
+            script5.onload = function() {
+                console.log('✅ App已加载');
                 initializeApp();
-            }
-        } else {
-            console.error('❌ 部分依赖未加载:', dependencies);
-            showManualError('依赖加载失败', '请检查所有JavaScript文件是否正确加载');
+            };
+            script5.onerror = function() {
+                console.error('❌ App加载失败');
+                showError('主应用加载失败');
+            };
+            document.head.appendChild(script5);
         }
         
         function initializeApp() {
-            console.log('开始初始化应用...');
+            console.log('=== 开始初始化应用 ===');
             
-            try {
-                // 显示加载状态
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'flex';
-                }
+            // 检查所有依赖
+            const dependencies = {
+                CONFIG: typeof CONFIG !== 'undefined',
+                Utils: typeof Utils !== 'undefined',
+                api: typeof api !== 'undefined',
+                app: typeof app !== 'undefined'
+            };
+            
+            console.log('依赖检查:', dependencies);
+            
+            if (dependencies.CONFIG && dependencies.Utils && dependencies.api && dependencies.app) {
+                console.log('✅ 所有核心依赖已加载');
                 
                 // 初始化应用
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', startApp);
+                } else {
+                    startApp();
+                }
+            } else {
+                console.error('❌ 核心依赖缺失');
+                showError('系统依赖加载不完整');
+            }
+        }
+        
+        function startApp() {
+            try {
+                console.log('启动应用...');
+                
                 if (typeof app !== 'undefined' && app.init) {
+                    // 修改CONFIG中的刷新间隔，避免API频率限制
+                    if (typeof CONFIG !== 'undefined') {
+                        CONFIG.REFRESH.AUTO_REFRESH_INTERVAL = 300000; // 5分钟
+                        CONFIG.REFRESH.RETRY_DELAY = 5000; // 5秒重试延迟
+                    }
+                    
                     app.init().then(() => {
-                        console.log('✅ 应用初始化成功');
+                        console.log('✅ 应用启动成功');
+                        hideLoading();
                     }).catch(error => {
-                        console.error('❌ 应用初始化失败:', error);
-                        showManualError('初始化失败', error.message);
+                        console.error('❌ 应用启动失败:', error);
+                        showError('应用初始化失败: ' + error.message);
+                        hideLoading();
                     });
                 } else {
                     throw new Error('app对象或init方法不存在');
                 }
             } catch (error) {
-                console.error('初始化过程出错:', error);
-                showManualError('初始化错误', error.message);
+                console.error('启动过程出错:', error);
+                showError('应用启动错误: ' + error.message);
+                hideLoading();
             }
         }
         
-        function showManualError(title, message) {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-            }
+        function showError(message) {
+            hideLoading();
             
             const errorModal = document.getElementById('errorModal');
             const errorMessage = document.getElementById('errorMessage');
             
             if (errorModal && errorMessage) {
-                errorMessage.textContent = `${title}: ${message}`;
+                errorMessage.textContent = message;
                 errorModal.classList.remove('hidden');
             } else {
-                // 如果模态框不存在，使用alert
-                alert(`${title}: ${message}`);
+                alert(message);
             }
         }
         
-        // 网络状态检查
-        if (!navigator.onLine) {
-            console.warn('⚠️ 网络连接异常');
-            showManualError('网络错误', '请检查网络连接');
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
         }
         
-        // 全局错误处理
-        window.addEventListener('error', function(e) {
-            console.error('全局错误:', e.error);
-            showManualError('运行时错误', e.message);
-        });
-        
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('未处理的Promise错误:', e.reason);
-            showManualError('异步错误', e.reason.message || e.reason);
+        // 错误模态框关闭事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeError = document.getElementById('closeError');
+            const retryBtn = document.getElementById('retryBtn');
+            
+            if (closeError) {
+                closeError.addEventListener('click', function() {
+                    document.getElementById('errorModal').classList.add('hidden');
+                });
+            }
+            
+            if (retryBtn) {
+                retryBtn.addEventListener('click', function() {
+                    document.getElementById('errorModal').classList.add('hidden');
+                    location.reload();
+                });
+            }
         });
     </script>
 </body>
