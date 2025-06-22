@@ -39,244 +39,345 @@
 
     <!-- 主内容区域 -->
     <main class="dashboard-main">
-        <!-- 关键指标概览 -->
-        <section class="metrics-overview">
-            <div class="section-header">
-                <h2>📊 系统运行概览</h2>
-            </div>
+        <!-- 第一层：核心指标卡片组（4个卡片 - 粗显示） -->
+        <section class="core-metrics">
             <div class="metrics-grid">
-                <!-- 系统健康度 -->
-                <div class="metric-card health-card">
+                <!-- 业务产出率 -->
+                <div class="metric-card primary-card" onclick="showBusinessOutput()">
                     <div class="metric-header">
-                        <h3>📊 系统健康度</h3>
+                        <h3>🎯 业务产出率</h3>
+                        <span class="metric-icon">📈</span>
+                    </div>
+                    <div class="metric-value" id="businessOutput">87.5%</div>
+                    <div class="metric-trend positive">↗️ +12% 今日</div>
+                    <div class="metric-detail">点击查看趋势</div>
+                </div>
+
+                <!-- 处理效率 -->
+                <div class="metric-card efficiency-card" onclick="showProcessingDetails()">
+                    <div class="metric-header">
+                        <h3>⚡ 处理效率</h3>
+                        <span class="metric-icon">🚀</span>
+                    </div>
+                    <div class="metric-value" id="processingEfficiency">94.2%</div>
+                    <div class="metric-trend positive">⚡ 实时处理</div>
+                    <div class="metric-detail">点击查看详情</div>
+                </div>
+
+                <!-- 洞察质量 -->
+                <div class="metric-card quality-card" onclick="showQualityRanking()">
+                    <div class="metric-header">
+                        <h3>💎 洞察质量</h3>
+                        <span class="metric-icon">⭐</span>
+                    </div>
+                    <div class="metric-value" id="insightQuality">8.7/10</div>
+                    <div class="metric-trend positive">🔥 3个突破性</div>
+                    <div class="metric-detail">点击查看排行</div>
+                </div>
+
+                <!-- 系统状态 -->
+                <div class="metric-card health-card" onclick="showSystemLogs()">
+                    <div class="metric-header">
+                        <h3>🚨 系统状态</h3>
                         <span class="metric-icon" id="healthIcon">💚</span>
                     </div>
-                    <div class="metric-value" id="systemHealth">--</div>
-                    <div class="metric-trend" id="systemHealthTrend">系统初始化中</div>
-                    <div class="metric-detail">正在检测系统状态</div>
-                    <div class="loading-progress">
-                        <div class="progress-bar" id="healthProgressBar"></div>
-                    </div>
-                </div>
-
-                <!-- 今日洞察 -->
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <h3>📈 今日洞察</h3>
-                        <span class="metric-icon">🎯</span>
-                    </div>
-                    <div class="metric-value" id="todayInsights">--</div>
-                    <div class="metric-trend neutral" id="todayInsightsTrend">👆 与昨日对比</div>
-                    <div class="metric-detail">包含高价值洞察 <span id="highValueCount">--</span> 条</div>
-                </div>
-
-                <!-- 告警数量 -->
-                <div class="metric-card alert-card">
-                    <div class="metric-header">
-                        <h3>⚠️ 告警数量</h3>
-                        <span class="metric-icon">🚨</span>
-                    </div>
-                    <div class="metric-value" id="alertCount">--</div>
-                    <div class="metric-trend neutral" id="alertCountTrend">👆 需要关注</div>
-                    <div class="metric-detail"><span id="alertCount">--</span> 个高优先级告警</div>
-                </div>
-
-                <!-- 运行状态 -->
-                <div class="metric-card workflow-card">
-                    <div class="metric-header">
-                        <h3>🔄 运行状态</h3>
-                        <span class="metric-icon">⚡</span>
-                    </div>
-                    <div class="metric-value" id="runningWorkflows">运行中</div>
-                    <div class="metric-trend neutral" id="runningWorkflowsTrend"><span id="runningWorkflows">--</span> 个工作流</div>
-                    <div class="metric-detail">系统正常运行</div>
+                    <div class="metric-value" id="systemHealth">健康</div>
+                    <div class="metric-trend positive">✅ 全部正常</div>
+                    <div class="metric-detail">点击查看日志</div>
                 </div>
             </div>
         </section>
 
-        <!-- 数据收敛流转分析 - 独立完整显示 -->
-        <section class="data-flow-analysis">
-            <div class="section-header">
-                <h2>📊 数据收敛流转分析</h2>
-                <div class="section-controls">
-                    <span class="panel-subtitle">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</span>
-                </div>
-            </div>
-            
-            <div class="funnel-chart-panel">
+        <!-- 第二层：业务流程全景（1个长卡片 - 粗显示） -->
+        <section class="business-process">
+            <div class="process-panel">
                 <div class="panel-header">
-                    <h3>数据收敛流转分析</h3>
+                    <h2>📊 技术洞察全流程实时监控</h2>
                 </div>
-                <div class="chart-container">
-                    <!-- 流转统计 -->
-                    <div class="flow-stats">
-                        <div class="flow-stat">转化率 <strong id="conversionRate">--</strong></div>
-                        <div class="flow-stat">处理效率 <strong id="processingEfficiency">--</strong></div>
-                        <div class="flow-stat">总输入 <strong id="totalInput">--</strong></div>
-                        <div class="flow-stat">总输出 <strong id="totalOutput">--</strong></div>
+                <div class="process-flow">
+                    <div class="flow-step" onclick="showDataCollection()">
+                        <div class="step-icon">📥</div>
+                        <div class="step-label">数据采集</div>
+                        <div class="step-value" id="dataCollection">1,247条</div>
+                        <div class="step-detail">[5个数据源]</div>
                     </div>
                     
-                    <!-- 流转步骤 -->
-                    <div class="funnel-steps">
-                        <div class="funnel-step">
-                            <div class="step-header">
-                                <span class="step-icon">📥</span>
-                                <span class="step-label">原始数据</span>
-                                <span class="step-tag">RAW</span>
+                    <div class="flow-arrow">→</div>
+                    
+                    <div class="flow-step" onclick="showAIAnalysis()">
+                        <div class="step-icon">🧠</div>
+                        <div class="step-label">智能分析</div>
+                        <div class="step-value" id="aiAnalysis">处理中89%</div>
+                        <div class="step-detail">[点击查看]</div>
+                    </div>
+                    
+                    <div class="flow-arrow">→</div>
+                    
+                    <div class="flow-step" onclick="showInsightExtraction()">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-label">洞察提取</div>
+                        <div class="step-value" id="insightExtraction">新增16条</div>
+                        <div class="step-detail">[点击查看]</div>
+                    </div>
+                    
+                    <div class="flow-arrow">→</div>
+                    
+                    <div class="flow-step" onclick="showValueAssessment()">
+                        <div class="step-icon">💰</div>
+                        <div class="step-label">价值评估</div>
+                        <div class="step-value" id="valueAssessment">3个高价值</div>
+                        <div class="step-detail">[点击详情]</div>
+                    </div>
+                    
+                    <div class="flow-arrow">→</div>
+                    
+                    <div class="flow-step" onclick="showActionRecommendations()">
+                        <div class="step-icon">🎯</div>
+                        <div class="step-label">行动建议</div>
+                        <div class="step-value" id="actionRecommendations">待执行5项</div>
+                        <div class="step-detail">[点击处理]</div>
+                    </div>
+                </div>
+                <div class="process-summary">
+                    <span>流转效率: <strong id="flowEfficiency">87%</strong></span>
+                    <span>平均处理时间: <strong id="avgProcessTime">3.2分钟</strong></span>
+                    <span>今日完成: <strong id="todayCompleted">156条</strong></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三层：价值分析（2个大卡片 - 粗显示） -->
+        <section class="value-analysis">
+            <div class="value-grid">
+                <!-- TOP价值洞察 -->
+                <div class="value-insights-panel">
+                    <div class="panel-header">
+                        <h3>🏆 今日TOP价值洞察</h3>
+                    </div>
+                    <div class="insights-list" id="topInsightsList">
+                        <div class="insight-item" onclick="showInsightDetails('quantum-algorithm')">
+                            <div class="insight-rank">#1</div>
+                            <div class="insight-content">
+                                <div class="insight-title">🔥 量子计算新算法突破</div>
+                                <div class="insight-scores">
+                                    <span>信号强度: <strong>9.2</strong></span>
+                                    <span>商业价值: <strong>8.8</strong></span>
+                                </div>
+                                <div class="insight-action">点击查看详情</div>
                             </div>
-                            <div class="step-value" id="rawDataCount">355</div>
-                            <div class="step-desc">学术论文、专利、新闻等</div>
-                            <div class="step-arrow">87%</div>
                         </div>
                         
-                        <div class="funnel-step">
-                            <div class="step-header">
-                                <span class="step-icon">🧠</span>
-                                <span class="step-label">智能洞察</span>
-                                <span class="step-tag">Intelligence</span>
+                        <div class="insight-item" onclick="showInsightDetails('battery-material')">
+                            <div class="insight-rank">#2</div>
+                            <div class="insight-content">
+                                <div class="insight-title">⚡ 新型电池材料发现</div>
+                                <div class="insight-scores">
+                                    <span>信号强度: <strong>8.9</strong></span>
+                                    <span>商业价值: <strong>9.1</strong></span>
+                                </div>
+                                <div class="insight-action">点击查看详情</div>
                             </div>
-                            <div class="step-value" id="intelligenceCount">16</div>
-                            <div class="step-desc">AI识别的技术信号</div>
-                            <div class="step-arrow">78%</div>
                         </div>
                         
-                        <div class="funnel-step">
-                            <div class="step-header">
-                                <span class="step-icon">🔍</span>
-                                <span class="step-label">技术线索</span>
-                                <span class="step-tag">Clues</span>
+                        <div class="insight-item" onclick="showInsightDetails('gene-editing')">
+                            <div class="insight-rank">#3</div>
+                            <div class="insight-content">
+                                <div class="insight-title">🧬 基因编辑技术进展</div>
+                                <div class="insight-scores">
+                                    <span>信号强度: <strong>8.7</strong></span>
+                                    <span>商业价值: <strong>8.5</strong></span>
+                                </div>
+                                <div class="insight-action">点击查看详情</div>
                             </div>
-                            <div class="step-value" id="cluesCount">--</div>
-                            <div class="step-desc">验证通过的有效线索</div>
-                            <div class="step-arrow">65%</div>
+                        </div>
+                    </div>
+                    <div class="insights-summary">
+                        <span>今日发现: <strong id="todayInsights">16条</strong></span>
+                        <span>高价值: <strong id="highValueCount">3条</strong></span>
+                        <button class="btn-secondary" onclick="showFullRanking()">点击查看完整排行</button>
+                    </div>
+                </div>
+
+                <!-- 技术突破监控 -->
+                <div class="breakthrough-panel">
+                    <div class="panel-header">
+                        <h3>💡 技术突破监控</h3>
+                        <div class="panel-subtitle">🚀 突破性技术 (评分>8.0)</div>
+                    </div>
+                    <div class="breakthrough-list" id="breakthroughList">
+                        <div class="breakthrough-item" onclick="openSourceLink('https://arxiv.org/abs/quantum-error-correction')">
+                            <div class="breakthrough-content">
+                                <div class="breakthrough-title">• 量子纠错算法优化</div>
+                                <div class="breakthrough-score">(9.1分)</div>
+                            </div>
+                            <div class="breakthrough-time">[30分钟前发现]</div>
                         </div>
                         
-                        <div class="funnel-step">
-                            <div class="step-header">
-                                <span class="step-icon">🎯</span>
-                                <span class="step-label">行动建议</span>
-                                <span class="step-tag">Actions</span>
+                        <div class="breakthrough-item" onclick="openSourceLink('https://nature.com/superconductor-research')">
+                            <div class="breakthrough-content">
+                                <div class="breakthrough-title">• 室温超导体研究进展</div>
+                                <div class="breakthrough-score">(8.7分)</div>
                             </div>
-                            <div class="step-value" id="actionsCount">--</div>
-                            <div class="step-desc">可执行的决策建议</div>
+                            <div class="breakthrough-time">[2小时前更新]</div>
                         </div>
+                        
+                        <div class="breakthrough-item" onclick="openSourceLink('https://science.org/brain-computer-interface')">
+                            <div class="breakthrough-content">
+                                <div class="breakthrough-title">• 脑机接口新突破</div>
+                                <div class="breakthrough-score">(8.3分)</div>
+                            </div>
+                            <div class="breakthrough-time">[4小时前发现]</div>
+                        </div>
+                    </div>
+                    <div class="breakthrough-action">
+                        <button class="btn-primary" onclick="showTechRadar()">点击查看技术雷达图</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 数据质量监控 - 独立完整显示 -->
-        <section class="data-quality">
-            <div class="section-header">
-                <h2>📋 数据质量监控</h2>
-            </div>
-            
-            <div class="quality-metrics-panel">
+        <!-- 第四层：趋势分析（1个长卡片 - 细显示） -->
+        <section class="trend-analysis">
+            <div class="trend-panel">
                 <div class="panel-header">
-                    <h3>数据质量指标</h3>
+                    <h3>📈 技术趋势与市场动向</h3>
                 </div>
-                <div class="quality-grid">
-                    <div class="quality-item">
-                        <span class="quality-label">准确性</span>
-                        <span class="quality-value">95.2%</span>
+                <div class="trend-content">
+                    <div class="trend-left">
+                        <h4>🔥 热门技术领域</h4>
+                        <div class="trend-list">
+                            <div class="trend-item">
+                                <span class="trend-name">• 人工智能:</span>
+                                <span class="trend-value">45条洞察 (↗️ +15%)</span>
+                            </div>
+                            <div class="trend-item">
+                                <span class="trend-name">• 量子计算:</span>
+                                <span class="trend-value">23条洞察 (↗️ +28%)</span>
+                            </div>
+                            <div class="trend-item">
+                                <span class="trend-name">• 生物技术:</span>
+                                <span class="trend-value">18条洞察 (↗️ +8%)</span>
+                            </div>
+                            <div class="trend-item">
+                                <span class="trend-name">• 新能源:</span>
+                                <span class="trend-value">12条洞察 (↘️ -5%)</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="quality-item">
-                        <span class="quality-label">完整性</span>
-                        <span class="quality-value">88.7%</span>
+                    <div class="trend-right">
+                        <h4>📊 数据源分析</h4>
+                        <div class="source-list">
+                            <div class="source-item">
+                                <span class="source-name">• 学术论文:</span>
+                                <span class="source-value">892条 (78%)</span>
+                            </div>
+                            <div class="source-item">
+                                <span class="source-name">• 专利数据:</span>
+                                <span class="source-value">156条 (14%)</span>
+                            </div>
+                            <div class="source-item">
+                                <span class="source-name">• 技术新闻:</span>
+                                <span class="source-value">89条 (8%)</span>
+                            </div>
+                        </div>
+                        <button class="btn-link" onclick="showDataSourceDetails()">点击查看数据源详情</button>
                     </div>
-                    <div class="quality-item">
-                        <span class="quality-label">及时性</span>
-                        <span class="quality-value">92.1%</span>
+                </div>
+                <div class="trend-footer">
+                    <div class="trend-insight">
+                        <span>📅 本周趋势: 量子计算领域异常活跃</span>
+                        <span>🎯 关注建议: 重点监控量子纠错技术</span>
                     </div>
-                    <div class="quality-item">
-                        <span class="quality-label">一致性</span>
-                        <span class="quality-value">89.3%</span>
+                    <div class="trend-actions">
+                        <button class="btn-secondary" onclick="showDetailedTrendAnalysis()">点击查看详细趋势分析</button>
+                        <button class="btn-secondary" onclick="setMonitoringRules()">点击设置监控规则</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 工作流状态监控 - 独立完整显示 -->
-        <section class="workflow-monitoring">
-            <div class="section-header">
-                <h2>🔄 工作流实时状态监控</h2>
-                <div class="section-controls">
-                    <span class="panel-subtitle">🔄 显示当前所有工作流的最新执行状态和时间信息</span>
-                </div>
-            </div>
-            
-            <div class="workflow-status-panel">
-                <div class="panel-header">
-                    <h3>当前工作流状态</h3>
-                    <div class="status-legend">
-                        <div class="legend-item">
-                            <div class="dot success"></div>
-                            <span>已完成</span>
+        <!-- 第五层：监控详情（3个中等卡片 - 细显示） -->
+        <section class="monitoring-details">
+            <div class="monitoring-grid">
+                <!-- 工作流执行状态 -->
+                <div class="workflow-panel">
+                    <div class="panel-header">
+                        <h4>🔄 工作流执行状态</h4>
+                    </div>
+                    <div class="workflow-list">
+                        <div class="workflow-item">
+                            <span class="status-icon">✅</span>
+                            <span>数据采集: 运行中</span>
                         </div>
-                        <div class="legend-item">
-                            <div class="dot warning"></div>
-                            <span>运行中</span>
+                        <div class="workflow-item">
+                            <span class="status-icon">🟡</span>
+                            <span>AI分析: 队列中</span>
                         </div>
-                        <div class="legend-item">
-                            <div class="dot danger"></div>
-                            <span>失败</span>
+                        <div class="workflow-item">
+                            <span class="status-icon">✅</span>
+                            <span>洞察提取: 完成</span>
                         </div>
-                        <div class="legend-item">
-                            <div class="dot secondary"></div>
-                            <span>等待中</span>
+                        <div class="workflow-item">
+                            <span class="status-icon">🔄</span>
+                            <span>价值评估: 进行中</span>
                         </div>
                     </div>
-                </div>
-                <div class="workflow-list" id="workflowList">
-                    <div class="loading">正在加载工作流状态...</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 业务价值分析 - 独立完整显示 -->
-        <section class="business-value">
-            <div class="section-header">
-                <h2>💰 业务价值分析</h2>
-            </div>
-            
-            <div class="top-intelligence-panel">
-                <div class="panel-header">
-                    <h3>TOP 洞察排行</h3>
-                    <div class="value-summary">
-                        <div class="value-stat">高价值洞察 <strong id="highValueCount">--</strong></div>
-                        <div class="value-stat">投资机会 <strong id="investmentOpportunities">--</strong></div>
+                    <div class="workflow-summary">
+                        <div>执行队列: <strong>3个任务</strong></div>
+                        <div>平均耗时: <strong>2.8分钟</strong></div>
                     </div>
+                    <button class="btn-link" onclick="showExecutionLogs()">点击查看执行日志</button>
                 </div>
-                <div class="intelligence-list" id="intelligenceList">
-                    <div class="loading">正在加载洞察数据...</div>
-                </div>
-            </div>
-        </section>
 
-        <!-- 技术趋势分析 - 独立完整显示 -->
-        <section class="tech-trends">
-            <div class="section-header">
-                <h2>🔥 技术趋势分析</h2>
-            </div>
-            
-            <div class="trends-stats-panel">
-                <div class="panel-header">
-                    <h3>趋势统计</h3>
+                <!-- 数据质量监控 -->
+                <div class="quality-panel">
+                    <div class="panel-header">
+                        <h4>📋 数据质量监控</h4>
+                    </div>
+                    <div class="quality-metrics">
+                        <div class="quality-item">
+                            <span>准确性: <strong class="quality-good">95.2%</strong> ✅</span>
+                        </div>
+                        <div class="quality-item">
+                            <span>完整性: <strong class="quality-warning">88.7%</strong> ⚠️</span>
+                        </div>
+                        <div class="quality-item">
+                            <span>及时性: <strong class="quality-good">92.1%</strong> ✅</span>
+                        </div>
+                        <div class="quality-item">
+                            <span>一致性: <strong class="quality-warning">89.3%</strong> ⚠️</span>
+                        </div>
+                    </div>
+                    <div class="quality-score">
+                        <div>综合质量分: <strong>91.3</strong></div>
+                    </div>
+                    <button class="btn-link" onclick="showQualityReport()">点击查看详细报告</button>
                 </div>
-                <div class="trends-list" id="trendsList">
-                    <div class="loading">正在分析趋势...</div>
-                </div>
-            </div>
-        </section>
 
-        <!-- 系统控制 -->
-        <section class="system-control">
-            <div class="section-header">
-                <h2>🎛️ 系统控制</h2>
-            </div>
-            <div class="control-panel">
-                <div class="control-status">
-                    <span id="systemStatus">✅ 系统运行正常 - 所有服务已启动</span>
+                <!-- 异常告警中心 -->
+                <div class="alert-panel">
+                    <div class="panel-header">
+                        <h4>⚠️ 异常告警中心</h4>
+                    </div>
+                    <div class="alert-summary">
+                        <div class="alert-count">
+                            <span>🔴 高优先级: <strong>0</strong></span>
+                        </div>
+                        <div class="alert-count">
+                            <span>🟡 中优先级: <strong>2</strong></span>
+                        </div>
+                        <div class="alert-count">
+                            <span>🟢 低优先级: <strong>1</strong></span>
+                        </div>
+                    </div>
+                    <div class="recent-alerts">
+                        <h5>最新告警:</h5>
+                        <div class="alert-item">
+                            <span>• 数据源B连接延迟</span>
+                            <span class="alert-time">[2分钟前]</span>
+                        </div>
+                    </div>
+                    <button class="btn-link" onclick="showAllAlerts()">点击查看所有告警</button>
                 </div>
             </div>
         </section>
@@ -286,12 +387,12 @@
     <footer class="dashboard-footer">
         <div class="footer-content">
             <div class="footer-left">
-                <p>技术洞察系统监控仪表板 - 数据条数: <span id="dataCount">--</span></p>
+                <p>技术洞察系统监控仪表板 - 数据条数: <span id="dataCount">1,247</span></p>
             </div>
             <div class="footer-right">
-                <span id="footerUpdate">--</span>
+                <span id="footerUpdate">2025-01-08 14:32:15</span>
                 <span class="separator">|</span>
-                <span id="apiStatus" class="api-status">API连接检测中</span>
+                <span id="apiStatus" class="api-status">API连接正常</span>
             </div>
         </div>
     </footer>
@@ -396,245 +497,729 @@
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 
-    <!-- 内联样式补充 -->
-    <style>
-        /* 确保所有面板都是单列布局，内容完整显示 */
-        .data-flow-grid,
-        .workflow-grid,
-        .value-grid,
-        .trends-grid {
-            display: block !important;
+    <!-- 交互函数 -->
+    <script>
+        // 核心指标点击事件
+        function showBusinessOutput() {
+            alert('跳转到业务产出详情页面');
         }
         
-        .funnel-chart-panel,
-        .quality-metrics-panel,
-        .workflow-status-panel,
-        .top-intelligence-panel,
-        .trends-stats-panel {
-            width: 100%;
+        function showProcessingDetails() {
+            alert('跳转到处理效率详情页面');
+        }
+        
+        function showQualityRanking() {
+            alert('跳转到洞察质量排行页面');
+        }
+        
+        function showSystemLogs() {
+            alert('跳转到系统日志页面');
+        }
+        
+        // 业务流程点击事件
+        function showDataCollection() {
+            alert('跳转到数据采集详情页面');
+        }
+        
+        function showAIAnalysis() {
+            alert('跳转到AI分析详情页面');
+        }
+        
+        function showInsightExtraction() {
+            alert('跳转到洞察提取详情页面');
+        }
+        
+        function showValueAssessment() {
+            alert('跳转到价值评估详情页面');
+        }
+        
+        function showActionRecommendations() {
+            alert('跳转到行动建议页面');
+        }
+        
+        // 价值洞察点击事件
+        function showInsightDetails(insightId) {
+            alert(`跳转到洞察详情页面: ${insightId}`);
+        }
+        
+        function showFullRanking() {
+            alert('跳转到完整洞察排行页面');
+        }
+        
+        // 技术突破点击事件 - 跳转到原始参考链接
+        function openSourceLink(url) {
+            window.open(url, '_blank');
+        }
+        
+        function showTechRadar() {
+            alert('跳转到技术雷达图页面');
+        }
+        
+        // 趋势分析点击事件
+        function showDataSourceDetails() {
+            alert('跳转到数据源详情页面');
+        }
+        
+        function showDetailedTrendAnalysis() {
+            alert('跳转到详细趋势分析页面');
+        }
+        
+        function setMonitoringRules() {
+            alert('跳转到监控规则设置页面');
+        }
+        
+        // 监控详情点击事件
+        function showExecutionLogs() {
+            alert('跳转到执行日志页面');
+        }
+        
+        function showQualityReport() {
+            alert('跳转到质量报告页面');
+        }
+        
+        function showAllAlerts() {
+            alert('跳转到所有告警页面');
+        }
+    </script>
+
+    <!-- 内联样式 -->
+    <style>
+        /* 核心指标卡片样式 */
+        .core-metrics {
             margin-bottom: 2rem;
         }
         
-        .funnel-steps {
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .metric-card {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+        
+        .primary-card::before {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+        
+        .efficiency-card::before {
+            background: linear-gradient(90deg, var(--success-color), var(--success-light));
+        }
+        
+        .quality-card::before {
+            background: linear-gradient(90deg, var(--warning-color), var(--warning-light));
+        }
+        
+        .health-card::before {
+            background: linear-gradient(90deg, var(--info-color), var(--primary-light));
+        }
+        
+        .metric-header {
             display: flex;
-            flex-direction: row;
             justify-content: space-between;
-            align-items: stretch;
-            gap: 1rem;
-            margin-top: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-card h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
+        .metric-icon {
+            font-size: 1.25rem;
+            opacity: 0.8;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .metric-trend {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-trend.positive {
+            color: var(--success-color);
+        }
+        
+        .metric-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* 业务流程样式 */
+        .business-process {
+            margin-bottom: 2rem;
+        }
+        
+        .process-panel {
+            background: var(--card-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+        }
+        
+        .process-panel .panel-header h2 {
+            color: var(--text-primary);
+            margin: 0 0 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
             overflow-x: auto;
             padding: 1rem 0;
         }
         
-        .funnel-step {
+        .flow-step {
             background: var(--background-secondary);
             padding: 1.5rem;
             border-radius: var(--radius);
             border-left: 4px solid var(--primary-color);
-            flex: 1;
-            min-width: 200px;
-            position: relative;
+            min-width: 150px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
         }
         
-        /* 添加箭头连接线 */
-        .funnel-step:not(:last-child)::after {
-            content: '→';
-            position: absolute;
-            right: -1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .flow-step:hover {
+            background: var(--border-light);
+            transform: translateY(-2px);
+        }
+        
+        .flow-step .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-step .step-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .flow-step .step-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .flow-step .step-detail {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .flow-arrow {
             font-size: 1.5rem;
             color: var(--primary-color);
             font-weight: bold;
-            z-index: 1;
+            margin: 0 0.5rem;
         }
         
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .step-icon {
-            font-size: 1.5rem;
-        }
-        
-        .step-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-        
-        .step-tag {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .step-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-        
-        .step-desc {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            text-align: center;
-            line-height: 1.4;
-        }
-        
-        .step-arrow {
-            font-size: 0.75rem;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            background: var(--success-color);
-            padding: 0.5rem;
-            border-radius: var(--radius-sm);
-            margin-top: auto;
-        }
-        
-        .flow-stats {
+        .process-summary {
             display: flex;
             justify-content: space-around;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--card-background);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-        }
-        
-        .flow-stat {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        .flow-stat strong {
-            display: block;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-top: 0.25rem;
-        }
-        
-        .quality-grid {
-            padding: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .quality-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             padding: 1rem;
             background: var(--background-secondary);
             border-radius: var(--radius);
-            border: 1px solid var(--border-light);
-        }
-        
-        .quality-label {
             font-size: 0.875rem;
             color: var(--text-secondary);
-            font-weight: 500;
         }
         
-        .quality-value {
-            font-weight: 700;
+        .process-summary strong {
             color: var(--primary-color);
-            font-size: 1.125rem;
+            font-weight: 600;
         }
         
-        .control-panel {
+        /* 价值分析样式 */
+        .value-analysis {
+            margin-bottom: 2rem;
+        }
+        
+        .value-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .value-insights-panel,
+        .breakthrough-panel {
             background: var(--card-background);
-            padding: 2rem;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            text-align: center;
+            overflow: hidden;
         }
         
-        .control-status {
-            font-size: 1.125rem;
-            color: var(--success-color);
-            font-weight: 600;
-        }
-        
-        .workflow-card {
+        .panel-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
             background: var(--background-secondary);
-            padding: 1rem;
-            border-radius: var(--radius);
-            margin-bottom: 0.5rem;
-            border: 1px solid var(--border-light);
         }
         
-        .workflow-header {
+        .panel-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .panel-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .insights-list {
+            padding: 1rem 1.5rem;
+        }
+        
+        .insight-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            padding: 1rem;
             margin-bottom: 0.5rem;
+            background: var(--background-secondary);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
         }
         
-        .workflow-meta {
+        .insight-item:hover {
+            background: var(--border-light);
+            transform: translateX(4px);
+        }
+        
+        .insight-rank {
+            background: var(--primary-color);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-right: 1rem;
+        }
+        
+        .insight-content {
+            flex: 1;
+        }
+        
+        .insight-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .insight-scores {
             display: flex;
             gap: 1rem;
             font-size: 0.75rem;
             color: var(--text-secondary);
+            margin-bottom: 0.25rem;
         }
         
-        .value-summary {
-            display: flex;
-            gap: 2rem;
-            font-size: 0.875rem;
-        }
-        
-        .value-stat {
-            color: var(--text-secondary);
-        }
-        
-        .value-stat strong {
+        .insight-scores strong {
             color: var(--primary-color);
+        }
+        
+        .insight-action {
+            font-size: 0.75rem;
+            color: var(--info-color);
+        }
+        
+        .insights-summary {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .insights-summary strong {
+            color: var(--primary-color);
+        }
+        
+        .breakthrough-list {
+            padding: 1rem 1.5rem;
+        }
+        
+        .breakthrough-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--background-secondary);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .breakthrough-item:hover {
+            background: var(--border-light);
+            transform: translateX(4px);
+        }
+        
+        .breakthrough-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .breakthrough-title {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        
+        .breakthrough-score {
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        .breakthrough-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .breakthrough-action {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-secondary);
+        }
+        
+        /* 趋势分析样式 */
+        .trend-analysis {
+            margin-bottom: 2rem;
+        }
+        
+        .trend-panel {
+            background: var(--card-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .trend-content {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .trend-content h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1rem;
             font-weight: 600;
         }
         
-        /* 移动端适配 */
+        .trend-list,
+        .source-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .trend-item,
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: var(--background-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+        }
+        
+        .trend-name,
+        .source-name {
+            color: var(--text-primary);
+        }
+        
+        .trend-value,
+        .source-value {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .trend-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-secondary);
+        }
+        
+        .trend-insight {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .trend-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* 监控详情样式 */
+        .monitoring-details {
+            margin-bottom: 2rem;
+        }
+        
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .workflow-panel,
+        .quality-panel,
+        .alert-panel {
+            background: var(--card-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .monitoring-grid .panel-header {
+            padding: 1rem;
+        }
+        
+        .monitoring-grid .panel-header h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .workflow-list,
+        .quality-metrics,
+        .alert-summary {
+            padding: 1rem;
+        }
+        
+        .workflow-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        
+        .status-icon {
+            font-size: 1rem;
+        }
+        
+        .workflow-summary {
+            padding: 1rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-secondary);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .workflow-summary strong {
+            color: var(--primary-color);
+        }
+        
+        .quality-item {
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        
+        .quality-good {
+            color: var(--success-color);
+        }
+        
+        .quality-warning {
+            color: var(--warning-color);
+        }
+        
+        .quality-score {
+            padding: 1rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-secondary);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .quality-score strong {
+            color: var(--primary-color);
+            font-size: 1.125rem;
+        }
+        
+        .alert-count {
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        
+        .alert-count strong {
+            font-weight: 600;
+        }
+        
+        .recent-alerts {
+            margin-top: 1rem;
+        }
+        
+        .recent-alerts h5 {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: var(--background-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .alert-time {
+            color: var(--text-muted);
+        }
+        
+        /* 按钮样式 */
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--text-secondary);
+        }
+        
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--info-color);
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: var(--transition);
+        }
+        
+        .btn-link:hover {
+            color: var(--primary-color);
+        }
+        
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            .funnel-steps {
-                flex-direction: column;
+            .metrics-grid {
+                grid-template-columns: 1fr;
             }
             
-            .funnel-step:not(:last-child)::after {
-                content: '↓';
-                right: 50%;
-                top: auto;
-                bottom: -1.5rem;
-                transform: translateX(50%);
-            }
-            
-            .flow-stats {
+            .process-flow {
                 flex-direction: column;
                 gap: 1rem;
             }
             
-            .quality-grid {
+            .flow-arrow {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+            
+            .value-grid {
                 grid-template-columns: 1fr;
             }
             
-            .value-summary {
+            .trend-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .monitoring-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-summary {
                 flex-direction: column;
                 gap: 0.5rem;
+            }
+            
+            .trend-insight {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .trend-actions {
+                flex-direction: column;
+            }
+            
+            .insights-summary {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
             }
         }
     </style>
