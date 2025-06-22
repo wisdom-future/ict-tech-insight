@@ -370,7 +370,7 @@ class TechIntelligenceApp {
         });
     }
 
-    // 更新工作流状态
+    // 更新工作流状态 - 修复版
     updateWorkflowStatus() {
         const workflowLogs = this.data.processedWorkflows || [];
         const workflowListEl = document.getElementById('workflowList');
@@ -381,22 +381,36 @@ class TechIntelligenceApp {
 
         let html = '';
 
-        latestStatuses.forEach(status => {
-            const statusColor = Utils.getStatusColor(status.executionStatus);
-            const statusIcon = this.getStatusIcon(status.executionStatus);
+        if (latestStatuses.length === 0) {
+            html = '<div class="loading">暂无工作流数据</div>';
+        } else {
+            latestStatuses.forEach(status => {
+                const statusColor = this.getStatusColor(status.executionStatus);
+                const statusIcon = this.getStatusIcon(status.executionStatus);
+                const statusText = this.getStatusText(status.executionStatus);
 
-            html += `
-                <div class="workflow-item">
-                    <div class="workflow-name">${status.workflowName}</div>
-                    <div class="workflow-status" style="color: ${statusColor}">
-                        ${statusIcon} ${this.getStatusText(status.executionStatus)}
+                html += `
+                    <div class="workflow-card">
+                        <div class="workflow-header">
+                            <div class="workflow-name">${status.workflowName}</div>
+                            <div class="workflow-status" style="color: ${statusColor}">
+                                ${statusIcon} ${statusText}
+                            </div>
+                        </div>
+                        <div class="workflow-meta">
+                            <div class="workflow-time">
+                                ${this.formatDateTime(status.startTimestamp, 'short')}
+                            </div>
+                            <div class="workflow-duration">
+                                耗时: ${status.durationSeconds ? Math.round(status.durationSeconds / 60) : '--'}分钟
+                            </div>
+                        </div>
                     </div>
-                    <div class="workflow-time">${Utils.formatDateTime(status.startTimestamp, 'short')}</div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
 
-        workflowListEl.innerHTML = html || '<div class="loading">暂无工作流数据</div>';
+        workflowListEl.innerHTML = html;
     }
 
     // 获取最新工作流状态
