@@ -165,7 +165,7 @@
                 </div>
             </section>
 
-            <!-- 数据流转分析 -->
+            <!-- 数据流转分析 - 横向优化版 -->
             <section class="data-flow-section">
                 <div class="section-header">
                     <h2>📊 核心业务可视化</h2>
@@ -195,68 +195,83 @@
                     </div>
                 </div>
                 
-                <!-- 流转步骤展示 -->
-                <div class="flow-steps-container">
-                    <div class="flow-step" id="rawDataStep">
-                        <div class="step-icon">📥</div>
-                        <div class="step-content">
-                            <h4>原始数据 (RAW)</h4>
-                            <div class="step-value" id="rawDataCount">--</div>
-                            <div class="step-detail">来源: 学术论文、专利、新闻等</div>
+                <!-- 横向流转步骤展示 -->
+                <div class="flow-pipeline">
+                    <div class="pipeline-container">
+                        <div class="pipeline-step" id="rawDataStep">
+                            <div class="step-header">
+                                <div class="step-icon">📥</div>
+                                <h4>原始数据</h4>
+                                <span class="step-tag">RAW</span>
+                            </div>
+                            <div class="step-value" id="rawDataCount">355</div>
+                            <div class="step-detail">学术论文、专利、新闻等</div>
+                            <div class="step-progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
                         </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 100%"></div>
+
+                        <div class="pipeline-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-head">▶</div>
+                            <div class="conversion-rate" id="rawToIntel">87%</div>
                         </div>
-                    </div>
 
-                    <div class="flow-arrow">⬇️</div>
-                    <div class="flow-conversion" id="rawToIntel">87% 转化率</div>
-
-                    <div class="flow-step" id="intelligenceStep">
-                        <div class="step-icon">🧠</div>
-                        <div class="step-content">
-                            <h4>智能洞察 (Intelligence)</h4>
-                            <div class="step-value" id="intelligenceCount">--</div>
+                        <div class="pipeline-step" id="intelligenceStep">
+                            <div class="step-header">
+                                <div class="step-icon">🧠</div>
+                                <h4>智能洞察</h4>
+                                <span class="step-tag">Intelligence</span>
+                            </div>
+                            <div class="step-value" id="intelligenceCount">16</div>
                             <div class="step-detail">AI识别的技术信号</div>
+                            <div class="step-progress-bar">
+                                <div class="progress-fill" style="width: 87%"></div>
+                            </div>
                         </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 87%"></div>
+
+                        <div class="pipeline-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-head">▶</div>
+                            <div class="conversion-rate" id="intelToClues">78%</div>
                         </div>
-                    </div>
 
-                    <div class="flow-arrow">⬇️</div>
-                    <div class="flow-conversion" id="intelToClues">78% 转化率</div>
-
-                    <div class="flow-step" id="cluesStep">
-                        <div class="step-icon">🔍</div>
-                        <div class="step-content">
-                            <h4>技术线索 (Clues)</h4>
-                            <div class="step-value" id="cluesCount">--</div>
+                        <div class="pipeline-step" id="cluesStep">
+                            <div class="step-header">
+                                <div class="step-icon">🔍</div>
+                                <h4>技术线索</h4>
+                                <span class="step-tag">Clues</span>
+                            </div>
+                            <div class="step-value" id="cluesCount">9</div>
                             <div class="step-detail">验证通过的有效线索</div>
+                            <div class="step-progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
                         </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 78%"></div>
+
+                        <div class="pipeline-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-head">▶</div>
+                            <div class="conversion-rate" id="cluesToActions">65%</div>
                         </div>
-                    </div>
 
-                    <div class="flow-arrow">⬇️</div>
-                    <div class="flow-conversion" id="cluesToActions">65% 转化率</div>
-
-                    <div class="flow-step" id="actionsStep">
-                        <div class="step-icon">🎯</div>
-                        <div class="step-content">
-                            <h4>行动建议 (Actions)</h4>
-                            <div class="step-value" id="actionsCount">--</div>
+                        <div class="pipeline-step" id="actionsStep">
+                            <div class="step-header">
+                                <div class="step-icon">🎯</div>
+                                <h4>行动建议</h4>
+                                <span class="step-tag">Actions</span>
+                            </div>
+                            <div class="step-value" id="actionsCount">0</div>
                             <div class="step-detail">可执行的决策建议</div>
-                        </div>
-                        <div class="step-progress">
-                            <div class="progress-bar" style="width: 65%"></div>
+                            <div class="step-progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 工作流状态监控 -->
+            <!-- 工作流状态监控 - 优化为一页显示 -->
             <section class="workflow-section">
                 <div class="section-header">
                     <h2>工作流实时状态监控</h2>
@@ -285,7 +300,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="workflow-list" id="workflowList">
+                    <!-- 工作流网格布局 -->
+                    <div class="workflow-grid" id="workflowList">
                         <div class="loading">正在加载工作流状态...</div>
                     </div>
                 </div>
@@ -398,8 +414,216 @@
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 
-    <!-- 添加简化样式 -->
+    <!-- 优化后的样式 -->
     <style>
+        /* 横向流转管道样式 */
+        .flow-pipeline {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color, #e2e8f0);
+        }
+
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        .pipeline-step {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--primary-color, #2563eb);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-header h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary, #1e293b);
+            margin: 0;
+        }
+
+        .step-tag {
+            background: var(--primary-color, #2563eb);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .step-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color, #2563eb);
+            margin: 0.5rem 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .step-detail {
+            font-size: 0.875rem;
+            color: var(--text-secondary, #64748b);
+            margin-bottom: 1rem;
+        }
+
+        .step-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary, #f1f5f9);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color, #2563eb), var(--primary-light, #3b82f6));
+            border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+
+        .pipeline-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .arrow-line {
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color, #2563eb);
+            margin-bottom: 0.25rem;
+        }
+
+        .arrow-head {
+            font-size: 1.5rem;
+            color: var(--primary-color, #2563eb);
+            margin-bottom: 0.25rem;
+        }
+
+        .conversion-rate {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--success-color, #10b981);
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 工作流网格布局 */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            max-height: none; /* 移除高度限制，显示所有工作流 */
+        }
+
+        .workflow-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color, #e2e8f0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .workflow-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-name {
+            font-weight: 600;
+            color: var(--text-primary, #1e293b);
+            font-size: 0.875rem;
+        }
+
+        .workflow-status {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .workflow-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary, #64748b);
+        }
+
+        .workflow-time {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .pipeline-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .pipeline-arrow {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+
+            .arrow-line {
+                width: 30px;
+            }
+
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline-step {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+
+        /* 其他现有样式保持不变 */
         .data-flow-stats {
             margin: 2rem 0;
         }
