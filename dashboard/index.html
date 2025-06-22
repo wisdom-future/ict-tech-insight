@@ -9,9 +9,11 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
     <meta name="description" content="技术洞察系统实时监控仪表板，提供数据流转分析、工作流状态监控和业务洞察展示">
-    <!-- 临时图标解决方案 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    
+    <!-- 修复后的图标引用 -->
+    <link rel="icon" type="image/png" href="assets/images/icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="assets/images/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="assets/images/icons/icon-512.png">
     
     <!-- PWA 支持 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,7 +26,7 @@
 </head>
 <body>
     <!-- 加载遮罩层 -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <h3>技术洞察系统</h3>
@@ -138,7 +140,7 @@
                     <div class="metric-card health-card">
                         <div class="metric-header">
                             <h3>📊 系统健康度</h3>
-                            <div class="metric-icon">💚</div>
+                            <div class="metric-icon" id="healthIcon">💚</div>
                         </div>
                         <div class="metric-value" id="systemHealth">--</div>
                         <div class="metric-trend neutral" id="healthTrend">系统初始化中</div>
@@ -487,30 +489,117 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <!-- 脚本文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <script>
+        // 确保Chart.js加载完成
+        console.log('Chart.js版本:', Chart.version);
+    </script>
+    
+    <!-- 配置和核心脚本 -->
     <script src="config/config.js"></script>
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 
-    <!-- Service Worker 注册 - 修复版 -->
+    <!-- 增强的初始化脚本 -->
     <script>
-        // 暂时禁用 Service Worker，避免404错误
-        /*
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
+        // 调试和初始化脚本
+        console.log('=== 技术洞察系统启动 ===');
+        
+        // 检查所有依赖
+        const dependencies = {
+            CONFIG: typeof CONFIG !== 'undefined',
+            Utils: typeof Utils !== 'undefined',
+            SheetsAPI: typeof SheetsAPI !== 'undefined',
+            api: typeof api !== 'undefined',
+            DashboardCharts: typeof DashboardCharts !== 'undefined',
+            dashboardCharts: typeof dashboardCharts !== 'undefined',
+            TechIntelligenceApp: typeof TechIntelligenceApp !== 'undefined',
+            app: typeof app !== 'undefined',
+            Chart: typeof Chart !== 'undefined'
+        };
+        
+        console.log('依赖检查:', dependencies);
+        
+        // 检查是否所有依赖都已加载
+        const allLoaded = Object.values(dependencies).every(loaded => loaded);
+        
+        if (allLoaded) {
+            console.log('✅ 所有依赖已加载，开始初始化应用');
+            
+            // 确保DOM完全加载后再初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeApp);
+            } else {
+                initializeApp();
+            }
+        } else {
+            console.error('❌ 部分依赖未加载:', dependencies);
+            showManualError('依赖加载失败', '请检查所有JavaScript文件是否正确加载');
         }
-        */
-        console.log('Service Worker 已暂时禁用');
+        
+        function initializeApp() {
+            console.log('开始初始化应用...');
+            
+            try {
+                // 显示加载状态
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'flex';
+                }
+                
+                // 初始化应用
+                if (typeof app !== 'undefined' && app.init) {
+                    app.init().then(() => {
+                        console.log('✅ 应用初始化成功');
+                    }).catch(error => {
+                        console.error('❌ 应用初始化失败:', error);
+                        showManualError('初始化失败', error.message);
+                    });
+                } else {
+                    throw new Error('app对象或init方法不存在');
+                }
+            } catch (error) {
+                console.error('初始化过程出错:', error);
+                showManualError('初始化错误', error.message);
+            }
+        }
+        
+        function showManualError(title, message) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+            
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (errorModal && errorMessage) {
+                errorMessage.textContent = `${title}: ${message}`;
+                errorModal.classList.remove('hidden');
+            } else {
+                // 如果模态框不存在，使用alert
+                alert(`${title}: ${message}`);
+            }
+        }
+        
+        // 网络状态检查
+        if (!navigator.onLine) {
+            console.warn('⚠️ 网络连接异常');
+            showManualError('网络错误', '请检查网络连接');
+        }
+        
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            console.error('全局错误:', e.error);
+            showManualError('运行时错误', e.message);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('未处理的Promise错误:', e.reason);
+            showManualError('异步错误', e.reason.message || e.reason);
+        });
     </script>
 </body>
 </html>
