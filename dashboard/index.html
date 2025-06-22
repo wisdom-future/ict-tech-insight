@@ -1,1 +1,115 @@
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术情报系统监控仪表板</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
+</head>
+<body>
+    <div id="app">
+        <header class="dashboard-header">
+            <h1>🎯 技术情报系统监控仪表板</h1>
+            <div class="header-controls">
+                <button id="refreshBtn" class="btn-refresh">🔄 刷新</button>
+                <span id="lastUpdate" class="last-update">最后更新: --</span>
+            </div>
+        </header>
+        
+        <main class="dashboard-main">
+            <!-- 系统概览区 -->
+            <section class="overview-section">
+                <div class="metrics-grid">
+                    <div class="metric-card" id="systemHealth">
+                        <h3>📊 系统健康度</h3>
+                        <div class="metric-value">--</div>
+                        <div class="metric-trend">--</div>
+                    </div>
+                    <div class="metric-card" id="todayIntel">
+                        <h3>📈 今日情报</h3>
+                        <div class="metric-value">--</div>
+                        <div class="metric-trend">--</div>
+                    </div>
+                    <div class="metric-card" id="alertCount">
+                        <h3>⚠️ 告警数量</h3>
+                        <div class="metric-value">--</div>
+                        <div class="metric-trend">--</div>
+                    </div>
+                    <div class="metric-card" id="runningWorkflows">
+                        <h3>🔄 运行中</h3>
+                        <div class="metric-value">--</div>
+                        <div class="metric-trend">--</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 工作流状态区 -->
+            <section class="workflow-section">
+                <h2>🔧 工作流状态</h2>
+                <div class="workflow-grid">
+                    <div class="workflow-status" id="workflowStatus">
+                        <div class="loading">加载中...</div>
+                    </div>
+                    <div class="workflow-timeline" id="workflowTimeline">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 数据流转区 -->
+            <section class="data-flow-section">
+                <h2>📊 数据流转</h2>
+                <div class="data-flow-grid">
+                    <div class="funnel-chart" id="dataFunnel">
+                        <canvas id="funnelChart"></canvas>
+                    </div>
+                    <div class="quality-metrics" id="qualityMetrics">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 业务价值区 -->
+            <section class="value-section">
+                <h2>💰 业务价值</h2>
+                <div class="value-grid">
+                    <div class="value-matrix" id="valueMatrix">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                    <div class="top-intelligence" id="topIntelligence">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="dashboard-footer">
+            <p>© 2024 技术情报决策引擎 | 最后更新: <span id="footerUpdate">--</span></p>
+        </footer>
+    </div>
+    
+    <!-- 加载提示 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>正在加载数据...</p>
+    </div>
+    
+    <!-- 错误提示 -->
+    <div id="errorModal" class="error-modal hidden">
+        <div class="error-content">
+            <h3>⚠️ 数据加载失败</h3>
+            <p id="errorMessage">--</p>
+            <button id="retryBtn" class="btn-retry">重试</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
