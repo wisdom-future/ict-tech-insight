@@ -9,8 +9,9 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
     <meta name="description" content="技术洞察系统实时监控仪表板，提供数据流转分析、工作流状态监控和业务洞察展示">
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link rel="apple-touch-icon" href="assets/images/icons/icon-192.png">
+    <!-- 临时图标解决方案 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
     
     <!-- PWA 支持 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -493,8 +494,10 @@
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 
-    <!-- Service Worker 注册 -->
+    <!-- Service Worker 注册 - 修复版 -->
     <script>
+        // 暂时禁用 Service Worker，避免404错误
+        /*
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js')
@@ -506,6 +509,8 @@
                     });
             });
         }
+        */
+        console.log('Service Worker 已暂时禁用');
     </script>
 </body>
 </html>
