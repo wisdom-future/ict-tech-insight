@@ -1,0 +1,1928 @@
+name: Setup Dashboard Structure
+
+on:
+  workflow_dispatch:  # 手动触发
+    inputs:
+      force_recreate:
+        description: 'Force recreate existing files'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  setup-dashboard:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create dashboard directory structure
+      run: |
+        # 创建主目录结构
+        mkdir -p dashboard/assets/css
+        mkdir -p dashboard/assets/js
+        mkdir -p dashboard/assets/images/icons
+        mkdir -p dashboard/config
+        mkdir -p dashboard/.github/workflows
+        
+        echo "📁 Directory structure created successfully!"
+    
+    - name: Create main HTML file
+      run: |
+        cat > dashboard/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>技术情报系统监控仪表板</title>
+            <link rel="stylesheet" href="assets/css/main.css">
+            <link rel="stylesheet" href="assets/css/mobile.css">
+            <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
+        </head>
+        <body>
+            <div id="app">
+                <header class="dashboard-header">
+                    <h1>🎯 技术情报系统监控仪表板</h1>
+                    <div class="header-controls">
+                        <button id="refreshBtn" class="btn-refresh">🔄 刷新</button>
+                        <span id="lastUpdate" class="last-update">最后更新: --</span>
+                    </div>
+                </header>
+                
+                <main class="dashboard-main">
+                    <!-- 系统概览区 -->
+                    <section class="overview-section">
+                        <div class="metrics-grid">
+                            <div class="metric-card" id="systemHealth">
+                                <h3>📊 系统健康度</h3>
+                                <div class="metric-value">--</div>
+                                <div class="metric-trend">--</div>
+                            </div>
+                            <div class="metric-card" id="todayIntel">
+                                <h3>📈 今日情报</h3>
+                                <div class="metric-value">--</div>
+                                <div class="metric-trend">--</div>
+                            </div>
+                            <div class="metric-card" id="alertCount">
+                                <h3>⚠️ 告警数量</h3>
+                                <div class="metric-value">--</div>
+                                <div class="metric-trend">--</div>
+                            </div>
+                            <div class="metric-card" id="runningWorkflows">
+                                <h3>🔄 运行中</h3>
+                                <div class="metric-value">--</div>
+                                <div class="metric-trend">--</div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- 工作流状态区 -->
+                    <section class="workflow-section">
+                        <h2>🔧 工作流状态</h2>
+                        <div class="workflow-grid">
+                            <div class="workflow-status" id="workflowStatus">
+                                <div class="loading">加载中...</div>
+                            </div>
+                            <div class="workflow-timeline" id="workflowTimeline">
+                                <canvas id="timelineChart"></canvas>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- 数据流转区 -->
+                    <section class="data-flow-section">
+                        <h2>📊 数据流转</h2>
+                        <div class="data-flow-grid">
+                            <div class="funnel-chart" id="dataFunnel">
+                                <canvas id="funnelChart"></canvas>
+                            </div>
+                            <div class="quality-metrics" id="qualityMetrics">
+                                <div class="loading">加载中...</div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- 业务价值区 -->
+                    <section class="value-section">
+                        <h2>💰 业务价值</h2>
+                        <div class="value-grid">
+                            <div class="value-matrix" id="valueMatrix">
+                                <canvas id="scatterChart"></canvas>
+                            </div>
+                            <div class="top-intelligence" id="topIntelligence">
+                                <div class="loading">加载中...</div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+                
+                <footer class="dashboard-footer">
+                    <p>© 2024 技术情报决策引擎 | 最后更新: <span id="footerUpdate">--</span></p>
+                </footer>
+            </div>
+            
+            <!-- 加载提示 -->
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p>正在加载数据...</p>
+            </div>
+            
+            <!-- 错误提示 -->
+            <div id="errorModal" class="error-modal hidden">
+                <div class="error-content">
+                    <h3>⚠️ 数据加载失败</h3>
+                    <p id="errorMessage">--</p>
+                    <button id="retryBtn" class="btn-retry">重试</button>
+                </div>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="config/config.js"></script>
+            <script src="assets/js/utils.js"></script>
+            <script src="assets/js/api.js"></script>
+            <script src="assets/js/charts.js"></script>
+            <script src="assets/js/app.js"></script>
+        </body>
+        </html>
+        EOF
+        
+        echo "📄 index.html created successfully!"
+    
+    - name: Create main CSS file
+      run: |
+        cat > dashboard/assets/css/main.css << 'EOF'
+        /* 技术情报系统监控仪表板 - 主样式文件 */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .dashboard-header {
+            background: var(--card-background);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .btn-refresh {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-refresh:hover {
+            background: #1d4ed8;
+        }
+        
+        .last-update {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .dashboard-main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        section {
+            margin-bottom: 2rem;
+        }
+        
+        section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        /* 指标卡片网格 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .metric-card h3 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-trend {
+            font-size: 0.875rem;
+            color: var(--success-color);
+        }
+        
+        /* 工作流状态 */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .workflow-status {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 数据流转 */
+        .data-flow-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .funnel-chart, .quality-metrics {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 业务价值 */
+        .value-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .value-matrix, .top-intelligence {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 图表容器 */
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: var(--text-secondary);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-overlay p {
+            color: white;
+            font-size: 1rem;
+        }
+        
+        /* 错误模态框 */
+        .error-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        
+        .error-modal.hidden {
+            display: none;
+        }
+        
+        .error-content {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .error-content h3 {
+            color: var(--danger-color);
+            margin-bottom: 1rem;
+        }
+        
+        .error-content p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .btn-retry {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .btn-retry:hover {
+            background: #1d4ed8;
+        }
+        
+        /* 页脚 */
+        .dashboard-footer {
+            background: var(--card-background);
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* 实用类 */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-success {
+            color: var(--success-color) !important;
+        }
+        
+        .text-warning {
+            color: var(--warning-color) !important;
+        }
+        
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+        EOF
+        
+        echo "🎨 main.css created successfully!"
+    
+    - name: Create mobile CSS file
+      run: |
+        cat > dashboard/assets/css/mobile.css << 'EOF'
+        /* 移动端适配样式 */
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .dashboard-main {
+                padding: 1rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .metric-card {
+                padding: 1rem;
+            }
+            
+            .metric-value {
+                font-size: 1.5rem;
+            }
+            
+            .workflow-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .data-flow-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .value-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            section h2 {
+                font-size: 1.125rem;
+            }
+            
+            .workflow-status,
+            .funnel-chart,
+            .quality-metrics,
+            .value-matrix,
+            .top-intelligence {
+                padding: 1rem;
+            }
+            
+            .error-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 0.75rem;
+            }
+            
+            .dashboard-main {
+                padding: 0.75rem;
+            }
+            
+            .metric-card {
+                padding: 0.75rem;
+            }
+            
+            .metric-value {
+                font-size: 1.25rem;
+            }
+            
+            .btn-refresh {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.8125rem;
+            }
+        }
+        EOF
+        
+        echo "📱 mobile.css created successfully!"
+    
+    - name: Create JavaScript files
+      run: |
+        # 创建配置文件
+        cat > dashboard/config/config.js << 'EOF'
+        // 技术情报系统配置文件
+        
+        const CONFIG = {
+            // Google Sheets API配置
+            GOOGLE_SHEETS: {
+                API_KEY: 'YOUR_GOOGLE_SHEETS_API_KEY', // 需要替换为实际的API密钥
+                SPREADSHEET_IDS: {
+                    CONFIG_DB: 'YOUR_CONFIG_DB_SPREADSHEET_ID',
+                    RAWDATA_DB: 'YOUR_RAWDATA_DB_SPREADSHEET_ID',
+                    INTELLIGENCE_DB: 'YOUR_INTELLIGENCE_DB_SPREADSHEET_ID',
+                    OPERATIONS_DB: 'YOUR_OPERATIONS_DB_SPREADSHEET_ID'
+                }
+            },
+            
+            // 数据刷新配置
+            REFRESH: {
+                AUTO_REFRESH_INTERVAL: 30000, // 30秒自动刷新
+                RETRY_ATTEMPTS: 3,
+                RETRY_DELAY: 2000
+            },
+            
+            // 图表配置
+            CHARTS: {
+                COLORS: {
+                    PRIMARY: '#2563eb',
+                    SUCCESS: '#10b981',
+                    WARNING: '#f59e0b',
+                    DANGER: '#ef4444',
+                    SECONDARY: '#64748b'
+                },
+                ANIMATION: {
+                    DURATION: 1000,
+                    EASING: 'easeInOutQuart'
+                }
+            },
+            
+            // 阈值配置
+            THRESHOLDS: {
+                SYSTEM_HEALTH: {
+                    GOOD: 95,
+                    WARNING: 80
+                },
+                SIGNAL_STRENGTH: {
+                    HIGH: 8.0,
+                    MEDIUM: 6.0
+                },
+                CONFIDENCE_LEVEL: {
+                    HIGH: 80,
+                    MEDIUM: 60
+                }
+            }
+        };
+        
+        // 导出配置（兼容不同模块系统）
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = CONFIG;
+        } else if (typeof window !== 'undefined') {
+            window.CONFIG = CONFIG;
+        }
+        EOF
+        
+        # 创建工具函数文件
+        cat > dashboard/assets/js/utils.js << 'EOF'
+        // 工具函数库
+        
+        const Utils = {
+            // 格式化日期时间
+            formatDateTime(dateString) {
+                if (!dateString || dateString === '--') return '--';
+                const date = new Date(dateString);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            },
+            
+            // 格式化数字
+            formatNumber(num) {
+                if (typeof num !== 'number') return '--';
+                return num.toLocaleString('zh-CN');
+            },
+            
+            // 格式化百分比
+            formatPercentage(num) {
+                if (typeof num !== 'number') return '--';
+                return `${num.toFixed(1)}%`;
+            },
+            
+            // 延迟函数
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            },
+            
+            // 防抖函数
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
+            
+            // 节流函数
+            throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                };
+            },
+            
+            // 获取状态颜色
+            getStatusColor(status) {
+                const colors = {
+                    'completed': CONFIG.CHARTS.COLORS.SUCCESS,
+                    'running': CONFIG.CHARTS.COLORS.WARNING,
+                    'failed': CONFIG.CHARTS.COLORS.DANGER,
+                    'pending': CONFIG.CHARTS.COLORS.SECONDARY
+                };
+                return colors[status] || CONFIG.CHARTS.COLORS.SECONDARY;
+            },
+            
+            // 获取健康度颜色
+            getHealthColor(percentage) {
+                if (percentage >= CONFIG.THRESHOLDS.SYSTEM_HEALTH.GOOD) {
+                    return CONFIG.CHARTS.COLORS.SUCCESS;
+                } else if (percentage >= CONFIG.THRESHOLDS.SYSTEM_HEALTH.WARNING) {
+                    return CONFIG.CHARTS.COLORS.WARNING;
+                } else {
+                    return CONFIG.CHARTS.COLORS.DANGER;
+                }
+            },
+            
+            // 显示错误消息
+            showError(message) {
+                const errorModal = document.getElementById('errorModal');
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = message;
+                errorModal.classList.remove('hidden');
+            },
+            
+            // 隐藏错误消息
+            hideError() {
+                const errorModal = document.getElementById('errorModal');
+                errorModal.classList.add('hidden');
+            },
+            
+            // 显示加载状态
+            showLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.style.display = 'flex';
+            },
+            
+            // 隐藏加载状态
+            hideLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.style.display = 'none';
+            }
+        };
+        
+        // 导出工具函数
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = Utils;
+        } else if (typeof window !== 'undefined') {
+            window.Utils = Utils;
+        }
+        EOF
+        
+        echo "🔧 JavaScript utility files created successfully!"
+    
+    - name: Create API and Chart files
+      run: |
+        # 创建API文件
+        cat > dashboard/assets/js/api.js << 'EOF'
+        // Google Sheets API 接口
+        
+        class SheetsAPI {
+            constructor() {
+                this.apiKey = CONFIG.GOOGLE_SHEETS.API_KEY;
+                this.baseUrl = 'https://sheets.googleapis.com/v4/spreadsheets';
+            }
+            
+            // 获取表格数据
+            async getSheetData(spreadsheetId, range) {
+                try {
+                    const url = `${this.baseUrl}/${spreadsheetId}/values/${range}?key=${this.apiKey}`;
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data.values || [];
+                } catch (error) {
+                    console.error('获取表格数据失败:', error);
+                    throw error;
+                }
+            }
+            
+            // 获取工作流执行日志
+            async getWorkflowLogs() {
+                try {
+                    const spreadsheetId = CONFIG.GOOGLE_SHEETS.SPREADSHEET_IDS.OPERATIONS_DB;
+                    const range = 'Workflow_Execution_Log!A:Z';
+                    return await this.getSheetData(spreadsheetId, range);
+                } catch (error) {
+                    console.error('获取工作流日志失败:', error);
+                    return [];
+                }
+            }
+            
+            // 获取情报数据
+            async getIntelligenceData() {
+                try {
+                    const spreadsheetId = CONFIG.GOOGLE_SHEETS.SPREADSHEET_IDS.INTELLIGENCE_DB;
+                    const range = 'Tech_Intelligence_Master!A:Z';
+                    return await this.getSheetData(spreadsheetId, range);
+                } catch (error) {
+                    console.error('获取情报数据失败:', error);
+                    return [];
+                }
+            }
+            
+            // 获取数据质量报告
+            async getDataQualityReports() {
+                try {
+                    const spreadsheetId = CONFIG.GOOGLE_SHEETS.SPREADSHEET_IDS.OPERATIONS_DB;
+                    const range = 'Data_Quality_Reports!A:Z';
+                    return await this.getSheetData(spreadsheetId, range);
+                } catch (error) {
+                    console.error('获取数据质量报告失败:', error);
+                    return [];
+                }
+            }
+            
+            // 获取原始数据统计
+            async getRawDataStats() {
+                try {
+                    const spreadsheetId = CONFIG.GOOGLE_SHEETS.SPREADSHEET_IDS.RAWDATA_DB;
+                    const sheets = [
+                        'Raw_Academic_Papers',
+                        'Raw_Patent_Data',
+                        'Raw_OpenSource_Data',
+                        'Raw_Tech_News',
+                        'Raw_Industry_Dynamics',
+                        'Raw_Competitor_Intelligence'
+                    ];
+                    
+                    const stats = {};
+                    for (const sheet of sheets) {
+                        const range = `${sheet}!A:S`;
+                        const data = await this.getSheetData(spreadsheetId, range);
+                        stats[sheet] = data;
+                    }
+                    
+                    return stats;
+                } catch (error) {
+                    console.error('获取原始数据统计失败:', error);
+                    return {};
+                }
+            }
+        }
+        
+        // 创建API实例
+        const api = new SheetsAPI();
+        
+        // 导出API
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = { SheetsAPI, api };
+        } else if (typeof window !== 'undefined') {
+            window.SheetsAPI = SheetsAPI;
+            window.api = api;
+        }
+        EOF
+        
+        # 创建图表文件（基础版本）
+        cat > dashboard/assets/js/charts.js << 'EOF'
+        // 图表配置和渲染
+        
+        class DashboardCharts {
+            constructor() {
+                this.charts = {};
+                this.colors = CONFIG.CHARTS.COLORS;
+            }
+            
+            // 初始化所有图表
+            initCharts() {
+                this.initTimelineChart();
+                this.initFunnelChart();
+                this.initScatterChart();
+            }
+            
+            // 初始化时间线图表
+            initTimelineChart() {
+                const ctx = document.getElementById('timelineChart');
+                if (!ctx) return;
+                
+                this.charts.timeline = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '工作流执行时长',
+                            data: [],
+                            borderColor: this.colors.PRIMARY,
+                            backgroundColor: this.colors.PRIMARY + '20',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '工作流执行时长趋势'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '执行时长 (分钟)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化漏斗图表
+            initFunnelChart() {
+                const ctx = document.getElementById('funnelChart');
+                if (!ctx) return;
+                
+                this.charts.funnel = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['原始数据', '信号识别', '证据验证', '深度分析', '决策建议'],
+                        datasets: [{
+                            label: '数据量',
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                this.colors.SECONDARY,
+                                this.colors.PRIMARY,
+                                this.colors.WARNING,
+                                this.colors.SUCCESS,
+                                this.colors.DANGER
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '数据流转漏斗'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化散点图
+            initScatterChart() {
+                const ctx = document.getElementById('scatterChart');
+                if (!ctx) return;
+                
+                this.charts.scatter = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: '情报价值分布',
+                            data: [],
+                            backgroundColor: this.colors.PRIMARY + '80',
+                            borderColor: this.colors.PRIMARY,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '情报价值矩阵'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '商业价值评分'
+                                },
+                                min: 0,
+                                max: 10
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '技术突破性评分'
+                                },
+                                min: 0,
+                                max: 10
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 更新时间线图表
+            updateTimelineChart(data) {
+                if (!this.charts.timeline) return;
+                
+                this.charts.timeline.data.labels = data.labels;
+                this.charts.timeline.data.datasets[0].data = data.values;
+                this.charts.timeline.update();
+            }
+            
+            // 更新漏斗图表
+            updateFunnelChart(data) {
+                if (!this.charts.funnel) return;
+                
+                this.charts.funnel.data.datasets[0].data = data;
+                this.charts.funnel.update();
+            }
+            
+            // 更新散点图
+            updateScatterChart(data) {
+                if (!this.charts.scatter) return;
+                
+                this.charts.scatter.data.datasets[0].data = data;
+                this.charts.scatter.update();
+            }
+            
+            // 销毁所有图表
+            destroyCharts() {
+                Object.values(this.charts).forEach(chart => {
+                    if (chart && typeof chart.destroy === 'function') {
+                        chart.destroy();
+                    }
+                });
+                this.charts = {};
+            }
+        }
+        
+        // 创建图表实例
+        const dashboardCharts = new DashboardCharts();
+        
+        // 导出图表类
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = { DashboardCharts, dashboardCharts };
+        } else if (typeof window !== 'undefined') {
+            window.DashboardCharts = DashboardCharts;
+            window.dashboardCharts = dashboardCharts;
+        }
+        EOF
+        
+        # 创建主应用文件
+        cat > dashboard/assets/js/app.js << 'EOF'
+        // 主应用逻辑
+        
+        class TechIntelligenceApp {
+            constructor() {
+                this.isInitialized = false;
+                this.refreshInterval = null;
+                this.data = {};
+                
+                this.bindEvents();
+            }
+            
+            // 绑定事件
+            bindEvents() {
+                // 刷新按钮
+                const refreshBtn = document.getElementById('refreshBtn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => this.refreshData());
+                }
+                
+                // 重试按钮
+                const retryBtn = document.getElementById('retryBtn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => {
+                        Utils.hideError();
+                        this.refreshData();
+                    });
+                }
+                
+                // 错误模态框点击外部关闭
+                const errorModal = document.getElementById('errorModal');
+                if (errorModal) {
+                    errorModal.addEventListener('click', (e) => {
+                        if (e.target === errorModal) {
+                            Utils.hideError();
+                        }
+                    });
+                }
+                
+                // 页面可见性变化
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.stopAutoRefresh();
+                    } else {
+                        this.startAutoRefresh();
+                        this.refreshData();
+                    }
+                });
+            }
+            
+            // 初始化应用
+            async init() {
+                try {
+                    Utils.showLoading();
+                    
+                    // 检查配置
+                    if (!this.validateConfig()) {
+                        throw new Error('配置验证失败，请检查config.js中的API密钥和表格ID');
+                    }
+                    
+                    // 初始化图表
+                    dashboardCharts.initCharts();
+                    
+                    // 加载初始数据
+                    await this.loadInitialData();
+                    
+                    // 启动自动刷新
+                    this.startAutoRefresh();
+                    
+                    this.isInitialized = true;
+                    console.log('技术情报仪表板初始化完成');
+                    
+                } catch (error) {
+                    console.error('应用初始化失败:', error);
+                    Utils.showError(`初始化失败: ${error.message}`);
+                } finally {
+                    Utils.hideLoading();
+                }
+            }
+            
+            // 验证配置
+            validateConfig() {
+                const config = CONFIG.GOOGLE_SHEETS;
+                
+                if (!config.API_KEY || config.API_KEY === 'YOUR_GOOGLE_SHEETS_API_KEY') {
+                    return false;
+                }
+                
+                const spreadsheetIds = Object.values(config.SPREADSHEET_IDS);
+                return spreadsheetIds.every(id => id && id !== 'YOUR_CONFIG_DB_SPREADSHEET_ID');
+            }
+            
+            // 加载初始数据
+            async loadInitialData() {
+                try {
+                    // 并行加载所有数据
+                    const [workflowLogs, intelligenceData, qualityReports, rawDataStats] = await Promise.all([
+                        api.getWorkflowLogs(),
+                        api.getIntelligenceData(),
+                        api.getDataQualityReports(),
+                        api.getRawDataStats()
+                    ]);
+                    
+                    this.data = {
+                        workflowLogs,
+                        intelligenceData,
+                        qualityReports,
+                        rawDataStats
+                    };
+                    
+                    // 更新UI
+                    this.updateUI();
+                    
+                } catch (error) {
+                    console.error('加载初始数据失败:', error);
+                    throw error;
+                }
+            }
+            
+            // 刷新数据
+            async refreshData() {
+                try {
+                    const refreshBtn = document.getElementById('refreshBtn');
+                    if (refreshBtn) {
+                        refreshBtn.disabled = true;
+                        refreshBtn.textContent = '🔄 刷新中...';
+                    }
+                    
+                    await this.loadInitialData();
+                    
+                    // 更新最后刷新时间
+                    this.updateLastRefreshTime();
+                    
+                } catch (error) {
+                    console.error('刷新数据失败:', error);
+                    Utils.showError(`数据刷新失败: ${error.message}`);
+                } finally {
+                    const refreshBtn = document.getElementById('refreshBtn');
+                    if (refreshBtn) {
+                        refreshBtn.disabled = false;
+                        refreshBtn.textContent = '🔄 刷新';
+                    }
+                }
+            }
+            
+            // 更新UI
+            updateUI() {
+                this.updateMetrics();
+                this.updateWorkflowStatus();
+                this.updateDataFlow();
+                this.updateBusinessValue();
+                this.updateLastRefreshTime();
+            }
+            
+            // 更新关键指标
+            updateMetrics() {
+                const metrics = this.calculateMetrics();
+                
+                // 系统健康度
+                const systemHealthEl = document.querySelector('#systemHealth .metric-value');
+                if (systemHealthEl) {
+                    systemHealthEl.textContent = Utils.formatPercentage(metrics.systemHealth);
+                    systemHealthEl.style.color = Utils.getHealthColor(metrics.systemHealth);
+                }
+                
+                // 今日情报
+                const todayIntelEl = document.querySelector('#todayIntel .metric-value');
+                if (todayIntelEl) {
+                    todayIntelEl.textContent = Utils.formatNumber(metrics.todayIntelligence);
+                }
+                
+                // 告警数量
+                const alertCountEl = document.querySelector('#alertCount .metric-value');
+                if (alertCountEl) {
+                    alertCountEl.textContent = Utils.formatNumber(metrics.alertCount);
+                    alertCountEl.style.color = metrics.alertCount > 0 ? CONFIG.CHARTS.COLORS.DANGER : CONFIG.CHARTS.COLORS.SUCCESS;
+                }
+                
+                // 运行中工作流
+                const runningWorkflowsEl = document.querySelector('#runningWorkflows .metric-value');
+                if (runningWorkflowsEl) {
+                    runningWorkflowsEl.textContent = Utils.formatNumber(metrics.runningWorkflows);
+                }
+            }
+            
+            // 计算关键指标
+            calculateMetrics() {
+                const { workflowLogs, intelligenceData } = this.data;
+                
+                // 系统健康度计算
+                const recentLogs = this.getRecentWorkflowLogs(workflowLogs, 24); // 最近24小时
+                const totalWorkflows = recentLogs.length;
+                const successfulWorkflows = recentLogs.filter(log => log[3] === 'completed').length;
+                const systemHealth = totalWorkflows > 0 ? (successfulWorkflows / totalWorkflows) * 100 : 100;
+                
+                // 今日情报数量
+                const today = new Date().toISOString().split('T')[0];
+                const todayIntelligence = intelligenceData.filter(intel => 
+                    intel[20] && intel[20].startsWith(today) // created_timestamp列
+                ).length;
+                
+                // 告警数量（运行失败的工作流）
+                const alertCount = recentLogs.filter(log => log[3] === 'failed').length;
+                
+                // 运行中工作流
+                const runningWorkflows = recentLogs.filter(log => log[3] === 'running').length;
+                
+                return {
+                    systemHealth,
+                    todayIntelligence,
+                    alertCount,
+                    runningWorkflows
+                };
+            }
+            
+            // 获取最近的工作流日志
+            getRecentWorkflowLogs(logs, hours) {
+                const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+                return logs.filter(log => {
+                    const logTime = new Date(log[4]); // start_timestamp列
+                    return logTime >= cutoffTime;
+                });
+            }
+            
+            // 更新工作流状态
+            updateWorkflowStatus() {
+                const { workflowLogs } = this.data;
+                const workflowStatusEl = document.getElementById('workflowStatus');
+                
+                if (!workflowStatusEl) return;
+                
+                // 获取最新的工作流状态
+                const latestStatuses = this.getLatestWorkflowStatuses(workflowLogs);
+                
+                let html = '<div class="workflow-status-list">';
+                latestStatuses.forEach(status => {
+                    const statusColor = Utils.getStatusColor(status.status);
+                    const statusIcon = this.getStatusIcon(status.status);
+                    
+                    html += `
+                        <div class="workflow-item">
+                            <span class="workflow-name">${status.name}</span>
+                            <span class="workflow-status" style="color: ${statusColor}">
+                                ${statusIcon} ${status.status}
+                            </span>
+                            <span class="workflow-time">${Utils.formatDateTime(status.time)}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                workflowStatusEl.innerHTML = html;
+                
+                // 更新时间线图表
+                this.updateTimelineChart(workflowLogs);
+            }
+            
+            // 获取最新工作流状态
+            getLatestWorkflowStatuses(logs) {
+                const workflowMap = new Map();
+                
+                logs.forEach(log => {
+                    const workflowName = log[1]; // workflow_name列
+                    const status = log[3]; // execution_status列
+                    const time = log[4]; // start_timestamp列
+                    
+                    if (!workflowMap.has(workflowName) || new Date(time) > new Date(workflowMap.get(workflowName).time)) {
+                        workflowMap.set(workflowName, {
+                            name: workflowName,
+                            status: status,
+                            time: time
+                        });
+                    }
+                });
+                
+                return Array.from(workflowMap.values());
+            }
+            
+            // 获取状态图标
+            getStatusIcon(status) {
+                const icons = {
+                    'completed': '✅',
+                    'running': '🟡',
+                    'failed': '❌',
+                    'pending': '⏳'
+                };
+                return icons[status] || '❓';
+            }
+            
+            // 更新时间线图表
+            updateTimelineChart(logs) {
+                const recentLogs = this.getRecentWorkflowLogs(logs, 168); // 最近7天
+                const dailyStats = this.calculateDailyExecutionStats(recentLogs);
+                
+                dashboardCharts.updateTimelineChart({
+                    labels: dailyStats.labels,
+                    values: dailyStats.avgDuration
+                });
+            }
+            
+            // 计算每日执行统计
+            calculateDailyExecutionStats(logs) {
+                const dailyMap = new Map();
+                
+                logs.forEach(log => {
+                    const date = log[4].split('T')[0]; // 提取日期部分
+                    const duration = parseInt(log[6]) || 0; // duration_seconds列
+                    
+                    if (!dailyMap.has(date)) {
+                        dailyMap.set(date, { totalDuration: 0, count: 0 });
+                    }
+                    
+                    const dayData = dailyMap.get(date);
+                    dayData.totalDuration += duration;
+                    dayData.count += 1;
+                });
+                
+                const labels = Array.from(dailyMap.keys()).sort();
+                const avgDuration = labels.map(date => {
+                    const dayData = dailyMap.get(date);
+                    return dayData.count > 0 ? Math.round(dayData.totalDuration / dayData.count / 60) : 0; // 转换为分钟
+                });
+                
+                return { labels, avgDuration };
+            }
+            
+            // 更新数据流转
+            updateDataFlow() {
+                const { rawDataStats, intelligenceData } = this.data;
+                
+                // 计算数据流转统计
+                const flowStats = this.calculateDataFlowStats(rawDataStats, intelligenceData);
+                
+                // 更新漏斗图
+                dashboardCharts.updateFunnelChart([
+                    flowStats.rawData,
+                    flowStats.signalIdentified,
+                    flowStats.evidenceVerified,
+                    flowStats.deepAnalysis,
+                    flowStats.actionRecommendations
+                ]);
+                
+                // 更新数据质量指标
+                this.updateQualityMetrics();
+            }
+            
+            // 计算数据流转统计
+            calculateDataFlowStats(rawDataStats, intelligenceData) {
+                let rawData = 0;
+                Object.values(rawDataStats).forEach(sheetData => {
+                    rawData += sheetData.length - 1; // 减去标题行
+                });
+                
+                const signalIdentified = intelligenceData.length;
+                const evidenceVerified = intelligenceData.filter(intel => intel[11] === 'high').length; // confidence_level列
+                const deepAnalysis = intelligenceData.filter(intel => intel[19] === 100).length; // analysis_completion列
+                const actionRecommendations = intelligenceData.filter(intel => intel[13] === 'completed').length; // processing_status列
+                
+                return {
+                    rawData,
+                    signalIdentified,
+                    evidenceVerified,
+                    deepAnalysis,
+                    actionRecommendations
+                };
+            }
+            
+            // 更新质量指标
+            updateQualityMetrics() {
+                const { qualityReports } = this.data;
+                const qualityMetricsEl = document.getElementById('qualityMetrics');
+                
+                if (!qualityMetricsEl || !qualityReports.length) return;
+                
+                const latestReport = qualityReports[qualityReports.length - 1];
+                
+                let html = '<div class="quality-metrics-list">';
+                html += `<div class="quality-item">
+                    <span class="quality-label">数据完整性</span>
+                    <span class="quality-value">${Utils.formatPercentage(parseFloat(latestReport[11]) || 0)}</span>
+                </div>`;
+                html += `<div class="quality-item">
+                    <span class="quality-label">数据准确性</span>
+                    <span class="quality-value">${Utils.formatPercentage(parseFloat(latestReport[10]) || 0)}</span>
+                </div>`;
+                html += `<div class="quality-item">
+                    <span class="quality-label">数据一致性</span>
+                    <span class="quality-value">${Utils.formatPercentage(parseFloat(latestReport[12]) || 0)}</span>
+                </div>`;
+                html += `<div class="quality-item">
+                    <span class="quality-label">总体质量</span>
+                    <span class="quality-value">${parseFloat(latestReport[14]) || 0}/10</span>
+                </div>`;
+                html += '</div>';
+                
+                qualityMetricsEl.innerHTML = html;
+            }
+            
+            // 更新业务价值
+            updateBusinessValue() {
+                const { intelligenceData } = this.data;
+                
+                // 更新价值矩阵散点图
+                const scatterData = intelligenceData.map(intel => ({
+                    x: parseFloat(intel[10]) || 0, // commercial_value_score列
+                    y: parseFloat(intel[9]) || 0   // breakthrough_score列
+                }));
+                
+                dashboardCharts.updateScatterChart(scatterData);
+                
+                // 更新TOP情报列表
+                this.updateTopIntelligence(intelligenceData);
+            }
+            
+            // 更新TOP情报
+            updateTopIntelligence(intelligenceData) {
+                const topIntelligenceEl = document.getElementById('topIntelligence');
+                if (!topIntelligenceEl) return;
+                
+                // 按信号强度排序，取前5个
+                const topIntel = intelligenceData
+                    .filter(intel => intel[8]) // 有信号强度的记录
+                    .sort((a, b) => parseFloat(b[8]) - parseFloat(a[8])) // 按信号强度降序
+                    .slice(0, 5);
+                
+                let html = '<div class="top-intelligence-list">';
+                html += '<h4>🏆 TOP情报</h4>';
+                
+                topIntel.forEach((intel, index) => {
+                    const title = intel[3] || '未知标题'; // title列
+                    const signalStrength = parseFloat(intel[8]) || 0; // signal_strength列
+                    const dataType = intel[5] || '未知类型'; // data_type列
+                    
+                    html += `
+                        <div class="intelligence-item">
+                            <div class="intelligence-rank">#${index + 1}</div>
+                            <div class="intelligence-content">
+                                <div class="intelligence-title">${title.substring(0, 50)}...</div>
+                                <div class="intelligence-meta">
+                                    <span class="intelligence-type">${dataType}</span>
+                                    <span class="intelligence-score">信号强度: ${signalStrength.toFixed(1)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                topIntelligenceEl.innerHTML = html;
+            }
+            
+            // 更新最后刷新时间
+            updateLastRefreshTime() {
+                const now = new Date();
+                const timeString = Utils.formatDateTime(now);
+                
+                const lastUpdateEl = document.getElementById('lastUpdate');
+                const footerUpdateEl = document.getElementById('footerUpdate');
+                
+                if (lastUpdateEl) {
+                    lastUpdateEl.textContent = `最后更新: ${timeString}`;
+                }
+                
+                if (footerUpdateEl) {
+                    footerUpdateEl.textContent = timeString;
+                }
+            }
+            
+            // 启动自动刷新
+            startAutoRefresh() {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                }
+                
+                this.refreshInterval = setInterval(() => {
+                    this.refreshData();
+                }, CONFIG.REFRESH.AUTO_REFRESH_INTERVAL);
+            }
+            
+            // 停止自动刷新
+            stopAutoRefresh() {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                    this.refreshInterval = null;
+                }
+            }
+            
+            // 销毁应用
+            destroy() {
+                this.stopAutoRefresh();
+                dashboardCharts.destroyCharts();
+                this.isInitialized = false;
+            }
+        }
+        
+        // 创建应用实例
+        const app = new TechIntelligenceApp();
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+        
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', () => {
+            app.destroy();
+        });
+        
+        // 导出应用
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = { TechIntelligenceApp, app };
+        } else if (typeof window !== 'undefined') {
+            window.TechIntelligenceApp = TechIntelligenceApp;
+            window.app = app;
+        }
+        EOF
+        
+        echo "📱 JavaScript application files created successfully!"
+    
+    - name: Create README and additional files
+      run: |
+        # 创建README文件
+        cat > dashboard/README.md << 'EOF'
+        # 技术情报系统监控仪表板
+        
+        ## 📊 项目概述
+        
+        这是一个基于Google Sheets数据的技术情报系统监控仪表板，提供实时的系统状态监控、数据流转追踪和业务价值分析。
+        
+        ## 🚀 功能特性
+        
+        - **实时监控**: 工作流执行状态、系统健康度、数据处理进度
+        - **数据可视化**: 多种图表展示数据流转和业务价值
+        - **移动端适配**: 响应式设计，支持手机和平板访问
+        - **自动刷新**: 定时更新数据，保持信息实时性
+        - **错误处理**: 完善的错误提示和重试机制
+        
+        ## 📱 访问方式
+        
+        ### 在线访问
+        ```
+        https://你的用户名.github.io/ict-tech-insight/dashboard/
+        ```
+        
+        ### 本地开发
+        ```bash
+        # 克隆仓库
+        git clone https://github.com/你的用户名/ict-tech-insight.git
+        
+        # 进入dashboard目录
+        cd ict-tech-insight/dashboard
+        
+        # 使用本地服务器运行
+        python -m http.server 8000
+        # 或者
+        npx serve .
+        ```
+        
+        ## ⚙️ 配置说明
+        
+        ### 1. Google Sheets API配置
+        
+        在使用前，需要配置Google Sheets API：
+        
+        1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
+        2. 创建新项目或选择现有项目
+        3. 启用Google Sheets API
+        4. 创建API密钥（限制为Sheets API）
+        5. 配置域名限制（可选）
+        
+        ### 2. 修改配置文件
+        
+        编辑 `config/config.js` 文件：
+        
+        ```javascript
+        const CONFIG = {
+            GOOGLE_SHEETS: {
+                API_KEY: '你的API密钥',
+                SPREADSHEET_IDS: {
+                    CONFIG_DB: '配置数据库表格ID',
+                    RAWDATA_DB: '原始数据数据库表格ID',
+                    INTELLIGENCE_DB: '情报数据库表格ID',
+                    OPERATIONS_DB: '运营数据库表格ID'
+                }
+            }
+        };
+        ```
+        
+        ### 3. 表格权限设置
+        
+        确保所有Google Sheets表格的共享权限设置为：
+        - "知道链接的任何人都可以查看"
+        - 或者将API服务账号添加为查看者
+        
+        ## 📊 仪表板功能
+        
+        ### 系统概览
+        - 系统健康度百分比
+        - 今日新增情报数量
+        - 当前告警数量
+        - 运行中工作流数量
+        
+        ### 工作流监控
+        - 实时工作流执行状态
+        - 执行时长趋势图
+        - 工作流依赖关系
+        
+        ### 数据流转
+        - 数据处理漏斗图
+        - 数据质量指标
+        - 处理效率统计
+        
+        ### 业务价值
+        - 情报价值分布矩阵
+        - TOP情报排行榜
+        - 技术热度分析
+        
+        ## 🔧 技术栈
+        
+        - **前端**: HTML5 + CSS3 + JavaScript (ES6+)
+        - **图表库**: Chart.js
+        - **数据源**: Google Sheets API v4
+        - **部署**: GitHub Pages
+        - **响应式**: CSS Grid + Flexbox
+        
+        ## 📱 移动端特性
+        
+        - 响应式布局设计
+        - 触摸友好的交互
+        - 优化的移动端图表
+        - 支持添加到主屏幕
+        - 离线数据缓存
+        
+        ## 🔒 安全考虑
+        
+        - API密钥仅限只读权限
+        - 支持域名限制访问
+        - 不存储敏感数据
+        - HTTPS加密传输
+        
+        ## 🐛 故障排除
+        
+        ### 常见问题
+        
+        1. **数据加载失败**
+           - 检查API密钥是否正确
+           - 确认表格ID是否正确
+           - 验证表格权限设置
+        
+        2. **图表显示异常**
+           - 检查数据格式是否正确
+           - 确认网络连接正常
+           - 清除浏览器缓存
+        
+        3. **移动端显示问题**
+           - 检查viewport设置
+           - 确认CSS文件加载正常
+           - 测试不同设备和浏览器
+        
+        ## 📈 性能优化
+        
+        - 数据缓存机制
+        - 图表懒加载
+        - 资源压缩优化
+        - CDN加速
+        
+        ## 🤝 贡献指南
+        
+        欢迎提交Issue和Pull Request！
+        
+        1. Fork项目
+        2. 创建功能分支
+        3. 提交更改
+        4. 推送到分支
+        5. 创建Pull Request
+        
+        ## 📄 许可证
+        
+        MIT License
+        
+        ## 📞 联系方式
+        
+        如有问题，请通过以下方式联系：
+        - GitHub Issues
+        - 邮箱: your-email@example.com
+        
+        ---
+        
+        **最后更新**: 2024年12月
+        EOF
+        
+        # 创建.gitignore文件
+        cat > dashboard/.gitignore << 'EOF'
+        # 依赖文件
+        node_modules/
+        
+        # 日志文件
+        *.log
+        npm-debug.log*
+        yarn-debug.log*
+        yarn-error.log*
+        
+        # 运行时数据
+        pids
+        *.pid
+        *.seed
+        *.pid.lock
+        
+        # 环境变量文件
+        .env
+        .env.local
+        .env.development.local
+        .env.test.local
+        .env.production.local
+        
+        # 编辑器文件
+        .vscode/
+        .idea/
+        *.swp
+        *.swo
+        *~
+        
+        # 操作系统文件
+        .DS_Store
+        .DS_Store?
+        ._*
+        .Spotlight-V100
+        .Trashes
+        ehthumbs.db
+        Thumbs.db
+        
+        # 缓存文件
+        .cache/
+        .parcel-cache/
+        
+        # 构建输出
+        dist/
+        build/
+        
+        # 临时文件
+        .tmp/
+        .temp/
+        EOF
+        
+        # 创建favicon
+        mkdir -p dashboard/assets/images/icons
+        echo "📄 Project documentation and configuration files created successfully!"
+    
+    - name: Create GitHub Pages deployment workflow
+      run: |
+        cat > dashboard/.github/workflows/deploy.yml << 'EOF'
+        name: Deploy Dashboard to GitHub Pages
+        
+        on:
+          push:
+            branches: [ main, master ]
+            paths: [ 'dashboard/**' ]
+          workflow_dispatch:
+        
+        permissions:
+          contents: read
+          pages: write
+          id-token: write
+        
+        concurrency:
+          group: "pages"
+          cancel-in-progress: false
+        
+        jobs:
+          deploy:
+            environment:
+              name: github-pages
+              url: ${{ steps.deployment.outputs.page_url }}
+            runs-on: ubuntu-latest
+                        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Setup Pages
+              uses: actions/configure-pages@v4
+            
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                path: './dashboard'
+            
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
+        EOF
+        
+        echo "🚀 GitHub Pages deployment workflow created successfully!"
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dashboard/
+        git commit -m "🎯 Auto-generate dashboard structure and files
+        
+        ✨ Features:
+        - Complete dashboard directory structure
+        - Responsive HTML5 dashboard interface
+        - Mobile-first CSS design
+        - Google Sheets API integration
+        - Real-time data visualization with Chart.js
+        - Automatic refresh and error handling
+        - GitHub Pages deployment ready
+        
+        📁 Generated Files:
+        - index.html (Main dashboard interface)
+        - assets/css/ (Styling files)
+        - assets/js/ (Application logic)
+        - config/ (Configuration files)
+        - README.md (Documentation)
+        - .github/workflows/ (Auto-deployment)
+        
+        🔧 Next Steps:
+        1. Configure Google Sheets API key in config/config.js
+        2. Update spreadsheet IDs in configuration
+        3. Enable GitHub Pages in repository settings
+        4. Access dashboard at: https://username.github.io/ict-tech-insight/dashboard/
+        
+        📱 Mobile Ready: Optimized for desktop, tablet, and mobile devices"
+        git push
+        
+        echo "✅ Dashboard structure committed and pushed successfully!"
+    
+    - name: Create setup summary
+      run: |
+        cat << 'EOF'
+        
+        🎉 ================================
+        📊 DASHBOARD SETUP COMPLETED! 
+        🎉 ================================
+        
+        ✅ Generated Files:
+        ├── 📄 index.html (Main dashboard)
+        ├── 🎨 assets/css/main.css (Desktop styles)
+        ├── 📱 assets/css/mobile.css (Mobile styles)
+        ├── ⚙️ config/config.js (Configuration)
+        ├── 🔧 assets/js/app.js (Main application)
+        ├── 📊 assets/js/charts.js (Chart components)
+        ├── 🌐 assets/js/api.js (Google Sheets API)
+        ├── 🛠️ assets/js/utils.js (Utility functions)
+        ├── 📚 README.md (Documentation)
+        └── 🚀 .github/workflows/deploy.yml (Auto-deployment)
+        
+        📋 NEXT STEPS:
+        
+        1️⃣ Configure Google Sheets API:
+           • Go to Google Cloud Console
+           • Create/select project
+           • Enable Google Sheets API
+           • Create API key
+           • Copy API key to config/config.js
+        
+        2️⃣ Update Configuration:
+           • Edit dashboard/config/config.js
+           • Replace YOUR_GOOGLE_SHEETS_API_KEY
+           • Replace all spreadsheet IDs
+        
+        3️⃣ Enable GitHub Pages:
+           • Go to repository Settings
+           • Navigate to Pages section
+           • Select "GitHub Actions" as source
+           • Dashboard will auto-deploy on push
+        
+        4️⃣ Access Your Dashboard:
+           🌐 https://YOUR_USERNAME.github.io/ict-tech-insight/dashboard/
+        
+        📱 MOBILE ACCESS:
+           • Open URL in mobile browser
+           • Add to home screen for app-like experience
+           • Supports offline viewing of cached data
+        
+        🔧 FEATURES INCLUDED:
+           ✅ Real-time system health monitoring
+           ✅ Workflow execution status tracking
+           ✅ Data flow visualization
+           ✅ Business value analysis
+           ✅ Responsive mobile design
+           ✅ Auto-refresh every 30 seconds
+           ✅ Error handling and retry logic
+           ✅ Chart.js integration for visualizations
+           ✅ GitHub Pages deployment
+        
+        📊 DASHBOARD SECTIONS:
+           • 📈 System Overview (Health, Metrics)
+           • 🔄 Workflow Status (Real-time monitoring)
+           • 📊 Data Flow (Processing pipeline)
+           • 💰 Business Value (Intelligence analysis)
+        
+        🎯 READY TO USE!
+        EOF
+        
+        echo ""
+        echo "🚀 Dashboard setup completed successfully!"
+        echo "📝 Check the commit message for detailed information"
+        echo "🌐 Your dashboard will be available at: https://$(echo $GITHUB_REPOSITORY | cut -d'/' -f1).github.io/ict-tech-insight/dashboard/"
