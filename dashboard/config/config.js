@@ -1,4 +1,5 @@
 // 技术洞察系统增强配置文件
+
 const CONFIG = {
     // Google Sheets API配置
     GOOGLE_SHEETS: {
@@ -52,7 +53,7 @@ const CONFIG = {
             }
         }
     },
-    
+
     // 数据刷新配置
     REFRESH: {
         AUTO_REFRESH_INTERVAL: 30000, // 30秒自动刷新
@@ -61,7 +62,7 @@ const CONFIG = {
         TIMEOUT: 10000, // 10秒超时
         BATCH_SIZE: 100 // 批量处理大小
     },
-    
+
     // 图表配置
     CHARTS: {
         COLORS: {
@@ -84,7 +85,7 @@ const CONFIG = {
         RESPONSIVE: true,
         MAINTAIN_ASPECT_RATIO: false
     },
-    
+
     // 阈值配置
     THRESHOLDS: {
         SYSTEM_HEALTH: {
@@ -112,7 +113,7 @@ const CONFIG = {
             POOR: 3.0
         }
     },
-    
+
     // UI配置
     UI: {
         THEME: 'light', // light, dark, auto
@@ -124,7 +125,7 @@ const CONFIG = {
             CURRENCY: 'CNY'
         }
     },
-    
+
     // 功能开关
     FEATURES: {
         AUTO_REFRESH: true,
@@ -134,7 +135,7 @@ const CONFIG = {
         PWA_SUPPORT: true,
         OFFLINE_MODE: false
     },
-    
+
     // 性能配置
     PERFORMANCE: {
         LAZY_LOADING: true,
@@ -143,7 +144,7 @@ const CONFIG = {
         CACHE_ENABLED: true,
         CACHE_DURATION: 300000 // 5分钟缓存
     },
-    
+
     // 错误处理配置
     ERROR_HANDLING: {
         SHOW_STACK_TRACE: false,
@@ -151,7 +152,7 @@ const CONFIG = {
         LOG_ERRORS: true,
         SENTRY_DSN: null // 可选的错误监控服务
     },
-    
+
     // 数据列映射配置
     COLUMN_MAPPINGS: {
         TECH_INTELLIGENCE_MASTER: {
@@ -198,7 +199,7 @@ const CONFIG = {
             OVERALL_QUALITY_SCORE: 14 // O列
         }
     },
-    
+
     // API端点配置
     API: {
         BASE_URL: 'https://sheets.googleapis.com/v4/spreadsheets',
@@ -219,23 +220,23 @@ CONFIG.validate = function() {
         'GOOGLE_SHEETS.DATABASES.INTELLIGENCE_DB.SPREADSHEET_ID',
         'GOOGLE_SHEETS.DATABASES.OPERATIONS_DB.SPREADSHEET_ID'
     ];
-    
+
     const errors = [];
-    
+
     for (const path of required) {
         const value = this.getNestedValue(path);
         if (!value || value.startsWith('YOUR_')) {
             errors.push(`配置项 ${path} 未设置或使用默认值`);
         }
     }
-    
+
     return {
         isValid: errors.length === 0,
         errors: errors
     };
 };
 
-// 获取嵌套配置值 - 修复语法错误
+// 获取嵌套配置值 - 修复了语法错误
 CONFIG.getNestedValue = function(path) {
     return path.split('.').reduce((obj, key) => obj && obj[key], this);
 };
