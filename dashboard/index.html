@@ -34,16 +34,9 @@
             </div>
             <div class="error-body">
                 <p id="errorMessage">发生未知错误</p>
-                <div id="errorDetails" class="error-details" style="display: none;">
-                    <details>
-                        <summary>查看详细信息</summary>
-                        <pre id="errorStack"></pre>
-                    </details>
-                </div>
             </div>
             <div class="error-footer">
                 <button class="btn-retry" id="retryBtn">🔄 重试</button>
-                <button class="btn-report" id="reportBtn">📧 报告问题</button>
             </div>
         </div>
     </div>
@@ -57,7 +50,7 @@
             </div>
             <div class="settings-body">
                 <div class="setting-group">
-                    <label for="refreshInterval">自动刷新间隔 (秒)</label>
+                    <label for="refreshInterval">自动刷新间隔</label>
                     <select id="refreshInterval">
                         <option value="60000">1分钟</option>
                         <option value="300000" selected>5分钟</option>
@@ -83,7 +76,7 @@
                 <div class="setting-group">
                     <label>
                         <input type="checkbox" id="chartAnimation" checked>
-                        启用图表动画
+                        启用动画效果
                     </label>
                 </div>
                 <div class="setting-group">
@@ -354,29 +347,6 @@
                 </div>
             </section>
 
-            <!-- 详细信息面板 -->
-            <section class="details-section">
-                <div class="details-grid">
-                    <div class="insights-detail">
-                        <div class="panel-header">
-                            <h3>📈 今日洞察详情</h3>
-                        </div>
-                        <div class="detail-content" id="insightsDetailContent">
-                            <div class="loading">正在加载洞察详情...</div>
-                        </div>
-                    </div>
-
-                    <div class="alerts-detail">
-                        <div class="panel-header">
-                            <h3>⚠️ 系统告警详情</h3>
-                        </div>
-                        <div class="detail-content" id="alertsDetailContent">
-                            <div class="loading">正在检查系统告警...</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- 系统控制面板 -->
             <section class="control-section">
                 <div class="panel-header">
@@ -421,208 +391,12 @@
         </footer>
     </div>
 
-    <!-- Toast 通知容器 -->
-    <div id="toastContainer" class="toast-container"></div>
-
-    <!-- 修复后的脚本加载 - 不包含charts.js -->
-    <script>
-        // 全局变量声明
-        window.CONFIG = null;
-        window.Utils = null;
-        window.api = null;
-        window.app = null;
-        
-        // 简化的图表对象，避免错误
-        window.dashboardCharts = {
-            initCharts: function() {
-                console.log('图表功能已禁用，使用简化显示');
-                return Promise.resolve();
-            },
-            updateTimelineChart: function(data) {
-                console.log('时间线图表更新（简化模式）');
-            },
-            updateFunnelChart: function(data) {
-                console.log('漏斗图表更新（简化模式）');
-            },
-            updateScatterChart: function(data) {
-                console.log('散点图表更新（简化模式）');
-            },
-            getChartsStatus: function() {
-                return { simplified: true };
-            },
-            destroyAllCharts: function() {
-                console.log('图表清理完成');
-            }
-        };
-        
-        // 错误处理
-        window.addEventListener('error', function(e) {
-            console.error('全局错误:', e.error);
-        });
-        
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Promise错误:', e.reason);
-        });
-    </script>
-
-    <!-- 按顺序加载脚本，跳过charts.js -->
-    <script>
-        // 1. 首先加载配置
-        const script1 = document.createElement('script');
-        script1.src = 'config/config.js';
-        script1.onload = function() {
-            console.log('✅ CONFIG已加载');
-            loadUtils();
-        };
-        script1.onerror = function() {
-            console.error('❌ CONFIG加载失败');
-            showError('配置文件加载失败');
-        };
-        document.head.appendChild(script1);
-        
-        function loadUtils() {
-            // 2. 加载工具函数
-            const script2 = document.createElement('script');
-            script2.src = 'assets/js/utils.js';
-            script2.onload = function() {
-                console.log('✅ Utils已加载');
-                loadAPI();
-            };
-            script2.onerror = function() {
-                console.error('❌ Utils加载失败');
-                showError('工具函数加载失败');
-            };
-            document.head.appendChild(script2);
-        }
-        
-        function loadAPI() {
-            // 3. 加载API模块
-            const script3 = document.createElement('script');
-            script3.src = 'assets/js/api.js';
-            script3.onload = function() {
-                console.log('✅ API已加载');
-                // 跳过charts.js，直接加载app.js
-                loadApp();
-            };
-            script3.onerror = function() {
-                console.error('❌ API加载失败');
-                showError('API模块加载失败');
-            };
-            document.head.appendChild(script3);
-        }
-        
-        function loadApp() {
-            // 4. 加载主应用（跳过charts.js）
-            const script4 = document.createElement('script');
-            script4.src = 'assets/js/app.js';
-            script4.onload = function() {
-                console.log('✅ App已加载');
-                initializeApp();
-            };
-            script4.onerror = function() {
-                console.error('❌ App加载失败');
-                showError('主应用加载失败');
-            };
-            document.head.appendChild(script4);
-        }
-        
-        function initializeApp() {
-            console.log('=== 开始初始化应用（简化模式）===');
-            
-            // 检查核心依赖
-            const dependencies = {
-                CONFIG: typeof CONFIG !== 'undefined',
-                Utils: typeof Utils !== 'undefined',
-                api: typeof api !== 'undefined',
-                app: typeof app !== 'undefined'
-            };
-            
-            console.log('依赖检查:', dependencies);
-            
-            if (dependencies.CONFIG && dependencies.Utils && dependencies.api && dependencies.app) {
-                console.log('✅ 所有核心依赖已加载');
-                
-                // 初始化应用
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', startApp);
-                } else {
-                    startApp();
-                }
-            } else {
-                console.error('❌ 核心依赖缺失');
-                showError('系统依赖加载不完整');
-            }
-        }
-        
-        function startApp() {
-            try {
-                console.log('启动应用（简化模式）...');
-                
-                if (typeof app !== 'undefined' && app.init) {
-                    // 修改CONFIG中的刷新间隔
-                    if (typeof CONFIG !== 'undefined') {
-                        CONFIG.REFRESH.AUTO_REFRESH_INTERVAL = 300000; // 5分钟
-                        CONFIG.REFRESH.RETRY_DELAY = 5000; // 5秒重试延迟
-                    }
-                    
-                    app.init().then(() => {
-                        console.log('✅ 应用启动成功（简化模式）');
-                        hideLoading();
-                    }).catch(error => {
-                        console.error('❌ 应用启动失败:', error);
-                        showError('应用初始化失败: ' + error.message);
-                        hideLoading();
-                    });
-                } else {
-                    throw new Error('app对象或init方法不存在');
-                }
-            } catch (error) {
-                console.error('启动过程出错:', error);
-                showError('应用启动错误: ' + error.message);
-                hideLoading();
-            }
-        }
-        
-        function showError(message) {
-            hideLoading();
-            
-            const errorModal = document.getElementById('errorModal');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            if (errorModal && errorMessage) {
-                errorMessage.textContent = message;
-                errorModal.classList.remove('hidden');
-            } else {
-                alert(message);
-            }
-        }
-        
-        function hideLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-            }
-        }
-        
-        // 错误模态框关闭事件
-        document.addEventListener('DOMContentLoaded', function() {
-            const closeError = document.getElementById('closeError');
-            const retryBtn = document.getElementById('retryBtn');
-            
-            if (closeError) {
-                closeError.addEventListener('click', function() {
-                    document.getElementById('errorModal').classList.add('hidden');
-                });
-            }
-            
-            if (retryBtn) {
-                retryBtn.addEventListener('click', function() {
-                    document.getElementById('errorModal').classList.add('hidden');
-                    location.reload();
-                });
-            }
-        });
-    </script>
+    <!-- 脚本按顺序加载 -->
+    <script src="config/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/app.js"></script>
 
     <!-- 添加简化样式 -->
     <style>
@@ -638,22 +412,23 @@
         }
         
         .stat-item {
-            background: var(--bg-secondary);
+            background: var(--bg-secondary, #f1f5f9);
             padding: 1rem;
-            border-radius: var(--radius-md);
+            border-radius: 0.5rem;
             text-align: center;
+            border: 1px solid var(--border-color, #e2e8f0);
         }
         
         .stat-label {
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: var(--text-secondary, #64748b);
             margin-bottom: 0.5rem;
         }
         
         .stat-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--primary-color, #2563eb);
         }
         
         .value-stats {
@@ -664,13 +439,14 @@
         }
         
         .value-stat-item {
-            background: var(--bg-card);
+            background: var(--bg-card, #ffffff);
             padding: 1.5rem;
-            border-radius: var(--radius-lg);
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             gap: 1rem;
-            box-shadow: var(--shadow);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color, #e2e8f0);
         }
         
         .stat-icon {
@@ -680,22 +456,29 @@
         
         .stat-content .stat-label {
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: var(--text-secondary, #64748b);
         }
         
         .stat-content .stat-value {
             font-size: 1.75rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-primary, #1e293b);
         }
         
         .health-progress {
             width: 100%;
             height: 4px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary, #f1f5f9);
+            border-radius: 0.25rem;
             overflow: hidden;
             margin-top: 1rem;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color, #10b981), var(--success-light, #34d399));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease-in-out;
         }
     </style>
 </body>
