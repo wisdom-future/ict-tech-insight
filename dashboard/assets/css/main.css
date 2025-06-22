@@ -1,4 +1,7 @@
-/* 技术洞察系统监控仪表板 - 增强版主样式文件 */
+/*
+技术洞察系统监控仪表板
+增强版主样式文件
+*/
 
 * {
     margin: 0;
@@ -46,7 +49,9 @@ body {
     font-size: 14px;
 }
 
-/* 滚动条样式 */
+/*
+滚动条样式
+*/
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -65,7 +70,9 @@ body {
     background: var(--secondary-color);
 }
 
-/* 头部样式 */
+/*
+头部样式
+*/
 .dashboard-header {
     background: var(--card-background);
     padding: 1rem 2rem;
@@ -115,7 +122,8 @@ body {
     gap: 1rem;
 }
 
-.btn-refresh, .btn-settings {
+.btn-refresh,
+.btn-settings {
     background: var(--primary-color);
     color: white;
     border: none;
@@ -129,7 +137,8 @@ body {
     gap: 0.25rem;
 }
 
-.btn-refresh:hover, .btn-settings:hover {
+.btn-refresh:hover,
+.btn-settings:hover {
     background: var(--primary-dark);
     transform: translateY(-1px);
 }
@@ -154,7 +163,9 @@ body {
     color: var(--text-secondary);
 }
 
-/* 主内容区域 */
+/*
+主内容区域
+*/
 .dashboard-main {
     padding: 2rem;
     max-width: 1400px;
@@ -201,7 +212,9 @@ section h2 {
     color: var(--text-primary);
 }
 
-/* 指标卡片网格 */
+/*
+指标卡片网格
+*/
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -296,8 +309,13 @@ section h2 {
     color: var(--text-muted);
 }
 
-/* 面板样式 */
-.workflow-grid, .data-flow-grid, .value-grid, .trends-grid {
+/*
+面板样式
+*/
+.workflow-grid,
+.data-flow-grid,
+.value-grid,
+.trends-grid {
     display: grid;
     gap: 1.5rem;
 }
@@ -349,7 +367,9 @@ section h2 {
     margin: 0;
 }
 
-/* 状态图例 */
+/*
+状态图例
+*/
 .status-legend {
     display: flex;
     gap: 1rem;
@@ -374,7 +394,9 @@ section h2 {
 .dot.danger { background: var(--danger-color); }
 .dot.secondary { background: var(--secondary-color); }
 
-/* 工作流列表 */
+/*
+工作流列表
+*/
 .workflow-list {
     padding: 1rem 1.5rem;
     max-height: 400px;
@@ -410,7 +432,9 @@ section h2 {
     color: var(--text-muted);
 }
 
-/* 图表容器 */
+/*
+图表容器
+*/
 .chart-container {
     padding: 1rem 1.5rem;
     height: 300px;
@@ -431,7 +455,9 @@ section h2 {
     color: var(--text-primary);
 }
 
-/* 质量指标网格 */
+/*
+质量指标网格
+*/
 .quality-grid {
     padding: 1rem 1.5rem;
     display: grid;
@@ -450,7 +476,7 @@ section h2 {
 
 .quality-label {
     font-size: 0.875rem;
-    color: var(--text-secondary
+    color: var(--text-secondary);
 }
 
 .quality-value {
@@ -476,7 +502,9 @@ section h2 {
     color: var(--primary-color);
 }
 
-/* 洞察列表 */
+/*
+洞察列表
+*/
 .intelligence-list {
     padding: 1rem 1.5rem;
     max-height: 400px;
@@ -539,18 +567,23 @@ section h2 {
     font-weight: 500;
 }
 
-/* 统计信息 */
-.flow-stats, .value-summary {
+/*
+统计信息
+*/
+.flow-stats,
+.value-summary {
     display: flex;
     gap: 1.5rem;
     font-size: 0.875rem;
 }
 
-.flow-stat, .value-stat {
+.flow-stat,
+.value-stat {
     color: var(--text-secondary);
 }
 
-.flow-stat strong, .value-stat strong {
+.flow-stat strong,
+.value-stat strong {
     color: var(--text-primary);
     font-weight: 600;
 }
@@ -570,7 +603,9 @@ section h2 {
     font-weight: 600;
 }
 
-/* 热度图容器 */
+/*
+热度图容器
+*/
 .heatmap-container {
     padding: 1rem 1.5rem;
     height: 300px;
@@ -607,7 +642,9 @@ section h2 {
     color: var(--text-secondary);
 }
 
-/* 加载状态 */
+/*
+加载状态
+*/
 .loading {
     display: flex;
     justify-content: center;
@@ -801,7 +838,10 @@ section h2 {
     justify-content: flex-end;
 }
 
-.btn-retry, .btn-report, .btn-save, .btn-reset {
+.btn-retry,
+.btn-report,
+.btn-save,
+.btn-reset {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: var(--radius);
@@ -828,7 +868,9 @@ section h2 {
     background: var(--text-secondary);
 }
 
-/* 设置面板 */
+/*
+设置面板
+*/
 .settings-panel {
     position: fixed;
     top: 0;
@@ -931,7 +973,9 @@ section h2 {
     background: var(--danger-light);
 }
 
-/* 页脚样式 */
+/*
+页脚样式
+*/
 .dashboard-footer {
     background: var(--card-background);
     border-top: 1px solid var(--border-color);
@@ -974,7 +1018,9 @@ section h2 {
     color: var(--danger-color);
 }
 
-/* 实用类 */
+/*
+实用类
+*/
 .hidden {
     display: none !important;
 }
@@ -1007,14 +1053,22 @@ section h2 {
     background-color: var(--danger-color) !important;
 }
 
-/* 动画类 */
+/*
+动画类
+*/
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .slide-in {
@@ -1022,20 +1076,26 @@ section h2 {
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-    .dark-mode {
-        --background-color: #0f172a;
-        --background-secondary: #1e293b;
-        --card-background: #1e293b;
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-        --border-color: #334155;
-        --border-light: #475569;
-    }
+/*
+深色模式支持
+*/
+.dark-mode {
+    --background-color: #0f172a;
+    --background-secondary: #1e293b;
+    --card-background: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #334155;
+    --border-light: #475569;
 }
