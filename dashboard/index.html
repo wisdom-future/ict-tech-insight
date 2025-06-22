@@ -3,109 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>技术情报系统监控仪表板</title>
+    <title>技术洞察系统监控仪表板</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
     <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
+    <meta name="description" content="技术洞察决策引擎实时监控仪表板">
+    <meta name="keywords" content="技术洞察,监控仪表板,数据可视化">
 </head>
 <body>
     <div id="app">
         <header class="dashboard-header">
-            <h1>🎯 技术情报系统监控仪表板</h1>
+            <div class="header-left">
+                <h1>🎯 技术洞察系统监控仪表板</h1>
+                <div class="system-status" id="systemStatus">
+                    <span class="status-indicator" id="statusIndicator">🟡</span>
+                    <span class="status-text" id="statusText">初始化中...</span>
+                </div>
+            </div>
             <div class="header-controls">
                 <button id="refreshBtn" class="btn-refresh">🔄 刷新</button>
                 <span id="lastUpdate" class="last-update">最后更新: --</span>
+                <button id="settingsBtn" class="btn-settings">⚙️</button>
             </div>
         </header>
         
         <main class="dashboard-main">
             <!-- 系统概览区 -->
             <section class="overview-section">
+                <h2>📊 系统概览</h2>
                 <div class="metrics-grid">
-                    <div class="metric-card" id="systemHealth">
-                        <h3>📊 系统健康度</h3>
+                    <div class="metric-card health-card" id="systemHealth">
+                        <div class="metric-header">
+                            <h3>📈 系统健康度</h3>
+                            <div class="metric-icon">💚</div>
+                        </div>
                         <div class="metric-value">--</div>
                         <div class="metric-trend">--</div>
+                        <div class="metric-detail">基于工作流成功率计算</div>
                     </div>
-                    <div class="metric-card" id="todayIntel">
-                        <h3>📈 今日情报</h3>
+                    <div class="metric-card intel-card" id="todayIntel">
+                        <div class="metric-header">
+                            <h3>📋 今日洞察</h3>
+                            <div class="metric-icon">📊</div>
+                        </div>
                         <div class="metric-value">--</div>
                         <div class="metric-trend">--</div>
+                        <div class="metric-detail">新增高价值洞察数量</div>
                     </div>
-                    <div class="metric-card" id="alertCount">
-                        <h3>⚠️ 告警数量</h3>
+                    <div class="metric-card alert-card" id="alertCount">
+                        <div class="metric-header">
+                            <h3>⚠️ 告警数量</h3>
+                            <div class="metric-icon">🚨</div>
+                        </div>
                         <div class="metric-value">--</div>
                         <div class="metric-trend">--</div>
+                        <div class="metric-detail">需要处理的异常事件</div>
                     </div>
-                    <div class="metric-card" id="runningWorkflows">
-                        <h3>🔄 运行中</h3>
+                    <div class="metric-card workflow-card" id="runningWorkflows">
+                        <div class="metric-header">
+                            <h3>🔄 运行中</h3>
+                            <div class="metric-icon">⚡</div>
+                        </div>
                         <div class="metric-value">--</div>
                         <div class="metric-trend">--</div>
+                        <div class="metric-detail">当前执行中的工作流</div>
                     </div>
                 </div>
             </section>
             
             <!-- 工作流状态区 -->
             <section class="workflow-section">
-                <h2>🔧 工作流状态</h2>
-                <div class="workflow-grid">
-                    <div class="workflow-status" id="workflowStatus">
-                        <div class="loading">加载中...</div>
+                <div class="section-header">
+                    <h2>🔧 工作流状态</h2>
+                    <div class="section-controls">
+                        <button class="btn-toggle" id="workflowToggle">详细视图</button>
                     </div>
-                    <div class="workflow-timeline" id="workflowTimeline">
-                        <canvas id="timelineChart"></canvas>
+                </div>
+                <div class="workflow-grid">
+                    <div class="workflow-status-panel" id="workflowStatus">
+                        <div class="panel-header">
+                            <h3>实时状态</h3>
+                            <div class="status-legend">
+                                <span class="legend-item"><span class="dot success"></span>完成</span>
+                                <span class="legend-item"><span class="dot warning"></span>运行中</span>
+                                <span class="legend-item"><span class="dot danger"></span>失败</span>
+                                <span class="legend-item"><span class="dot secondary"></span>等待</span>
+                            </div>
+                        </div>
+                        <div class="workflow-list" id="workflowList">
+                            <div class="loading">加载工作流状态...</div>
+                        </div>
+                    </div>
+                    <div class="workflow-timeline-panel" id="workflowTimeline">
+                        <div class="panel-header">
+                            <h3>执行时长趋势</h3>
+                            <div class="chart-controls">
+                                <select id="timeRangeSelect">
+                                    <option value="24h">24小时</option>
+                                    <option value="7d">7天</option>
+                                    <option value="30d">30天</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>
             
             <!-- 数据流转区 -->
             <section class="data-flow-section">
-                <h2>📊 数据流转</h2>
-                <div class="data-flow-grid">
-                    <div class="funnel-chart" id="dataFunnel">
-                        <canvas id="funnelChart"></canvas>
+                <div class="section-header">
+                    <h2>📊 数据流转</h2>
+                    <div class="flow-stats" id="flowStats">
+                        <span class="flow-stat">处理效率: <strong id="processingEfficiency">--</strong></span>
+                        <span class="flow-stat">转化率: <strong id="conversionRate">--</strong></span>
                     </div>
-                    <div class="quality-metrics" id="qualityMetrics">
-                        <div class="loading">加载中...</div>
+                </div>
+                <div class="data-flow-grid">
+                    <div class="funnel-chart-panel" id="dataFunnel">
+                        <div class="panel-header">
+                            <h3>数据处理漏斗</h3>
+                            <div class="funnel-summary" id="funnelSummary">
+                                <span class="summary-item">输入: <strong id="totalInput">--</strong></span>
+                                <span class="summary-item">输出: <strong id="totalOutput">--</strong></span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="funnelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="quality-metrics-panel" id="qualityMetrics">
+                        <div class="panel-header">
+                            <h3>数据质量指标</h3>
+                            <div class="quality-score" id="overallQuality">
+                                <span class="score-label">总体评分</span>
+                                <span class="score-value">--/10</span>
+                            </div>
+                        </div>
+                        <div class="quality-grid" id="qualityGrid">
+                            <div class="loading">加载质量指标...</div>
+                        </div>
                     </div>
                 </div>
             </section>
             
             <!-- 业务价值区 -->
             <section class="value-section">
-                <h2>💰 业务价值</h2>
-                <div class="value-grid">
-                    <div class="value-matrix" id="valueMatrix">
-                        <canvas id="scatterChart"></canvas>
+                <div class="section-header">
+                    <h2>💰 业务价值分析</h2>
+                    <div class="value-summary" id="valueSummary">
+                        <span class="value-stat">高价值洞察: <strong id="highValueCount">--</strong></span>
+                        <span class="value-stat">投资机会: <strong id="investmentOpportunities">--</strong></span>
                     </div>
-                    <div class="top-intelligence" id="topIntelligence">
-                        <div class="loading">加载中...</div>
+                </div>
+                <div class="value-grid">
+                    <div class="value-matrix-panel" id="valueMatrix">
+                        <div class="panel-header">
+                            <h3>洞察价值分布矩阵</h3>
+                            <div class="matrix-legend">
+                                <span class="legend-item">X轴: 商业价值</span>
+                                <span class="legend-item">Y轴: 技术突破性</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="top-intelligence-panel" id="topIntelligence">
+                        <div class="panel-header">
+                            <h3>🏆 TOP洞察排行</h3>
+                            <div class="ranking-controls">
+                                <select id="rankingCriteria">
+                                    <option value="signal_strength">信号强度</option>
+                                    <option value="commercial_value">商业价值</option>
+                                    <option value="breakthrough_score">技术突破性</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="intelligence-list" id="intelligenceList">
+                            <div class="loading">加载洞察排行...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 技术热点区 -->
+            <section class="tech-trends-section">
+                <div class="section-header">
+                    <h2>🔥 技术热点趋势</h2>
+                </div>
+                <div class="trends-grid">
+                    <div class="heatmap-panel" id="techHeatmap">
+                        <div class="panel-header">
+                            <h3>技术领域热度图</h3>
+                        </div>
+                        <div class="heatmap-container" id="heatmapContainer">
+                            <div class="loading">生成热度图...</div>
+                        </div>
+                    </div>
+                    <div class="trends-stats-panel" id="trendsStats">
+                        <div class="panel-header">
+                            <h3>趋势统计</h3>
+                        </div>
+                        <div class="trends-list" id="trendsList">
+                            <div class="loading">分析趋势数据...</div>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
         
         <footer class="dashboard-footer">
-            <p>© 2024 技术情报决策引擎 | 最后更新: <span id="footerUpdate">--</span></p>
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>© 2024 技术洞察决策引擎 | 实时监控仪表板</p>
+                </div>
+                <div class="footer-right">
+                    <span>最后更新: <span id="footerUpdate">--</span></span>
+                    <span class="separator">|</span>
+                    <span>数据源: Google Sheets</span>
+                    <span class="separator">|</span>
+                    <span class="api-status" id="apiStatus">API连接正常</span>
+                </div>
+            </div>
         </footer>
     </div>
     
     <!-- 加载提示 -->
     <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p>正在加载数据...</p>
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>正在加载技术洞察数据</h3>
+            <p id="loadingMessage">初始化系统...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
     </div>
     
     <!-- 错误提示 -->
     <div id="errorModal" class="error-modal hidden">
         <div class="error-content">
-            <h3>⚠️ 数据加载失败</h3>
-            <p id="errorMessage">--</p>
-            <button id="retryBtn" class="btn-retry">重试</button>
+            <div class="error-header">
+                <h3>⚠️ 数据加载失败</h3>
+                <button class="close-btn" id="closeError">×</button>
+            </div>
+            <div class="error-body">
+                <p id="errorMessage">--</p>
+                <div class="error-details" id="errorDetails">
+                    <details>
+                        <summary>查看详细错误信息</summary>
+                        <pre id="errorStack">--</pre>
+                    </details>
+                </div>
+            </div>
+            <div class="error-footer">
+                <button id="retryBtn" class="btn-retry">重试</button>
+                <button id="reportBtn" class="btn-report">报告问题</button>
+            </div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 设置面板 -->
+    <div id="settingsPanel" class="settings-panel hidden">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3>⚙️ 仪表板设置</h3>
+                <button class="close-btn" id="closeSettings">×</button>
+            </div>
+            <div class="settings-body">
+                <div class="setting-group">
+                    <label>自动刷新间隔</label>
+                    <select id="refreshInterval">
+                        <option value="15000">15秒</option>
+                        <option value="30000" selected>30秒</option>
+                        <option value="60000">1分钟</option>
+                        <option value="300000">5分钟</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>图表动画</label>
+                    <input type="checkbox" id="chartAnimation" checked>
+                </div>
+                <div class="setting-group">
+                    <label>深色模式</label>
+                    <input type="checkbox" id="darkMode">
+                </div>
+            </div>
+            <div class="settings-footer">
+                <button id="saveSettings" class="btn-save">保存设置</button>
+                <button id="resetSettings" class="btn-reset">重置</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
     <script src="config/config.js"></script>
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/api.js"></script>

@@ -1,4 +1,30 @@
-/* 移动端适配样式 */
+/* 移动端增强适配样式 */
+
+@media (max-width: 1024px) {
+    .dashboard-main {
+        padding: 1.5rem;
+    }
+    
+    .workflow-grid,
+    .data-flow-grid,
+    .value-grid,
+    .trends-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .flow-stats,
+    .value-summary {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
 
 @media (max-width: 768px) {
     .dashboard-header {
@@ -7,8 +33,20 @@
         gap: 1rem;
     }
     
+    .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
     .dashboard-header h1 {
         font-size: 1.25rem;
+    }
+    
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
     }
     
     .dashboard-main {
@@ -17,7 +55,7 @@
     
     .metrics-grid {
         grid-template-columns: 1fr;
-        gap: 0.75rem;
+        gap: 1rem;
     }
     
     .metric-card {
@@ -25,45 +63,117 @@
     }
     
     .metric-value {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
     }
     
-    .workflow-grid {
+    .metric-header {
+        margin-bottom: 0.75rem;
+    }
+    
+    .panel-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .status-legend {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .legend-item {
+        font-size: 0.6875rem;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+        height: 250px;
+    }
+    
+    .workflow-list,
+    .intelligence-list,
+    .trends-list {
+        padding: 1rem;
+        max-height: 300px;
+    }
+    
+    .workflow-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 1rem 0;
+    }
+    
+    .workflow-status {
+        align-self: flex-end;
+    }
+    
+    .intelligence-item {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .intelligence-rank {
+        align-self: flex-start;
+    }
+    
+    .intelligence-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .quality-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .data-flow-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .value-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    section h2 {
-        font-size: 1.125rem;
-    }
-    
-    .workflow-status,
-    .funnel-chart,
-    .quality-metrics,
-    .value-matrix,
-    .top-intelligence {
+        gap: 0.75rem;
         padding: 1rem;
     }
     
     .error-content {
         margin: 1rem;
-        padding: 1.5rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .error-header,
+    .error-body,
+    .error-footer {
+        padding: 1rem;
+    }
+    
+    .error-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn-retry,
+    .btn-report {
+        width: 100%;
+    }
+    
+    .settings-panel {
+        width: 100%;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .footer-right {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }
 
 @media (max-width: 480px) {
     .dashboard-header {
         padding: 0.75rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.125rem;
     }
     
     .dashboard-main {
@@ -75,11 +185,93 @@
     }
     
     .metric-value {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
     
     .btn-refresh {
         padding: 0.375rem 0.75rem;
         font-size: 0.8125rem;
+    }
+    
+    .btn-settings {
+        padding: 0.375rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+        padding: 0.75rem;
+    }
+    
+    .loading-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .loading-content h3 {
+        font-size: 1rem;
+    }
+    
+    .intelligence-rank {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.6875rem;
+    }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    .metric-card:hover,
+    .btn-refresh:hover,
+    .btn-settings:hover,
+    .btn-toggle:hover,
+    .close-btn:hover {
+        transform: none;
+        box-shadow: var(--shadow);
+    }
+    
+    .btn-refresh:active,
+    .btn-settings:active,
+    .btn-toggle:active {
+        transform: scale(0.95);
+    }
+    
+    .metric-card:active {
+        transform: scale(0.98);
+    }
+}
+
+/* 横屏适配 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .dashboard-header {
+        flex-direction: row;
+        padding: 0.75rem 1rem;
+    }
+    
+    .header-left {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.125rem;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-container {
+        height: 220px;
+    }
+}
+
+/* PWA支持 */
+@media (display-mode: standalone) {
+    .dashboard-header {
+        padding-top: calc(1rem + env(safe-area-inset-top));
+    }
+    
+    .dashboard-main {
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
     }
 }
