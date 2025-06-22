@@ -1,9 +1,8 @@
 // 技术洞察系统增强配置文件
-
 const CONFIG = {
     // Google Sheets API配置
     GOOGLE_SHEETS: {
-        API_KEY: 'AIzaSyCgwfInAQt9nBL_uM-k_caOtu21q3KLXbY', // 需要替换为实际的API密钥
+        API_KEY: 'AIzaSyCgwfInAQt9nBL_uM-k_caOtu21q3KLXbY', // 你的API密钥
         
         // 数据库配置 - 每个数据库包含多个工作表
         DATABASES: {
@@ -12,7 +11,7 @@ const CONFIG = {
                 SPREADSHEET_ID: '14jCzQclmFaHRH8iHrYt9v2Tk-bZ8TVrvbhXUZyFITNE',
                 SHEETS: {
                     TECHNOLOGY_REGISTRY: 'Technology_Registry',
-                    COMPETITOR_REGISTRY: 'Competitor_Registry', 
+                    COMPETITOR_REGISTRY: 'Competitor_Registry',
                     CONFERENCE_REGISTRY: 'Conference_Registry'
                 }
             },
@@ -177,7 +176,7 @@ const CONFIG = {
             WORKFLOW_NAME: 1,         // B列
             WORKFLOW_VERSION: 2,      // C列
             EXECUTION_STATUS: 3,      // D列
-                                START_TIMESTAMP: 4,       // E列
+            START_TIMESTAMP: 4,       // E列
             END_TIMESTAMP: 5,         // F列
             DURATION_SECONDS: 6,      // G列
             PROCESSED_RECORDS: 7,     // H列
@@ -236,7 +235,7 @@ CONFIG.validate = function() {
     };
 };
 
-// 获取嵌套配置值
+// 获取嵌套配置值 - 修复了语法错误
 CONFIG.getNestedValue = function(path) {
     return path.split('.').reduce((obj, key) => obj && obj[key], this);
 };
