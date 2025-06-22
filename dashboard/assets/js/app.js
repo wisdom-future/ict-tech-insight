@@ -1011,3 +1011,200 @@ if (typeof module !== 'undefined' && module.exports) {
     window.TechIntelligenceApp = TechIntelligenceApp;
     window.app = app;
 }
+
+// 在 app.js 文件末尾添加以下代码
+
+// 全局交互函数 - 简化版
+window.showBusinessOutput = function() {
+    Utils.showToast('业务产出详情功能开发中', 'info');
+};
+
+window.showProcessingDetails = function() {
+    Utils.showToast('处理效率详情功能开发中', 'info');
+};
+
+window.showQualityRanking = function() {
+    Utils.showToast('洞察质量排行功能开发中', 'info');
+};
+
+window.showSystemLogs = function() {
+    Utils.showToast('系统日志功能开发中', 'info');
+};
+
+// 业务流程点击 - 显示对应数据
+window.showDataCollection = function() {
+    const rawData = app.data.rawData || {};
+    let message = '数据采集详情:\n';
+    Object.keys(rawData).forEach(key => {
+        if (Array.isArray(rawData[key])) {
+            message += `${key}: ${rawData[key].length}条\n`;
+        }
+    });
+    alert(message);
+};
+
+window.showAIAnalysis = function() {
+    Utils.showToast('AI分析详情功能开发中', 'info');
+};
+
+window.showInsightExtraction = function() {
+    const intelligenceData = app.data.processedIntelligence || [];
+    alert(`洞察提取详情:\n当前洞察数量: ${intelligenceData.length}条\n今日新增: ${intelligenceData.filter(item => {
+        const today = new Date().toISOString().split('T')[0];
+        return item.createdTimestamp && item.createdTimestamp.startsWith(today);
+    }).length}条`);
+};
+
+window.showValueAssessment = function() {
+    const intelligenceData = app.data.processedIntelligence || [];
+    const highValue = intelligenceData.filter(intel => intel.commercialValueScore >= 8.0).length;
+    alert(`价值评估详情:\n高价值洞察: ${highValue}条\n平均商业价值分: ${(intelligenceData.reduce((sum, item) => sum + (item.commercialValueScore || 0), 0) / intelligenceData.length).toFixed(1)}`);
+};
+
+window.showActionRecommendations = function() {
+    Utils.showToast('行动建议功能开发中', 'info');
+};
+
+// 价值洞察点击 - 使用真实数据和链接
+window.handleInsightClick = function(insightId, sourceUrl) {
+    if (sourceUrl && sourceUrl !== '' && sourceUrl !== '--') {
+        // 有外部链接，直接跳转
+        window.open(sourceUrl, '_blank');
+    } else {
+        // 没有外部链接，显示详情
+        const intelligenceData = app.data.processedIntelligence || [];
+        const insight = intelligenceData.find(item => item.intelligenceId === insightId);
+        if (insight) {
+            const details = `洞察详情:
+标题: ${insight.title || '无标题'}
+技术关键词: ${insight.techKeyword || '--'}
+数据类型: ${insight.dataType || '--'}
+信号强度: ${insight.signalStrength || '--'}
+商业价值: ${insight.commercialValueScore || '--'}
+突破性评分: ${insight.breakthroughScore || '--'}
+置信度: ${insight.confidenceLevel || '--'}
+处理状态: ${insight.processingStatus || '--'}
+创建时间: ${insight.createdTimestamp || '--'}`;
+            alert(details);
+        } else {
+            Utils.showToast('洞察详情功能开发中', 'info');
+        }
+    }
+};
+
+window.showFullRanking = function() {
+    const intelligenceData = app.data.processedIntelligence || [];
+    let ranking = '完整洞察排行:\n\n';
+    intelligenceData
+        .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
+        .slice(0, 10)
+        .forEach((item, index) => {
+            ranking += `#${index + 1} ${item.title || '无标题'} (${item.signalStrength || 0}分)\n`;
+        });
+    alert(ranking);
+};
+
+// 技术突破点击 - 使用真实链接
+window.openSourceLink = function(url) {
+    if (url && url !== '' && url !== '--') {
+        window.open(url, '_blank');
+    } else {
+        Utils.showToast('暂无原文链接', 'warning');
+    }
+};
+
+window.showTechRadar = function() {
+    Utils.showToast('技术雷达图功能开发中', 'info');
+};
+
+// 趋势分析点击
+window.showDataSourceDetails = function() {
+    const rawData = app.data.rawData || {};
+    let details = '数据源详情:\n\n';
+    Object.entries(rawData).forEach(([key, data]) => {
+        if (Array.isArray(data)) {
+            details += `${key}: ${data.length}条记录\n`;
+        }
+    });
+    alert(details);
+};
+
+window.showDetailedTrendAnalysis = function() {
+    Utils.showToast('详细趋势分析功能开发中', 'info');
+};
+
+window.setMonitoringRules = function() {
+    Utils.showToast('监控规则设置功能开发中', 'info');
+};
+
+// 监控详情点击
+window.showExecutionLogs = function() {
+    const workflowData = app.data.processedWorkflows || [];
+    let logs = '执行日志:\n\n';
+    workflowData.slice(0, 5).forEach(log => {
+        logs += `${log.workflowName}: ${log.executionStatus} (${log.startTimestamp})\n`;
+    });
+    alert(logs);
+};
+
+window.showQualityReport = function() {
+    const qualityData = app.data.processedQuality || [];
+    if (qualityData.length > 0) {
+        const latest = qualityData[0];
+        const report = `质量报告:
+数据源: ${latest.dataSource || '--'}
+总记录数: ${latest.totalRecords || '--'}
+有效记录数: ${latest.validRecords || '--'}
+准确性: ${latest.dataAccuracyPercentage || '--'}%
+完整性: ${latest.dataCompletenessPercentage || '--'}%
+一致性: ${latest.dataConsistencyPercentage || '--'}%
+总体质量分: ${latest.overallQualityScore || '--'}`;
+        alert(report);
+    } else {
+        Utils.showToast('暂无质量报告数据', 'info');
+    }
+};
+
+window.showAllAlerts = function() {
+    Utils.showToast('告警中心功能开发中', 'info');
+};
+
+// 修改 updateTopIntelligence 方法以使用真实数据
+if (window.app && window.app.updateTopIntelligence) {
+    const originalUpdateTopIntelligence = window.app.updateTopIntelligence;
+    window.app.updateTopIntelligence = function(intelligenceData) {
+        const intelligenceListEl = document.getElementById('topInsightsList');
+        if (!intelligenceListEl) return;
+
+        const topIntel = intelligenceData
+            .filter(intel => intel.signalStrength > 0)
+            .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
+            .slice(0, 3);
+
+        let html = '';
+        if (topIntel.length === 0) {
+            html = '<div class="loading">暂无洞察数据</div>';
+        } else {
+            topIntel.forEach((intel, index) => {
+                const hasLink = intel.sourceUrl && intel.sourceUrl !== '' && intel.sourceUrl !== '--';
+                html += `
+                    <div class="insight-item" onclick="handleInsightClick('${intel.intelligenceId}', '${intel.sourceUrl || ''}')">
+                        <div class="insight-rank">#${index + 1}</div>
+                        <div class="insight-content">
+                            <div class="insight-title">${intel.title || '无标题'}</div>
+                            <div class="insight-scores">
+                                <span>信号强度: <strong>${(intel.signalStrength || 0).toFixed(1)}</strong></span>
+                                <span>商业价值: <strong>${(intel.commercialValueScore || 0).toFixed(1)}</strong></span>
+                            </div>
+                            <div class="insight-action">
+                                ${hasLink ? '点击查看原文' : '点击查看详情'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        intelligenceListEl.innerHTML = html;
+    };
+}
