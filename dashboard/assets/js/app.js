@@ -1,4 +1,5 @@
 // 简化版主应用逻辑
+
 class TechIntelligenceApp {
     constructor() {
         this.isInitialized = false;
@@ -93,6 +94,7 @@ class TechIntelligenceApp {
             if (!configValidation.isValid) {
                 throw new Error(`配置验证失败:\n${configValidation.errors.join('\n')}`);
             }
+
             Utils.updateProgress(20);
 
             // 测试API连接
@@ -140,7 +142,7 @@ class TechIntelligenceApp {
     async loadInitialData() {
         try {
             Utils.performance.mark('data_load_start');
-            
+
             // 并行加载所有数据
             const [
                 configData,
@@ -220,6 +222,7 @@ class TechIntelligenceApp {
             }
 
             Utils.performance.mark('refresh_start');
+
             await this.loadInitialData();
 
             // 更新最后刷新时间
@@ -343,7 +346,7 @@ class TechIntelligenceApp {
 
         // 今日洞察数量
         const today = new Date().toISOString().split('T')[0];
-        const todayIntelligence = intelligenceData.filter(intel => 
+        const todayIntelligence = intelligenceData.filter(intel =>
             intel.createdTimestamp && intel.createdTimestamp.startsWith(today)
         ).length;
 
@@ -370,7 +373,7 @@ class TechIntelligenceApp {
         });
     }
 
-    // 更新工作流状态 - 修复版
+    // 更新工作流状态
     updateWorkflowStatus() {
         const workflowLogs = this.data.processedWorkflows || [];
         const workflowListEl = document.getElementById('workflowList');
@@ -419,15 +422,20 @@ class TechIntelligenceApp {
 
         logs.forEach(log => {
             const workflowName = log.workflowName;
-            if (!workflowMap.has(workflowName) || 
+            if (!workflowMap.has(workflowName) ||
                 new Date(log.startTimestamp) > new Date(workflowMap.get(workflowName).startTimestamp)) {
                 workflowMap.set(workflowName, log);
             }
         });
 
-        return Array.from(workflowMap.values()).sort((a, b) => 
+        return Array.from(workflowMap.values()).sort((a, b) =>
             new Date(b.startTimestamp) - new Date(a.startTimestamp)
         );
+    }
+
+    // 获取状态颜色
+    getStatusColor(status) {
+        return Utils.getStatusColor(status);
     }
 
     // 获取状态图标
@@ -452,6 +460,11 @@ class TechIntelligenceApp {
             'cancelled': '已取消'
         };
         return texts[status] || '未知';
+    }
+
+    // 格式化时间
+    formatDateTime(dateString, format = 'default') {
+        return Utils.formatDateTime(dateString, format);
     }
 
     // 更新数据流转
@@ -480,10 +493,10 @@ class TechIntelligenceApp {
         });
 
         const signalIdentified = intelligenceData.length;
-        const evidenceVerified = intelligenceData.filter(intel => 
+        const evidenceVerified = intelligenceData.filter(intel =>
             intel.confidenceLevel === 'high'
         ).length;
-        const deepAnalysis = intelligenceData.filter(intel => 
+        const deepAnalysis = intelligenceData.filter(intel =>
             intel.processingStatus === 'completed'
         ).length;
         const actionRecommendations = Math.floor(deepAnalysis * 0.6); // 估算
@@ -505,14 +518,12 @@ class TechIntelligenceApp {
         const totalOutput = document.getElementById('totalOutput');
 
         if (processingEfficiency) {
-            const efficiency = stats.rawData > 0 ? 
-                ((stats.signalIdentified / stats.rawData) * 100).toFixed(1) : 0;
+            const efficiency = stats.rawData > 0 ? ((stats.signalIdentified / stats.rawData) * 100).toFixed(1) : 0;
             processingEfficiency.textContent = `${efficiency}%`;
         }
 
         if (conversionRate) {
-            const conversion = stats.signalIdentified > 0 ? 
-                ((stats.actionRecommendations / stats.signalIdentified) * 100).toFixed(1) : 0;
+            const conversion = stats.signalIdentified > 0 ? ((stats.actionRecommendations / stats.signalIdentified) * 100).toFixed(1) : 0;
             conversionRate.textContent = `${conversion}%`;
         }
 
@@ -559,14 +570,14 @@ class TechIntelligenceApp {
         const investmentOpportunities = document.getElementById('investmentOpportunities');
 
         if (highValueCount) {
-            const highValue = intelligenceData.filter(intel => 
+            const highValue = intelligenceData.filter(intel =>
                 intel.signalStrength >= CONFIG.THRESHOLDS.SIGNAL_STRENGTH.HIGH
             ).length;
             highValueCount.textContent = Utils.formatNumber(highValue);
         }
 
         if (investmentOpportunities) {
-            const opportunities = intelligenceData.filter(intel => 
+            const opportunities = intelligenceData.filter(intel =>
                 intel.commercialValueScore >= 8.0 && intel.breakthroughScore >= 7.0
             ).length;
             investmentOpportunities.textContent = Utils.formatNumber(opportunities);
@@ -579,7 +590,7 @@ class TechIntelligenceApp {
         if (!intelligenceListEl) return;
 
         const criteria = this.settings.rankingCriteria || 'signal_strength';
-        const sortField = criteria === 'signal_strength' ? 'signalStrength' : 
+        const sortField = criteria === 'signal_strength' ? 'signalStrength' :
                          criteria === 'commercial_value' ? 'commercialValueScore' : 'breakthroughScore';
 
         const topIntel = intelligenceData
@@ -696,7 +707,6 @@ class TechIntelligenceApp {
 
         stats.forEach(stat => {
             const color = this.getQualityColor(stat.score);
-
             html += `
                 <div class="trend-item">
                     <span class="trend-name">${stat.name}</span>
@@ -721,7 +731,6 @@ class TechIntelligenceApp {
     // 更新系统状态
     updateSystemStatus(status, message) {
         const statusIndicator = document.getElementById('systemStatus');
-
         if (statusIndicator) {
             const indicators = {
                 'healthy': '🟢 系统状态：运行正常',
@@ -737,7 +746,6 @@ class TechIntelligenceApp {
     updateConnectionStatus(status) {
         this.connectionStatus = status;
         const apiStatusEl = document.getElementById('apiStatus');
-
         if (apiStatusEl) {
             const statuses = {
                 'connected': { text: 'API连接正常', class: '' },
@@ -875,7 +883,7 @@ class TechIntelligenceApp {
         settingsPanel.classList.toggle('hidden');
     }
 
-     // 自动刷新管理
+    // 自动刷新管理
     startAutoRefresh() {
         if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
@@ -940,9 +948,7 @@ class TechIntelligenceApp {
         };
 
         if (format === 'json') {
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-                type: 'application/json' 
-            });
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -972,7 +978,7 @@ const app = new TechIntelligenceApp();
 document.addEventListener('DOMContentLoaded', () => {
     // 添加加载动画
     document.body.classList.add('loading');
-    
+
     app.init().finally(() => {
         document.body.classList.remove('loading');
     });
