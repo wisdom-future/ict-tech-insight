@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#2563eb">
     <meta name="description" content="技术洞察系统实时监控仪表板">
     
-    <!-- 简化图标引用，避免404错误 -->
+    <!-- 简化图标引用 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 </head>
 <body>
@@ -132,6 +132,9 @@
                         <div class="metric-value" id="systemHealth">--</div>
                         <div class="metric-trend neutral" id="healthTrend">系统初始化中</div>
                         <div class="metric-detail" id="healthDetail">正在检测系统状态</div>
+                        <div class="health-progress">
+                            <div class="progress-bar" id="healthProgressBar" style="width: 0%"></div>
+                        </div>
                     </div>
 
                     <!-- 今日洞察卡片 -->
@@ -177,6 +180,28 @@
                 <div class="section-subtitle">数据收敛流转分析</div>
                 <div class="flow-description">📊 展示从原始数据到最终技术线索的收敛过程和数量分布</div>
                 
+                <!-- 数据流转统计 -->
+                <div class="data-flow-stats">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">转化率</div>
+                            <div class="stat-value" id="conversionRate">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">处理效率</div>
+                            <div class="stat-value" id="processingEfficiency">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">总输入</div>
+                            <div class="stat-value" id="totalInput">--</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">总输出</div>
+                            <div class="stat-value" id="totalOutput">--</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- 流转步骤展示 -->
                 <div class="flow-steps-container">
                     <div class="flow-step" id="rawDataStep">
@@ -185,6 +210,9 @@
                             <h4>原始数据 (RAW)</h4>
                             <div class="step-value" id="rawDataCount">--</div>
                             <div class="step-detail">来源: 学术论文、专利、新闻等</div>
+                        </div>
+                        <div class="step-progress">
+                            <div class="progress-bar" style="width: 100%"></div>
                         </div>
                     </div>
 
@@ -198,6 +226,9 @@
                             <div class="step-value" id="intelligenceCount">--</div>
                             <div class="step-detail">AI识别的技术信号</div>
                         </div>
+                        <div class="step-progress">
+                            <div class="progress-bar" style="width: 87%"></div>
+                        </div>
                     </div>
 
                     <div class="flow-arrow">⬇️</div>
@@ -210,6 +241,9 @@
                             <div class="step-value" id="cluesCount">--</div>
                             <div class="step-detail">验证通过的有效线索</div>
                         </div>
+                        <div class="step-progress">
+                            <div class="progress-bar" style="width: 78%"></div>
+                        </div>
                     </div>
 
                     <div class="flow-arrow">⬇️</div>
@@ -221,6 +255,9 @@
                             <h4>行动建议 (Actions)</h4>
                             <div class="step-value" id="actionsCount">--</div>
                             <div class="step-detail">可执行的决策建议</div>
+                        </div>
+                        <div class="step-progress">
+                            <div class="progress-bar" style="width: 65%"></div>
                         </div>
                     </div>
                 </div>
@@ -257,6 +294,62 @@
                     </div>
                     <div class="workflow-list" id="workflowList">
                         <div class="loading">正在加载工作流状态...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 业务价值分析 -->
+            <section class="value-section">
+                <div class="section-header">
+                    <h2>💰 业务价值分析</h2>
+                </div>
+
+                <div class="value-stats">
+                    <div class="value-stat-item">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-label">高价值洞察</div>
+                            <div class="stat-value" id="highValueCount">--</div>
+                        </div>
+                    </div>
+                    <div class="value-stat-item">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-content">
+                            <div class="stat-label">投资机会</div>
+                            <div class="stat-value" id="investmentOpportunities">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top-intelligence-panel">
+                    <div class="panel-header">
+                        <h3>TOP 洞察排行</h3>
+                        <div class="chart-controls">
+                            <select id="rankingSelect">
+                                <option value="signal_strength">信号强度</option>
+                                <option value="commercial_value">商业价值</option>
+                                <option value="breakthrough_score">技术突破性</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="intelligence-list" id="intelligenceList">
+                        <div class="loading">正在加载洞察数据...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技术趋势分析 -->
+            <section class="trends-section">
+                <div class="section-header">
+                    <h2>🔥 技术趋势分析</h2>
+                </div>
+
+                <div class="trends-stats-panel">
+                    <div class="panel-header">
+                        <h3>趋势统计</h3>
+                    </div>
+                    <div class="trends-list" id="trendsList">
+                        <div class="loading">正在分析趋势...</div>
                     </div>
                 </div>
             </section>
@@ -331,14 +424,36 @@
     <!-- Toast 通知容器 -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- 修复后的脚本加载 -->
+    <!-- 修复后的脚本加载 - 不包含charts.js -->
     <script>
         // 全局变量声明
-        window.Chart = null;
         window.CONFIG = null;
         window.Utils = null;
         window.api = null;
         window.app = null;
+        
+        // 简化的图表对象，避免错误
+        window.dashboardCharts = {
+            initCharts: function() {
+                console.log('图表功能已禁用，使用简化显示');
+                return Promise.resolve();
+            },
+            updateTimelineChart: function(data) {
+                console.log('时间线图表更新（简化模式）');
+            },
+            updateFunnelChart: function(data) {
+                console.log('漏斗图表更新（简化模式）');
+            },
+            updateScatterChart: function(data) {
+                console.log('散点图表更新（简化模式）');
+            },
+            getChartsStatus: function() {
+                return { simplified: true };
+            },
+            destroyAllCharts: function() {
+                console.log('图表清理完成');
+            }
+        };
         
         // 错误处理
         window.addEventListener('error', function(e) {
@@ -350,7 +465,7 @@
         });
     </script>
 
-    <!-- 按顺序加载脚本，避免依赖问题 -->
+    <!-- 按顺序加载脚本，跳过charts.js -->
     <script>
         // 1. 首先加载配置
         const script1 = document.createElement('script');
@@ -386,7 +501,8 @@
             script3.src = 'assets/js/api.js';
             script3.onload = function() {
                 console.log('✅ API已加载');
-                loadCharts();
+                // 跳过charts.js，直接加载app.js
+                loadApp();
             };
             script3.onerror = function() {
                 console.error('❌ API加载失败');
@@ -395,41 +511,25 @@
             document.head.appendChild(script3);
         }
         
-        function loadCharts() {
-            // 4. 加载图表模块（简化版，不依赖Chart.js）
+        function loadApp() {
+            // 4. 加载主应用（跳过charts.js）
             const script4 = document.createElement('script');
-            script4.src = 'assets/js/charts.js';
+            script4.src = 'assets/js/app.js';
             script4.onload = function() {
-                console.log('✅ Charts已加载');
-                loadApp();
+                console.log('✅ App已加载');
+                initializeApp();
             };
             script4.onerror = function() {
-                console.error('❌ Charts加载失败');
-                // 图表模块失败不阻塞应用启动
-                loadApp();
+                console.error('❌ App加载失败');
+                showError('主应用加载失败');
             };
             document.head.appendChild(script4);
         }
         
-        function loadApp() {
-            // 5. 最后加载主应用
-            const script5 = document.createElement('script');
-            script5.src = 'assets/js/app.js';
-            script5.onload = function() {
-                console.log('✅ App已加载');
-                initializeApp();
-            };
-            script5.onerror = function() {
-                console.error('❌ App加载失败');
-                showError('主应用加载失败');
-            };
-            document.head.appendChild(script5);
-        }
-        
         function initializeApp() {
-            console.log('=== 开始初始化应用 ===');
+            console.log('=== 开始初始化应用（简化模式）===');
             
-            // 检查所有依赖
+            // 检查核心依赖
             const dependencies = {
                 CONFIG: typeof CONFIG !== 'undefined',
                 Utils: typeof Utils !== 'undefined',
@@ -456,17 +556,17 @@
         
         function startApp() {
             try {
-                console.log('启动应用...');
+                console.log('启动应用（简化模式）...');
                 
                 if (typeof app !== 'undefined' && app.init) {
-                    // 修改CONFIG中的刷新间隔，避免API频率限制
+                    // 修改CONFIG中的刷新间隔
                     if (typeof CONFIG !== 'undefined') {
                         CONFIG.REFRESH.AUTO_REFRESH_INTERVAL = 300000; // 5分钟
                         CONFIG.REFRESH.RETRY_DELAY = 5000; // 5秒重试延迟
                     }
                     
                     app.init().then(() => {
-                        console.log('✅ 应用启动成功');
+                        console.log('✅ 应用启动成功（简化模式）');
                         hideLoading();
                     }).catch(error => {
                         console.error('❌ 应用启动失败:', error);
@@ -523,5 +623,80 @@
             }
         });
     </script>
+
+    <!-- 添加简化样式 -->
+    <style>
+        .data-flow-stats {
+            margin: 2rem 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .value-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .value-stat-item {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+        
+        .stat-content .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .stat-content .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .health-progress {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+    </style>
 </body>
 </html>
