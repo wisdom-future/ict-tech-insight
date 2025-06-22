@@ -246,18 +246,309 @@ class TechIntelligenceApp {
     }
 
     // 更新UI
-    updateUI() {
-        try {
-            this.updateMetrics();
-            this.updateWorkflowStatus();
-            this.updateDataFlow();
-            this.updateBusinessValue();
-            this.updateTechTrends();
-            this.updateLastRefreshTime();
-        } catch (error) {
-            console.error('UI更新失败:', error);
-        }
+updateUI() {
+    try {
+        this.updateMetrics();
+        this.updateWorkflowStatus();
+        this.updateDataFlow();
+        this.updateBusinessValue();
+        this.updateTechTrends();
+        this.updateLastRefreshTime();
+        
+        // 新增：更新页面静态数据
+        this.updatePageData();
+    } catch (error) {
+        console.error('UI更新失败:', error);
     }
+}
+
+// 新增方法：更新页面数据
+updatePageData() {
+    try {
+        // 更新核心指标
+        const metrics = this.calculateMetrics();
+        
+        // 更新业务产出率
+        const businessOutputEl = document.getElementById('businessOutput');
+        if (businessOutputEl) {
+            businessOutputEl.textContent = `${metrics.systemHealth.toFixed(1)}%`;
+        }
+        
+        // 更新处理效率
+        const processingEfficiencyEl = document.getElementById('processingEfficiency');
+        if (processingEfficiencyEl) {
+            const efficiency = this.calculateProcessingEfficiency();
+            processingEfficiencyEl.textContent = `${efficiency.toFixed(1)}%`;
+        }
+        
+        // 更新洞察质量
+        const insightQualityEl = document.getElementById('insightQuality');
+        if (insightQualityEl) {
+            const avgQuality = this.calculateAverageQuality();
+            insightQualityEl.textContent = `${avgQuality.toFixed(1)}/10`;
+        }
+        
+        // 更新业务流程数据
+        this.updateProcessFlowData();
+        
+        // 更新TOP洞察列表（使用真实数据）
+        const intelligenceData = this.data.processedIntelligence || [];
+        this.updateTopInsightsList(intelligenceData);
+        
+        // 更新技术突破列表
+        this.updateBreakthroughList(intelligenceData);
+        
+        // 更新趋势数据
+        this.updateTrendData();
+        
+    } catch (error) {
+        console.error('页面数据更新失败:', error);
+    }
+}
+
+// 计算处理效率
+calculateProcessingEfficiency() {
+    const rawDataStats = this.data.rawData || {};
+    const intelligenceData = this.data.processedIntelligence || [];
+    
+    let totalRawData = 0;
+    Object.values(rawDataStats).forEach(sheetData => {
+        if (Array.isArray(sheetData)) {
+            totalRawData += Math.max(0, sheetData.length - 1);
+        }
+    });
+    
+    const processedData = intelligenceData.length;
+    return totalRawData > 0 ? (processedData / totalRawData) * 100 : 0;
+}
+
+// 计算平均质量
+calculateAverageQuality() {
+    const intelligenceData = this.data.processedIntelligence || [];
+    if (intelligenceData.length === 0) return 0;
+    
+    const totalScore = intelligenceData.reduce((sum, item) => {
+        return sum + (item.signalStrength || 0);
+    }, 0);
+    
+    return totalScore / intelligenceData.length;
+}
+
+// 更新流程数据
+updateProcessFlowData() {
+    const rawDataStats = this.data.rawData || {};
+    const intelligenceData = this.data.processedIntelligence || [];
+    
+    // 数据采集
+    let totalRawData = 0;
+    Object.values(rawDataStats).forEach(sheetData => {
+        if (Array.isArray(sheetData)) {
+            totalRawData += Math.max(0, sheetData.length - 1);
+        }
+    });
+    
+    const dataCollectionEl = document.getElementById('dataCollection');
+    if (dataCollectionEl) {
+        dataCollectionEl.textContent = `${totalRawData}条`;
+    }
+    
+    // AI分析进度
+    const aiAnalysisEl = document.getElementById('aiAnalysis');
+    if (aiAnalysisEl) {
+        const processingRate = this.calculateProcessingEfficiency();
+        aiAnalysisEl.textContent = `处理中${processingRate.toFixed(0)}%`;
+    }
+    
+    // 洞察提取
+    const insightExtractionEl = document.getElementById('insightExtraction');
+    if (insightExtractionEl) {
+        const today = new Date().toISOString().split('T')[0];
+        const todayInsights = intelligenceData.filter(item => 
+            item.createdTimestamp && item.createdTimestamp.startsWith(today)
+        ).length;
+        insightExtractionEl.textContent = `新增${todayInsights}条`;
+    }
+    
+    // 价值评估
+    const valueAssessmentEl = document.getElementById('valueAssessment');
+    if (valueAssessmentEl) {
+        const highValueCount = intelligenceData.filter(item => 
+            item.commercialValueScore >= 8.0
+        ).length;
+        valueAssessmentEl.textContent = `${highValueCount}个高价值`;
+    }
+    
+    // 行动建议
+    const actionRecommendationsEl = document.getElementById('actionRecommendations');
+    if (actionRecommendationsEl) {
+        const recommendations = Math.floor(intelligenceData.length * 0.3);
+        actionRecommendationsEl.textContent = `待执行${recommendations}项`;
+    }
+    
+    // 流程统计
+    const flowEfficiencyEl = document.getElementById('flowEfficiency');
+    if (flowEfficiencyEl) {
+        flowEfficiencyEl.textContent = `${this.calculateProcessingEfficiency().toFixed(0)}%`;
+    }
+    
+    const avgProcessTimeEl = document.getElementById('avgProcessTime');
+    if (avgProcessTimeEl) {
+        avgProcessTimeEl.textContent = '3.2分钟'; // 可以后续从工作流数据计算
+    }
+    
+    const todayCompletedEl = document.getElementById('todayCompleted');
+    if (todayCompletedEl) {
+        todayCompletedEl.textContent = `${intelligenceData.length}条`;
+    }
+}
+
+// 更新TOP洞察列表
+updateTopInsightsList(intelligenceData) {
+    const intelligenceListEl = document.getElementById('topInsightsList');
+    if (!intelligenceListEl) return;
+
+    const topIntel = intelligenceData
+        .filter(intel => intel.signalStrength > 0)
+        .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
+        .slice(0, 3);
+
+    let html = '';
+    if (topIntel.length === 0) {
+        html = '<div class="loading">正在加载洞察数据...</div>';
+    } else {
+        topIntel.forEach((intel, index) => {
+            const hasLink = intel.sourceUrl && intel.sourceUrl !== '' && intel.sourceUrl !== '--';
+            const title = intel.title || '无标题';
+            const shortTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+            
+            html += `
+                <div class="insight-item" onclick="handleInsightClick('${intel.intelligenceId}', '${intel.sourceUrl || ''}')">
+                    <div class="insight-rank">#${index + 1}</div>
+                    <div class="insight-content">
+                        <div class="insight-title">${this.getInsightIcon(intel.dataType)} ${shortTitle}</div>
+                        <div class="insight-scores">
+                            <span>信号强度: <strong>${(intel.signalStrength || 0).toFixed(1)}</strong></span>
+                            <span>商业价值: <strong>${(intel.commercialValueScore || 0).toFixed(1)}</strong></span>
+                        </div>
+                        <div class="insight-action">
+                            ${hasLink ? '点击查看原文' : '点击查看详情'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    intelligenceListEl.innerHTML = html;
+    
+    // 更新统计数据
+    const todayInsightsEl = document.getElementById('todayInsights');
+    if (todayInsightsEl) {
+        todayInsightsEl.textContent = `${intelligenceData.length}条`;
+    }
+    
+    const highValueCountEl = document.getElementById('highValueCount');
+    if (highValueCountEl) {
+        const highValueCount = intelligenceData.filter(item => 
+            item.commercialValueScore >= 8.0
+        ).length;
+        highValueCountEl.textContent = `${highValueCount}条`;
+    }
+}
+
+// 获取洞察图标
+getInsightIcon(dataType) {
+    const icons = {
+        'academic_papers': '📄',
+        'patent_data': '📋',
+        'tech_news': '📰',
+        'opensource_data': '💻',
+        'industry_dynamics': '🏭',
+        'competitor_intelligence': '🔍'
+    };
+    return icons[dataType] || '🔥';
+}
+
+// 更新技术突破列表
+updateBreakthroughList(intelligenceData) {
+    const breakthroughListEl = document.getElementById('breakthroughList');
+    if (!breakthroughListEl) return;
+
+    const breakthroughs = intelligenceData
+        .filter(intel => intel.breakthroughScore >= 8.0)
+        .sort((a, b) => (b.breakthroughScore || 0) - (a.breakthroughScore || 0))
+        .slice(0, 3);
+
+    let html = '';
+    if (breakthroughs.length === 0) {
+        html = '<div class="loading">暂无突破性技术发现</div>';
+    } else {
+        breakthroughs.forEach(breakthrough => {
+            const hasLink = breakthrough.sourceUrl && breakthrough.sourceUrl !== '' && breakthrough.sourceUrl !== '--';
+            const title = breakthrough.title || breakthrough.techKeyword || '技术突破';
+            const shortTitle = title.length > 15 ? title.substring(0, 15) + '...' : title;
+            const timeAgo = this.getTimeAgo(breakthrough.createdTimestamp);
+            
+            html += `
+                <div class="breakthrough-item" onclick="${hasLink ? `openSourceLink('${breakthrough.sourceUrl}')` : `handleInsightClick('${breakthrough.intelligenceId}', '')`}">
+                    <div class="breakthrough-content">
+                        <div class="breakthrough-title">• ${shortTitle}</div>
+                        <div class="breakthrough-score">(${(breakthrough.breakthroughScore || 0).toFixed(1)}分)</div>
+                    </div>
+                    <div class="breakthrough-time">[${timeAgo}]</div>
+                </div>
+            `;
+        });
+    }
+
+    breakthroughListEl.innerHTML = html;
+}
+
+// 计算时间差
+getTimeAgo(timestamp) {
+    if (!timestamp) return '未知时间';
+    
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffMs = now - time;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    
+    if (diffHours > 24) {
+        return `${Math.floor(diffHours / 24)}天前`;
+    } else if (diffHours > 0) {
+        return `${diffHours}小时前`;
+    } else if (diffMinutes > 0) {
+        return `${diffMinutes}分钟前`;
+    } else {
+        return '刚刚';
+    }
+}
+
+// 更新趋势数据
+updateTrendData() {
+    const intelligenceData = this.data.processedIntelligence || [];
+    
+    // 按数据类型统计
+    const typeStats = {};
+    intelligenceData.forEach(intel => {
+        const type = intel.dataType || 'unknown';
+        if (!typeStats[type]) {
+            typeStats[type] = { count: 0, trend: 0 };
+        }
+        typeStats[type].count++;
+    });
+    
+    // 更新热门技术领域（这里先用模拟数据，后续可以改进）
+    const trendItems = document.querySelectorAll('.trend-item .trend-value');
+    if (trendItems.length >= 4) {
+        trendItems[0].textContent = `${typeStats.academic_papers?.count || 0}条洞察 (↗️ +15%)`;
+        trendItems[1].textContent = `${typeStats.patent_data?.count || 0}条洞察 (↗️ +28%)`;
+        trendItems[2].textContent = `${typeStats.tech_news?.count || 0}条洞察 (↗️ +8%)`;
+        trendItems[3].textContent = `${typeStats.industry_dynamics?.count || 0}条洞察 (↘️ -5%)`;
+    }
+}
+
 
     // 更新关键指标
     updateMetrics() {
