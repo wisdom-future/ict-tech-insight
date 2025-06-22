@@ -3,13 +3,13 @@
 const CONFIG = {
     // Google Sheets API配置
     GOOGLE_SHEETS: {
-        API_KEY: 'YOUR_GOOGLE_SHEETS_API_KEY', // 需要替换为实际的API密钥
+        API_KEY: 'AIzaSyCgwfInAQt9nBL_uM-k_caOtu21q3KLXbY', // 需要替换为实际的API密钥
         
         // 数据库配置 - 每个数据库包含多个工作表
         DATABASES: {
             // 📋 配置管理数据库
             CONFIG_DB: {
-                SPREADSHEET_ID: 'YOUR_CONFIG_DB_SPREADSHEET_ID',
+                SPREADSHEET_ID: '14jCzQclmFaHRH8iHrYt9v2Tk-bZ8TVrvbhXUZyFITNE',
                 SHEETS: {
                     TECHNOLOGY_REGISTRY: 'Technology_Registry',
                     COMPETITOR_REGISTRY: 'Competitor_Registry', 
@@ -19,7 +19,7 @@ const CONFIG = {
             
             // 📥 原始数据数据库
             RAWDATA_DB: {
-                SPREADSHEET_ID: 'YOUR_RAWDATA_DB_SPREADSHEET_ID',
+                SPREADSHEET_ID: '17CSJX53IF628jsaZbtab2rCaVhi71DRCSKUOQnRKyoU',
                 SHEETS: {
                     RAW_ACADEMIC_PAPERS: 'Raw_Academic_Papers',
                     RAW_PATENT_DATA: 'Raw_Patent_Data',
@@ -32,7 +32,7 @@ const CONFIG = {
             
             // 🧠 核心洞察数据库
             INTELLIGENCE_DB: {
-                SPREADSHEET_ID: 'YOUR_INTELLIGENCE_DB_SPREADSHEET_ID',
+                SPREADSHEET_ID: '1B9WQzSL56TY04E-633Io3A1X5AWmPr8XypGiU92OXu0',
                 SHEETS: {
                     TECH_INTELLIGENCE_MASTER: 'Tech_Intelligence_Master',
                     EVIDENCE_VALIDATION_MATRIX: 'Evidence_Validation_Matrix',
@@ -45,7 +45,7 @@ const CONFIG = {
             
             // 🔧 系统运营数据库
             OPERATIONS_DB: {
-                SPREADSHEET_ID: 'YOUR_OPERATIONS_DB_SPREADSHEET_ID',
+                SPREADSHEET_ID: '1ht0-r9yyIYd7I_ULubkKbKTVgxablvfyJgz09DfbKXk',
                 SHEETS: {
                     WORKFLOW_EXECUTION_LOG: 'Workflow_Execution_Log',
                     DATA_QUALITY_REPORTS: 'Data_Quality_Reports'
