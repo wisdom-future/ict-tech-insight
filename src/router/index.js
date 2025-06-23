@@ -1,47 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// 懒加载组件
-const Overview = () => import('@/views/Overview.vue')
-const Collection = () => import('@/views/Collection.vue')
-const Analysis = () => import('@/views/Analysis.vue')
-const Action = () => import('@/views/Action.vue')
-const Reports = () => import('@/views/Reports.vue')
-
 const routes = [
   {
     path: '/',
     name: 'Overview',
-    component: Overview,
-    meta: { title: '概览仪表板' }
+    component: () => import('../views/Overview.vue')
   },
   {
     path: '/collection',
-    name: 'Collection',
-    component: Collection,
-    meta: { title: '数据采集监控' }
+    name: 'Collection', 
+    component: () => import('../views/Collection.vue')
   },
   {
     path: '/analysis',
     name: 'Analysis',
-    component: Analysis,
-    meta: { title: '智能分析中心' }
+    component: () => import('../views/Analysis.vue')
   },
   {
     path: '/action',
     name: 'Action',
-    component: Action,
-    meta: { title: '行动决策中心' }
+    component: () => import('../views/Action.vue')
   },
   {
     path: '/reports',
     name: 'Reports',
-    component: Reports,
-    meta: { title: '报告中心' }
-  },
-  {
-    path: '/system',
-    name: 'System',
-    redirect: '/system/performance'
+    component: () => import('../views/Reports.vue')
   }
 ]
 
