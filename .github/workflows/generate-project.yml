@@ -1,0 +1,75 @@
+name: Generate Project Structure
+
+on:
+  workflow_dispatch:  # 手动触发
+  push:
+    paths:
+      - 'ict-tech-insight-generator.yml'  # 当配置文件更新时触发
+
+jobs:
+  generate-project:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        npm install -g js-yaml
+        npm install js-yaml
+
+    - name: Generate project structure
+      run: |
+        cat > generate.js << 'EOF'
+        const fs = require('fs');
+        const path = require('path');
+        const yaml = require('js-yaml');
+
+        try {
+          // 读取配置文件
+          const config = yaml.load(fs.readFileSync('ict-tech-insight-generator.yml', 'utf8'));
+          
+          // 创建目录
+          console.log('🏗️  创建目录结构...');
+          config.structure.directories.forEach(dir => {
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+              console.log(`✅ 创建目录: ${dir}`);
+            }
+          });
+
+          // 创建文件
+          console.log('📄 创建项目文件...');
+          Object.entries(config.files).forEach(([filePath, content]) => {
+            const dir = path.dirname(filePath);
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+            }
+            fs.writeFileSync(filePath, content.trim());
+            console.log(`✅ 创建文件: ${filePath}`);
+          });
+
+          console.log('🎉 项目结构生成完成！');
+        } catch (error) {
+          console.error('❌ 生成失败:', error.message);
+          process.exit(1);
+        }
+        EOF
+
+        node generate.js
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff --staged --quiet || git commit -m "🚀 Auto-generate project structure from YAML config"
+        git push
