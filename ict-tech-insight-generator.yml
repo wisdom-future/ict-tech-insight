@@ -1,0 +1,2735 @@
+# ict-tech-insight-generator.yml
+# 使用方法：将此文件保存为 generate-project.yml，然后运行生成脚本
+
+project:
+  name: "ict-tech-insight"
+  description: "ICT技术信息决策引擎"
+  version: "1.0.0"
+  repository: "https://github.com/yourusername/ict-tech-insight"
+
+structure:
+  directories:
+    - .github/workflows
+    - public
+    - src/assets/images
+    - src/assets/styles
+    - src/components/common
+    - src/components/charts
+    - src/components/layout
+    - src/views/System
+    - src/router
+    - src/store
+    - src/utils
+    - data/overview
+    - data/collection
+    - data/analysis
+    - data/action
+    - data/system
+    - data/reports
+
+files:
+  # GitHub Actions 配置
+  ".github/workflows/deploy.yml": |
+    name: Deploy ICT Tech Insight
+
+    on:
+      push:
+        branches: - main
+
+    jobs:
+      build-and-deploy:
+        runs-on: ubuntu-latest
+        
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '18'
+            cache: 'npm'
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Build
+          run: npm run build
+          env:
+            NODE_ENV: production
+
+        - name: Deploy to GitHub Pages
+          uses: peaceiris/actions-gh-pages@v3
+          if: github.ref == 'refs/heads/main'
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./dist
+
+  # 项目配置文件
+  "package.json": |
+    {
+      "name": "ict-tech-insight",
+      "version": "1.0.0",
+      "description": "ICT技术信息决策引擎",
+      "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
+        "format": "prettier --write src/"
+      },
+      "dependencies": {
+        "vue": "^3.3.4",
+        "vue-router": "^4.2.4",
+        "pinia": "^2.1.6",
+        "axios": "^1.5.0",
+        "dayjs": "^1.11.9",
+        "echarts": "^5.4.3",
+        "vue-echarts": "^6.6.1",
+        "element-plus": "^2.3.9",
+        "@element-plus/icons-vue": "^2.1.0"
+      },
+      "devDependencies": {
+        "@vitejs/plugin-vue": "^4.3.4",
+        "vite": "^4.4.9",
+        "tailwindcss": "^3.3.3",
+        "autoprefixer": "^10.4.15",
+        "postcss": "^8.4.29",
+        "eslint": "^8.47.0",
+        "eslint-plugin-vue": "^9.17.0",
+        "prettier": "^3.0.2"
+      }
+    }
+
+  # Vite 配置
+  "vite.config.js": |
+    import { defineConfig } from 'vite'
+    import vue from '@vitejs/plugin-vue'
+    import { resolve } from 'path'
+
+    export default defineConfig({
+      plugins: [vue()],
+      base: '/ict-tech-insight/',
+      resolve: {
+        alias: {
+          '@': resolve(__dirname, 'src')
+        }
+      },
+      build: {
+        outDir: 'dist',
+        assetsDir: 'assets',
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vendor: ['vue', 'vue-router', 'pinia'],
+              charts: ['echarts', 'vue-echarts'],
+              ui: ['element-plus']
+            }
+          }
+        }
+      },
+      server: {
+        port: 3000,
+        host: true
+      }
+    })
+
+  # Tailwind 配置
+  "tailwind.config.js": |
+    module.exports = {
+      content: [
+        "./index.html",
+        "./src/**/*.{vue,js,ts,jsx,tsx}",
+      ],
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            success: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+            },
+            warning: {
+              50: '#fffbeb',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            danger: {
+              50: '#fef2f2',
+              500: '#ef4444',
+              600: '#dc2626',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+      plugins: [],
+    }
+
+  # PostCSS 配置
+  "postcss.config.js": |
+    module.exports = {
+      plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+      },
+    }
+
+  # HTML 入口文件
+  "public/index.html": |
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>ICT Tech Insight - 技术信息决策引擎</title>
+      <link rel="icon" href="/favicon.ico">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+      <div id="app"></div>
+      <script type="module" src="/src/main.js"></script>
+    </body>
+    </html>
+
+  # Vue 主入口文件
+  "src/main.js": |
+    import { createApp } from 'vue'
+    import { createPinia } from 'pinia'
+    import ElementPlus from 'element-plus'
+    import 'element-plus/dist/index.css'
+    import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+    import './assets/styles/main.css'
+    
+    import App from './App.vue'
+    import router from './router'
+
+    const app = createApp(App)
+    const pinia = createPinia()
+
+    // 注册Element Plus图标
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component)
+    }
+
+    app.use(pinia)
+    app.use(router)
+    app.use(ElementPlus)
+
+    app.mount('#app')
+
+  # Vue 根组件
+  "src/App.vue": |
+    <template>
+      <div id="app" class="min-h-screen bg-gray-50">
+        <Header />
+        <div class="flex">
+          <Sidebar />
+          <main class="flex-1 p-6">
+            <router-view />
+          </main>
+        </div>
+        <Footer />
+      </div>
+    </template>
+
+    <script setup>
+    import Header from '@/components/layout/Header.vue'
+    import Sidebar from '@/components/layout/Sidebar.vue'
+    import Footer from '@/components/layout/Footer.vue'
+    </script>
+
+    <style>
+    #app {
+      font-family: 'Inter', sans-serif;
+    }
+    </style>
+
+  # 路由配置
+  "src/router/index.js": |
+    import { createRouter, createWebHistory } from 'vue-router'
+    import Overview from '@/views/Overview.vue'
+    import Collection from '@/views/Collection.vue'
+    import Analysis from '@/views/Analysis.vue'
+    import Action from '@/views/Action.vue'
+    import Reports from '@/views/Reports.vue'
+    import Performance from '@/views/System/Performance.vue'
+    import Configuration from '@/views/System/Configuration.vue'
+    import Logs from '@/views/System/Logs.vue'
+    import Users from '@/views/System/Users.vue'
+
+    const routes = [
+      {
+        path: '/',
+        name: 'Overview',
+        component: Overview,
+        meta: { title: '概览仪表板', icon: '🏠' }
+      },
+      {
+        path: '/collection',
+        name: 'Collection',
+        component: Collection,
+        meta: { title: '数据采集监控', icon: '📥' }
+      },
+      {
+        path: '/analysis',
+        name: 'Analysis',
+        component: Analysis,
+        meta: { title: '智能分析中心', icon: '🧠' }
+      },
+      {
+        path: '/action',
+        name: 'Action',
+        component: Action,
+        meta: { title: '行动决策中心', icon: '🎯' }
+      },
+      {
+        path: '/reports',
+        name: 'Reports',
+        component: Reports,
+        meta: { title: '报告中心', icon: '📑' }
+      },
+      {
+        path: '/system',
+        name: 'System',
+        meta: { title: '系统管理', icon: '⚙️' },
+        children: [
+          {
+            path: 'performance',
+            name: 'Performance',
+            component: Performance,
+            meta: { title: '性能监控', icon: '📊' }
+          },
+          {
+            path: 'configuration',
+            name: 'Configuration',
+            component: Configuration,
+            meta: { title: '配置管理', icon: '🔧' }
+          },
+          {
+            path: 'logs',
+            name: 'Logs',
+            component: Logs,
+            meta: { title: '日志查看', icon: '📋' }
+          },
+          {
+            path: 'users',
+            name: 'Users',
+            component: Users,
+            meta: { title: '用户管理', icon: '👥' }
+          }
+        ]
+      }
+    ]
+
+    const router = createRouter({
+      history: createWebHistory('/ict-tech-insight/'),
+      routes
+    })
+
+    export default router
+
+  # Pinia 状态管理
+  "src/store/index.js": |
+    import { defineStore } from 'pinia'
+    import { ref, computed } from 'vue'
+    import { fetchData } from '@/utils/api'
+
+    export const useAppStore = defineStore('app', () => {
+      // 状态
+      const loading = ref(false)
+      const error = ref(null)
+      const lastUpdated = ref(null)
+      
+      // Overview 数据
+      const overviewData = ref({})
+      const collectionData = ref({})
+      const analysisData = ref({})
+      const actionData = ref({})
+      const systemData = ref({})
+      const reportsData = ref({})
+
+      // 计算属性
+      const isDataStale = computed(() => {
+        if (!lastUpdated.value) return true
+        const now = new Date()
+        const updated = new Date(lastUpdated.value)
+        return (now - updated) > 3600000 // 1小时
+      })
+
+      // 方法
+      const loadOverviewData = async () => {
+        try {
+          loading.value = true
+          const [kpi, trends, intelligence] = await Promise.all([
+            fetchData('/data/overview/kpi-metrics.json'),
+            fetchData('/data/overview/trend-charts.json'),
+            fetchData('/data/overview/latest-intelligence.json')
+          ])
+          
+          overviewData.value = { kpi, trends, intelligence }
+          lastUpdated.value = new Date().toISOString()
+        } catch (err) {
+          error.value = err.message
+        } finally {
+          loading.value = false
+        }
+      }
+
+      const loadCollectionData = async () => {
+        try {
+          loading.value = true
+          const [techData, benchmarkData, qualityMetrics] = await Promise.all([
+            fetchData('/data/collection/tech-data-status.json'),
+            fetchData('/data/collection/benchmark-status.json'),
+            fetchData('/data/collection/quality-metrics.json')
+          ])
+          
+          collectionData.value = { techData, benchmarkData, qualityMetrics }
+        } catch (err) {
+          error.value = err.message
+        } finally {
+          loading.value = false
+        }
+      }
+
+      const clearError = () => {
+        error.value = null
+      }
+
+      return {
+        // 状态
+        loading,
+        error,
+        lastUpdated,
+        overviewData,
+        collectionData,
+        analysisData,
+        actionData,
+        systemData,
+        reportsData,
+        
+        // 计算属性
+        isDataStale,
+        
+        // 方法
+        loadOverviewData,
+        loadCollectionData,
+        clearError
+      }
+    })
+
+  # API 工具类
+  "src/utils/api.js": |
+    import axios from 'axios'
+
+    const api = axios.create({
+      baseURL: '/ict-tech-insight',
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    // 请求拦截器
+    api.interceptors.request.use(
+      config => {
+        console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`)
+        return config
+      },
+      error => {
+        console.error('❌ API Request Error:', error)
+        return Promise.reject(error)
+      }
+    )
+
+    // 响应拦截器
+    api.interceptors.response.use(
+      response => {
+        console.log(`✅ API Response: ${response.config.url}`, response.data)
+        return response
+      },
+      error => {
+        console.error('❌ API Response Error:', error)
+        if (error.response?.status === 404) {
+          console.warn('📄 Data file not found, using mock data')
+          return { data: {} }
+        }
+        return Promise.reject(error)
+      }
+    )
+
+    export const fetchData = async (url) => {
+      try {
+        const response = await api.get(url)
+        return response.data
+      } catch (error) {
+        console.error(`Failed to fetch data from ${url}:`, error)
+        throw error
+      }
+    }
+
+    export default api
+
+  # 数据格式化工具
+  "src/utils/formatters.js": |
+    import dayjs from 'dayjs'
+    import relativeTime from 'dayjs/plugin/relativeTime'
+    import 'dayjs/locale/zh-cn'
+
+    dayjs.extend(relativeTime)
+    dayjs.locale('zh-cn')
+
+    export const formatNumber = (num, precision = 0) => {
+      if (num === null || num === undefined) return '0'
+      
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(precision) + 'M'
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(precision) + 'K'
+      }
+      
+      return num.toLocaleString('zh-CN', { 
+        minimumFractionDigits: precision,
+        maximumFractionDigits: precision 
+      })
+    }
+
+    export const formatPercentage = (num, precision = 1) => {
+      if (num === null || num === undefined) return '0%'
+      return (num * 100).toFixed(precision) + '%'
+    }
+
+    export const formatCurrency = (amount, currency = 'USD') => {
+      if (amount === null || amount === undefined) return '$0'
+      
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      })
+      
+      return formatter.format(amount)
+    }
+
+    export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
+      if (!date) return ''
+      return dayjs(date).format(format)
+    }
+
+    export const formatRelativeTime = (date) => {
+      if (!date) return ''
+      return dayjs(date).fromNow()
+    }
+
+    export const getStatusColor = (status) => {
+      const colors = {
+        active: 'success',
+        inactive: 'danger',
+        pending: 'warning',
+        completed: 'success',
+        failed: 'danger',
+        running: 'primary'
+      }
+      return colors[status] || 'info'
+    }
+
+    export const getTrendIcon = (trend) => {
+      if (trend > 0) return '📈'
+      if (trend < 0) return '📉'
+      return '➡️'
+    }
+
+  # 常量定义
+  "src/utils/constants.js": |
+    export const API_ENDPOINTS = {
+      OVERVIEW: '/data/overview',
+      COLLECTION: '/data/collection',
+      ANALYSIS: '/data/analysis',
+      ACTION: '/data/action',
+      SYSTEM: '/data/system',
+      REPORTS: '/data/reports'
+    }
+
+    export const CHART_COLORS = {
+      PRIMARY: '#3b82f6',
+      SUCCESS: '#22c55e',
+      WARNING: '#f59e0b',
+      DANGER: '#ef4444',
+      INFO: '#6b7280',
+      GRADIENT: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+    }
+
+    export const DATA_REFRESH_INTERVAL = 5 * 60 * 1000 // 5分钟
+
+    export const TECH_CATEGORIES = [
+      { key: 'ai', label: '人工智能', icon: '🤖' },
+      { key: '5g', label: '5G通信', icon: '📡' },
+      { key: 'quantum', label: '量子计算', icon: '⚛️' },
+      { key: 'blockchain', label: '区块链', icon: '🔗' },
+      { key: 'iot', label: '物联网', icon: '🌐' },
+      { key: 'cloud', label: '云计算', icon: '☁️' }
+    ]
+
+    export const PRIORITY_LEVELS = {
+      URGENT: { label: '紧急', color: 'danger', value: 4 },
+      HIGH: { label: '高', color: 'warning', value: 3 },
+      MEDIUM: { label: '中', color: 'primary', value: 2 },
+      LOW: { label: '低', color: 'info', value: 1 }
+    }
+
+  # 主样式文件
+  "src/assets/styles/main.css": |
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    }
+
+    @layer components {
+      .card {
+        @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+      }
+      
+      .card-hover {
+        @apply card transition-all duration-200 hover:shadow-md hover:border-gray-300;
+      }
+      
+      .btn-primary {
+        @apply bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors;
+      }
+      
+      .btn-secondary {
+        @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors;
+      }
+      
+      .status-badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+      }
+      
+      .status-active {
+        @apply status-badge bg-success-50 text-success-600;
+      }
+      
+      .status-inactive {
+        @apply status-badge bg-danger-50 text-danger-600;
+      }
+      
+      .status-pending {
+        @apply status-badge bg-warning-50 text-warning-600;
+      }
+    }
+
+    @layer utilities {
+      .text-gradient {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .glass-effect {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.8);
+      }
+    }
+
+  # Header 组件
+  "src/components/layout/Header.vue": |
+    <template>
+      <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <h1 class="text-2xl font-bold text-gradient">
+                ICT Tech Insight
+              </h1>
+              <span class="text-sm text-gray-500">
+                技术信息决策引擎
+              </span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+              <el-badge :value="notifications" class="mr-4">
+                <el-button :icon="Bell" circle />
+              </el-badge>
+              
+              <div class="flex items-center space-x-2">
+                <el-avatar :size="32" src="/avatar.jpg" />
+                <span class="text-sm font-medium">Jason</span>
+              </div>
+              
+              <div class="text-xs text-gray-500">
+                最后更新: {{ formatRelativeTime(lastUpdated) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    </template>
+
+    <script setup>
+    import { computed } from 'vue'
+    import { Bell } from '@element-plus/icons-vue'
+    import { useAppStore } from '@/store'
+    import { formatRelativeTime } from '@/utils/formatters'
+
+    const store = useAppStore()
+
+    const notifications = computed(() => 3) // 示例通知数量
+    const lastUpdated = computed(() => store.lastUpdated)
+    </script>
+
+  # Sidebar 组件
+  "src/components/layout/Sidebar.vue": |
+    <template>
+      <aside class="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+        <nav class="p-4">
+          <ul class="space-y-2">
+            <li v-for="route in mainRoutes" :key="route.name">
+              <router-link
+                :to="route.path"
+                class="flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                :class="isActive(route.name) ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'"
+              >
+                <span class="text-lg">{{ route.meta.icon }}</span>
+                <span>{{ route.meta.title }}</span>
+              </router-link>
+            </li>
+            
+            <!-- 系统管理子菜单 -->
+            <li v-if="systemRoute">
+              <div class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700">
+                <span class="text-lg">{{ systemRoute.meta.icon }}</span>
+                <span>{{ systemRoute.meta.title }}</span>
+              </div>
+              <ul class="ml-8 mt-2 space-y-1">
+                <li v-for="child in systemRoute.children" :key="child.name">
+                  <router-link
+                    :to="`/system/${child.path}`"
+                    class="flex items-center space-x-2 px-3 py-1 rounded-md text-sm transition-colors"
+                    :class="isActive(child.name) ? 'bg-primary-50 text-primary-600' : 'text-gray-600 hover:bg-gray-50'"
+                  >
+                    <span>{{ child.meta.icon }}</span>
+                    <span>{{ child.meta.title }}</span>
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    </template>
+
+    <script setup>
+    import { computed } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
+
+    const route = useRoute()
+    const router = useRouter()
+
+    const allRoutes = computed(() => router.getRoutes())
+    
+    const mainRoutes = computed(() => 
+      allRoutes.value.filter(r => r.meta?.title && r.name !== 'System' && !r.path.includes('/system/'))
+    )
+    
+    const systemRoute = computed(() => 
+      allRoutes.value.find(r => r.name === 'System')
+    )
+
+    const isActive = (routeName) => {
+      return route.name === routeName
+    }
+    </script>
+
+  # Footer 组件
+  "src/components/layout/Footer.vue": |
+    <template>
+      <footer class="bg-white border-t border-gray-200 py-4 px-6">
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <div>
+            © 2025 ICT Tech Insight. All rights reserved.
+          </div>
+          <div class="flex items-center space-x-4">
+            <span>Powered by Vue.js & GitHub Pages</span>
+            <span>•</span>
+            <span>Version {{ version }}</span>
+          </div>
+        </div>
+      </footer>
+    </template>
+
+    <script setup>
+    import { ref } from 'vue'
+
+    const version = ref('1.0.0')
+    </script>
+
+  # Overview 页面
+  "src/views/Overview.vue": |
+    <template>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">概览仪表板</h2>
+          <el-button type="primary" :icon="Refresh" @click="refreshData">
+            刷新数据
+          </el-button>
+        </div>
+
+        <!-- KPI 指标卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <DataCard
+            v-for="metric in kpiMetrics"
+            :key="metric.key"
+            :title="metric.title"
+            :value="metric.value"
+            :trend="metric.trend"
+            :icon="metric.icon"
+            :color="metric.color"
+          />
+        </div>
+
+        <!-- 趋势图表 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="card">
+            <h3 class="text-lg font-semibold mb-4">信息发现趋势</h3>
+            <LineChart :data="trendData" height="300px" />
+          </div>
+          
+          <div class="card">
+            <h3 class="text-lg font-semibold mb-4">技术热度分布</h3>
+            <PieChart :data="techDistribution" height="300px" />
+          </div>
+        </div>
+
+        <!-- 最新信息流 -->
+        <div class="card">
+          <h3 class="text-lg font-semibold mb-4">最新高价值信息</h3>
+          <div class="space-y-3">
+            <div
+              v-for="item in latestIntelligence"
+              :key="item.id"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
+              @click="viewDetails(item)"
+            >
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-900">{{ item.title }}</h4>
+                <p class="text-sm text-gray-600">{{ item.category }}</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <span class="text-sm font-medium text-primary-600">
+                  信号强度: {{ item.signalStrength }}
+                </span>
+                <span class="text-xs text-gray-500">
+                  {{ formatRelativeTime(item.createdAt) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref, onMounted } from 'vue'
+    import { Refresh } from '@element-plus/icons-vue'
+    import { useAppStore } from '@/store'
+    import { formatRelativeTime } from '@/utils/formatters'
+    import DataCard from '@/components/common/DataCard.vue'
+    import LineChart from '@/components/charts/LineChart.vue'
+    import PieChart from '@/components/charts/PieChart.vue'
+
+    const store = useAppStore()
+
+    const kpiMetrics = ref([
+      { key: 'today_intelligence', title: '今日新增信息', value: 23, trend: 12.5, icon: '📊', color: 'primary' },
+      { key: 'high_value_signals', title: '高价值信号', value: 8, trend: 8.3, icon: '🎯', color: 'success' },
+      { key: 'pending_decisions', title: '待决策事项', value: 5, trend: -15.2, icon: '⚠️', color: 'warning' },
+      { key: 'system_health', title: '系统健康度', value: 98.5, trend: 2.1, icon: '💚', color: 'success' }
+    ])
+
+    const trendData = ref({
+      xAxis: ['06-19', '06-20', '06-21', '06-22', '06-23'],
+      series: [
+        { name: '信息发现', data: [18, 22, 25, 20, 23] },
+        { name: '高价值信号', data: [5, 7, 9, 6, 8] }
+      ]
+    })
+
+    const techDistribution = ref([
+      { name: '人工智能', value: 35 },
+      { name: '5G通信', value: 25 },
+      { name: '量子计算', value: 15 },
+      { name: '区块链', value: 12 },
+      { name: '物联网', value: 13 }
+    ])
+
+    const latestIntelligence = ref([
+      {
+        id: 1,
+        title: '谷歌发布新一代量子处理器Willow',
+        category: '量子计算',
+        signalStrength: 9.2,
+        createdAt: '2025-06-23T08:30:00Z'
+      },
+      {
+        id: 2,
+        title: 'OpenAI推出GPT-5预览版本',
+        category: '人工智能',
+        signalStrength: 9.8,
+        createdAt: '2025-06-23T07:15:00Z'
+      }
+    ])
+
+    const refreshData = async () => {
+      await store.loadOverviewData()
+    }
+
+    const viewDetails = (item) => {
+      console.log('查看详情:', item)
+    }
+
+    onMounted(() => {
+      refreshData()
+    })
+    </script>
+
+  # Collection 页面
+  "src/views/Collection.vue": |
+    <template>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">数据采集监控</h2>
+          <div class="flex space-x-3">
+            <el-button :icon="Setting" @click="openSettings">配置</el-button>
+            <el-button type="primary" :icon="Refresh" @click="refreshData">刷新</el-button>
+          </div>
+        </div>
+
+        <!-- 技术数据监控区域 -->
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-6 flex items-center">
+            <span class="mr-2">💻</span>
+            技术数据监控
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <TechDataCard
+              v-for="source in techDataSources"
+              :key="source.key"
+              :data="source"
+              @view-details="viewTechDetails"
+            />
+          </div>
+        </div>
+
+        <!-- 业界标杆监控区域 -->
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-6 flex items-center">
+            <span class="mr-2">🏆</span>
+            业界标杆监控
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <BenchmarkCard
+              v-for="benchmark in benchmarkSources"
+              :key="benchmark.key"
+              :data="benchmark"
+              @view-details="viewBenchmarkDetails"
+            />
+          </div>
+        </div>
+
+        <!-- 数据质量监控 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="card">
+            <h3 class="text-lg font-semibold mb-4">数据质量趋势</h3>
+            <LineChart :data="qualityTrendData" height="250px" />
+          </div>
+          
+          <div class="card">
+            <h3 class="text-lg font-semibold mb-4">采集成功率</h3>
+            <BarChart :data="successRateData" height="250px" />
+          </div>
+        </div>
+
+        <!-- 执行日志表格 -->
+        <div class="card">
+          <h3 class="text-lg font-semibold mb-4">最近执行日志</h3>
+          <el-table :data="executionLogs" stripe>
+            <el-table-column prop="workflowName" label="工作流" width="200" />
+            <el-table-column prop="executionTime" label="执行时间" width="180">
+              <template #default="{ row }">
+                {{ formatDate(row.executionTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="processedRecords" label="处理记录数" width="120" />
+            <el-table-column prop="successCount" label="成功数" width="100" />
+            <el-table-column prop="errorCount" label="错误数" width="100" />
+            <el-table-column prop="duration" label="耗时(秒)" width="100" />
+            <el-table-column prop="status" label="状态" width="100">
+              <template #default="{ row }">
+                <el-tag :type="getStatusType(row.status)">
+                  {{ getStatusText(row.status) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="150">
+              <template #default="{ row }">
+                <el-button size="small" @click="viewLog(row)">查看</el-button>
+                <el-button size="small" type="warning" @click="retryExecution(row)" v-if="row.status === 'failed'">
+                  重试
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref, onMounted } from 'vue'
+    import { Refresh, Setting } from '@element-plus/icons-vue'
+    import { useAppStore } from '@/store'
+    import { formatDate } from '@/utils/formatters'
+    import TechDataCard from '@/components/common/TechDataCard.vue'
+    import BenchmarkCard from '@/components/common/BenchmarkCard.vue'
+    import LineChart from '@/components/charts/LineChart.vue'
+    import BarChart from '@/components/charts/BarChart.vue'
+
+    const store = useAppStore()
+
+    const techDataSources = ref([
+      {
+        key: 'academic_papers',
+        title: '学术论文',
+        icon: '📚',
+        todayCount: 45,
+        totalCount: 1250,
+        successRate: 98.5,
+        avgScore: 8.2,
+        status: 'active',
+        trendData: [30, 35, 42, 38, 45],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'patent_data',
+        title: '专利数据',
+        icon: '🔬',
+        todayCount: 78,
+        totalCount: 3420,
+        successRate: 96.8,
+        avgScore: 7.9,
+        status: 'active',
+        trendData: [65, 70, 75, 72, 78],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'opensource_projects',
+        title: '开源项目',
+        icon: '💻',
+        todayCount: 23,
+        totalCount: 890,
+        successRate: 94.2,
+        avgScore: 8.5,
+        status: 'active',
+        trendData: [18, 20, 25, 21, 23],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'tech_news',
+        title: '技术新闻',
+        icon: '📰',
+        todayCount: 156,
+        totalCount: 5670,
+        successRate: 99.1,
+        avgScore: 7.5,
+        status: 'active',
+        trendData: [120, 135, 148, 142, 156],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      }
+    ])
+
+    const benchmarkSources = ref([
+      {
+        key: 'industry_dynamics',
+        title: '标杆动态',
+        icon: '🏭',
+        todayCount: 32,
+        totalCount: 1180,
+        criticalEvents: 5,
+        avgImpactScore: 8.1,
+        status: 'active',
+        trendData: [25, 28, 35, 30, 32],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'tech_innovation',
+        title: '技术创新',
+        icon: '🚀',
+        todayCount: 18,
+        totalCount: 650,
+        breakthroughCount: 3,
+        avgScore: 8.7,
+        status: 'active',
+        trendData: [12, 15, 20, 16, 18],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'product_launches',
+        title: '产品发布',
+        icon: '📱',
+        todayCount: 8,
+        totalCount: 340,
+        majorLaunches: 2,
+        avgImpact: 7.8,
+        status: 'active',
+        trendData: [5, 6, 9, 7, 8],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      },
+      {
+        key: 'talent_movement',
+        title: '人才流动',
+        icon: '👥',
+        todayCount: 12,
+        totalCount: 450,
+        executiveChanges: 3,
+        avgInfluence: 8.3,
+        status: 'active',
+        trendData: [8, 10, 14, 11, 12],
+        lastUpdate: '2025-06-23T09:30:00Z'
+      }
+    ])
+
+    const qualityTrendData = ref({
+      xAxis: ['06-19', '06-20', '06-21', '06-22', '06-23'],
+      series: [
+        { name: '完整性', data: [95, 96, 94, 97, 95] },
+        { name: '准确性', data: [92, 93, 91, 94, 92] },
+        { name: '及时性', data: [98, 97, 99, 98, 99] }
+      ]
+    })
+
+    const successRateData = ref({
+      xAxis: ['学术论文', '专利数据', '开源项目', '技术新闻', '标杆动态', '技术创新'],
+      series: [{ name: '成功率(%)', data: [98.5, 96.8, 94.2, 99.1, 97.3, 95.8] }]
+    })
+
+    const executionLogs = ref([
+      {
+        id: 1,
+        workflowName: 'WF1-学术论文监控流',
+        executionTime: '2025-06-23T00:30:00Z',
+        processedRecords: 45,
+        successCount: 44,
+        errorCount: 1,
+        duration: 1250,
+        status: 'completed'
+      },
+      {
+        id: 2,
+        workflowName: 'WF2-专利申请追踪流',
+        executionTime: '2025-06-23T00:30:00Z',
+        processedRecords: 78,
+        successCount: 76,
+        errorCount: 2,
+        duration: 1680,
+        status: 'completed'
+      }
+    ])
+
+    const refreshData = async () => {
+      await store.loadCollectionData()
+    }
+
+    const openSettings = () => {
+      console.log('打开设置')
+    }
+
+    const viewTechDetails = (data) => {
+      console.log('查看技术数据详情:', data)
+    }
+
+    const viewBenchmarkDetails = (data) => {
+      console.log('查看标杆数据详情:', data)
+    }
+
+    const viewLog = (log) => {
+      console.log('查看日志:', log)
+    }
+
+    const retryExecution = (log) => {
+      console.log('重试执行:', log)
+    }
+
+    const getStatusType = (status) => {
+      const types = {
+        completed: 'success',
+        running: 'primary',
+        failed: 'danger',
+        pending: 'warning'
+      }
+      return types[status] || 'info'
+    }
+
+    const getStatusText = (status) => {
+      const texts = {
+        completed: '已完成',
+        running: '运行中',
+        failed: '失败',
+        pending: '等待中'
+      }
+      return texts[status] || status
+    }
+
+    onMounted(() => {
+      refreshData()
+    })
+    </script>
+
+  # Analysis 页面
+  "src/views/Analysis.vue": |
+    <template>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">智能分析中心</h2>
+          <el-button type="primary" :icon="Refresh" @click="refreshData">刷新分析</el-button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- 左侧信息列表 -->
+          <div class="lg:col-span-1">
+            <div class="card">
+              <h3 class="text-lg font-semibold mb-4">信息列表</h3>
+              <div class="space-y-2">
+                <div
+                  v-for="item in intelligenceList"
+                  :key="item.id"
+                  class="p-3 rounded-md cursor-pointer transition-colors"
+                  :class="selectedItem?.id === item.id ? 'bg-primary-50 border border-primary-200' : 'bg-gray-50 hover:bg-gray-100'"
+                  @click="selectItem(item)"
+                >
+                  <h4 class="font-medium text-sm">{{ item.title }}</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-xs text-gray-600">{{ item.category }}</span>
+                    <span class="text-xs font-medium text-primary-600">
+                      {{ item.signalStrength }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧分析详情 -->
+          <div class="lg:col-span-2">
+            <div v-if="selectedItem" class="space-y-6">
+              <!-- 基本信息 -->
+              <div class="card">
+                <h3 class="text-lg font-semibold mb-4">{{ selectedItem.title }}</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <span class="text-sm text-gray-600">技术类别:</span>
+                    <span class="ml-2 font-medium">{{ selectedItem.category }}</span>
+                  </div>
+                  <div>
+                    <span class="text-sm text-gray-600">信号强度:</span>
+                    <span class="ml-2 font-medium text-primary-600">{{ selectedItem.signalStrength }}</span>
+                  </div>
+                  <div>
+                    <span class="text-sm text-gray-600">置信度:</span>
+                    <span class="ml-2 font-medium">{{ selectedItem.confidenceLevel }}%</span>
+                  </div>
+                  <div>
+                    <span class="text-sm text-gray-600">发现时间:</span>
+                    <span class="ml-2 font-medium">{{ formatDate(selectedItem.createdAt) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 三维分析标签页 -->
+              <div class="card">
+                <el-tabs v-model="activeTab">
+                  <el-tab-pane label="商业价值分析" name="commercial">
+                    <CommercialAnalysis :data="selectedItem.commercialAnalysis" />
+                  </el-tab-pane>
+                  <el-tab-pane label="竞争信息分析" name="competitive">
+                    <CompetitiveAnalysis :data="selectedItem.competitiveAnalysis" />
+                  </el-tab-pane>
+                  <el-tab-pane label="技术深度分析" name="technical">
+                    <TechnicalAnalysis :data="selectedItem.technicalAnalysis" />
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+            </div>
+
+            <div v-else class="card text-center py-12">
+              <div class="text-gray-400 text-lg">请选择一个信息项目查看详细分析</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 对比分析 -->
+        <div class="card" v-if="comparisonItems.length > 1">
+          <h3 class="text-lg font-semibold mb-4">对比分析</h3>
+          <ComparisonChart :data="comparisonData" />
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref, onMounted, computed } from 'vue'
+    import { Refresh } from '@element-plus/icons-vue'
+    import { formatDate } from '@/utils/formatters'
+    import CommercialAnalysis from '@/components/analysis/CommercialAnalysis.vue'
+    import CompetitiveAnalysis from '@/components/analysis/CompetitiveAnalysis.vue'
+    import TechnicalAnalysis from '@/components/analysis/TechnicalAnalysis.vue'
+    import ComparisonChart from '@/components/charts/ComparisonChart.vue'
+
+    const activeTab = ref('commercial')
+    const selectedItem = ref(null)
+    const comparisonItems = ref([])
+
+    const intelligenceList = ref([
+      {
+        id: 1,
+        title: '谷歌量子处理器Willow突破',
+        category: '量子计算',
+        signalStrength: 9.2,
+        confidenceLevel: 95,
+        createdAt: '2025-06-23T08:30:00Z',
+        commercialAnalysis: {
+          tamValue: 50000000000,
+          samValue: 15000000000,
+          somValue: 2000000000,
+          roiPercentage: 245,
+          npvValue: 850000000,
+          paybackMonths: 18
+        },
+        competitiveAnalysis: {
+          threatLevel: 'high',
+          competitorCount: 8,
+          marketPosition: 'leader',
+          patentStrength: 8.5
+        },
+        technicalAnalysis: {
+          trlLevel: 6,
+          feasibilityScore: 8.8,
+          innovationDegree: 'disruptive',
+          implementationComplexity: 'high'
+        }
+      }
+    ])
+
+    const comparisonData = computed(() => {
+      // 对比分析数据处理逻辑
+      return {}
+    })
+
+    const selectItem = (item) => {
+      selectedItem.value = item
+    }
+
+    const refreshData = () => {
+      console.log('刷新分析数据')
+    }
+
+    onMounted(() => {
+      if (intelligenceList.value.length > 0) {
+        selectedItem.value = intelligenceList.value[0]
+      }
+    })
+    </script>
+
+  # Action 页面
+  "src/views/Action.vue": |
+    <template>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">行动决策中心</h2>
+          <div class="flex space-x-3">
+            <el-button :icon="Filter" @click="openFilter">筛选</el-button>
+            <el-button type="primary" :icon="Plus" @click="createRecommendation">新建建议</el-button>
+          </div>
+        </div>
+
+        <!-- 优先级看板 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <PriorityCard
+            v-for="priority in priorityStats"
+            :key="priority.level"
+            :data="priority"
+            @view-items="viewPriorityItems"
+          />
+        </div>
+
+        <!-- 决策建议列表 -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold">行动建议</h3>
+            <div class="flex space-x-2">
+              <el-select v-model="filterStatus" placeholder="状态筛选" style="width: 120px">
+                <el-option label="全部" value="" />
+                <el-option label="待审批" value="pending" />
+                <el-option label="已批准" value="approved" />
+                <el-option label="实施中" value="implementing" />
+                <el-option label="已完成" value="completed" />
+              </el-select>
+              <el-select v-model="filterPriority" placeholder="优先级" style="width: 120px">
+                <el-option label="全部" value="" />
+                <el-option label="紧急" value="urgent" />
+                <el-option label="高" value="high" />
+                <el-option label="中" value="medium" />
+                <el-option label="低" value="low" />
+              </el-select>
+            </div>
+          </div>
+
+          <el-table :data="filteredRecommendations" stripe>
+            <el-table-column prop="title" label="建议标题" min-width="200">
+              <template #default="{ row }">
+                <div class="cursor-pointer" @click="viewDetails(row)">
+                  <div class="font-medium text-gray-900">{{ row.title }}</div>
+                  <div class="text-sm text-gray-600">{{ row.category }}</div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="priorityLevel" label="优先级" width="100">
+              <template #default="{ row }">
+                <el-tag :type="getPriorityType(row.priorityLevel)">
+                  {{ getPriorityText(row.priorityLevel) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="investmentLevel" label="投资级别" width="100">
+              <template #default="{ row }">
+                <el-tag :type="getInvestmentType(row.investmentLevel)">
+                  {{ row.investmentLevel }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="expectedImpact" label="预期影响" width="100">
+              <template #default="{ row }">
+                <el-rate v-model="row.expectedImpact" disabled show-score />
+              </template>
+            </el-table-column>
+            <el-table-column prop="roiEstimation" label="ROI估算" width="100">
+              <template #default="{ row }">
+                <span class="font-medium text-green-600">{{ row.roiEstimation }}%</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="状态" width="100">
+              <template #default="{ row }">
+                <el-tag :type="getStatusType(row.status)">
+                  {{ getStatusText(row.status) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="decisionDeadline" label="决策截止" width="120">
+              <template #default="{ row }">
+                {{ formatDate(row.decisionDeadline, 'MM-DD') }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="200">
+              <template #default="{ row }">
+                <el-button size="small" @click="viewDetails(row)">详情</el-button>
+                <el-button size="small" type="primary" @click="approve(row)" v-if="row.status === 'pending'">
+                  批准
+                </el-button>
+                <el-button size="small" type="success" @click="implement(row)" v-if="row.status === 'approved'">
+                  实施
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <!-- 执行跟踪 -->
+        <div class="card">
+          <h3 class="text-lg font-semibold mb-4">实施进度跟踪</h3>
+          <div class="space-y-4">
+            <div
+              v-for="item in implementationTracking"
+              :key="item.id"
+              class="border border-gray-200 rounded-lg p-4"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="font-medium">{{ item.title }}</h4>
+                <span class="text-sm text-gray-600">{{ item.progress }}% 完成</span>
+              </div>
+              <el-progress :percentage="item.progress" :status="getProgressStatus(item.progress)" />
+              <div class="mt-2 text-sm text-gray-600">
+                下一个里程碑: {{ item.nextMilestone }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref, computed, onMounted } from 'vue'
+    import { Filter, Plus } from '@element-plus/icons-vue'
+    import { formatDate } from '@/utils/formatters'
+    import PriorityCard from '@/components/common/PriorityCard.vue'
+
+    const filterStatus = ref('')
+    const filterPriority = ref('')
+
+    const priorityStats = ref([
+      { level: 'urgent', label: '紧急', count: 3, color: 'danger' },
+      { level: 'high', label: '高优先级', count: 8, color: 'warning' },
+      { level: 'medium', label: '中优先级', count: 15, color: 'primary' },
+      { level: 'low', label: '低优先级', count: 5, color: 'info' }
+    ])
+
+    const recommendations = ref([
+      {
+        id: 1,
+        title: '投资量子计算研发团队',
+        category: '技术投资',
+        priorityLevel: 'urgent',
+        investmentLevel: 'high',
+        expectedImpact: 4,
+        roiEstimation: 245,
+        status: 'pending',
+        decisionDeadline: '2025-06-30T00:00:00Z'
+      }
+    ])
+
+    const implementationTracking = ref([
+      {
+        id: 1,
+        title: 'AI芯片技术合作项目',
+        progress: 65,
+        nextMilestone: '原型测试完成'
+      }
+    ])
+
+    const filteredRecommendations = computed(() => {
+      return recommendations.value.filter(item => {
+        const statusMatch = !filterStatus.value || item.status === filterStatus.value
+        const priorityMatch = !filterPriority.value || item.priorityLevel === filterPriority.value
+        return statusMatch && priorityMatch
+      })
+    })
+
+    const openFilter = () => {
+      console.log('打开筛选')
+    }
+
+    const createRecommendation = () => {
+      console.log('创建新建议')
+    }
+
+    const viewPriorityItems = (priority) => {
+      filterPriority.value = priority.level
+    }
+
+    const viewDetails = (item) => {
+      console.log('查看详情:', item)
+    }
+
+    const approve = (item) => {
+      item.status = 'approved'
+      console.log('批准:', item)
+    }
+
+    const implement = (item) => {
+      item.status = 'implementing'
+      console.log('实施:', item)
+    }
+
+    const getPriorityType = (priority) => {
+      const types = { urgent: 'danger', high: 'warning', medium: 'primary', low: 'info' }
+      return types[priority] || 'info'
+    }
+
+    const getPriorityText = (priority) => {
+      const texts = { urgent: '紧急', high: '高', medium: '中', low: '低' }
+      return texts[priority] || priority
+    }
+
+    const getInvestmentType = (level) => {
+      const types = { high: 'danger', medium: 'warning', low: 'success' }
+      return types[level] || 'info'
+    }
+
+    const getStatusType = (status) => {
+      const types = {
+        pending: 'warning',
+        approved: 'primary',
+        implementing: 'success',
+        completed: 'success'
+      }
+      return types[status] || 'info'
+    }
+
+    const getStatusText = (status) => {
+      const texts = {
+        pending: '待审批',
+        approved: '已批准',
+        implementing: '实施中',
+        completed: '已完成'
+      }
+      return texts[status] || status
+    }
+
+    const getProgressStatus = (progress) => {
+      if (progress >= 100) return 'success'
+      if (progress >= 80) return 'warning'
+      return undefined
+    }
+
+    onMounted(() => {
+      // 初始化数据
+    })
+    </script>
+
+  # Reports 页面
+  "src/views/Reports.vue": |
+    <template>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">报告中心</h2>
+          <div class="flex space-x-3">
+            <el-button :icon="Download" @click="exportReport">导出报告</el-button>
+            <el-button type="primary" :icon="Plus" @click="createCustomReport">自定义报告</el-button>
+          </div>
+        </div>
+
+        <!-- 报告类型导航 -->
+        <div class="card">
+          <el-tabs v-model="activeReportType" @tab-click="handleTabClick">
+            <el-tab-pane label="📰 日报" name="daily">
+              <DailyReports />
+            </el-tab-pane>
+            <el-tab-pane label="📅 周报" name="weekly">
+              <WeeklyReports />
+            </el-tab-pane>
+            <el-tab-pane label="📈 月报" name="monthly">
+              <MonthlyReports />
+            </el-tab-pane>
+            <el-tab-pane label="📊 自定义" name="custom">
+              <CustomReports />
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+
+        <!-- 最新报告快速访问 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div
+            v-for="report in latestReports"
+            :key="report.id"
+            class="card-hover cursor-pointer"
+            @click="viewReport(report)"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">{{ report.title }}</h3>
+              <span class="text-2xl">{{ report.icon }}</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">{{ report.description }}</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">{{ formatDate(report.generatedAt) }}</span>
+              <el-tag size="small" :type="report.priority === 'high' ? 'danger' : 'primary'">
+                {{ report.priority === 'high' ? '重要' : '常规' }}
+              </el-tag>
+            </div>
+          </div>
+        </div>
+
+        <!-- 报告订阅设置 -->
+        <div class="card">
+          <h3 class="text-lg font-semibold mb-4">报告订阅设置</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              v-for="subscription in subscriptionSettings"
+              :key="subscription.type"
+              class="border border-gray-200 rounded-lg p-4"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="font-medium">{{ subscription.title }}</h4>
+                <el-switch v-model="subscription.enabled" @change="updateSubscription(subscription)" />
+              </div>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div>频率: {{ subscription.frequency }}</div>
+                <div>发送时间: {{ subscription.schedule }}</div>
+                <div>接收方式: {{ subscription.channels.join(', ') }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref, onMounted } from 'vue'
+    import { Download, Plus } from '@element-plus/icons-vue'
+    import { formatDate } from '@/utils/formatters'
+    import DailyReports from '@/components/reports/DailyReports.vue'
+    import WeeklyReports from '@/components/reports/WeeklyReports.vue'
+    import MonthlyReports from '@/components/reports/MonthlyReports.vue'
+    import CustomReports from '@/components/reports/CustomReports.vue'
+
+    const activeReportType = ref('daily')
+
+    const latestReports = ref([
+      {
+        id: 1,
+        title: '技术信息日报',
+        icon: '📊',
+        description: '今日发现8个高价值技术信号，包含量子计算和AI芯片重大突破',
+        generatedAt: '2025-06-23T09:00:00Z',
+        priority: 'high'
+      },
+      {
+        id: 2,
+        title: '竞争情报周报',
+        icon: '🏢',
+        description: '本周竞争对手动态分析，3家公司发布重要产品',
+        generatedAt: '2025-06-22T18:00:00Z',
+        priority: 'normal'
+      },
+      {
+        id: 3,
+        title: '技术趋势月报',
+        icon: '📈',
+        description: '6月技术发展趋势总结，AI和量子计算持续领先',
+        generatedAt: '2025-06-01T00:00:00Z',
+        priority: 'normal'
+      }
+    ])
+
+    const subscriptionSettings = ref([
+      {
+        type: 'daily_executive',
+        title: '高管日报',
+        enabled: true,
+        frequency: '每日',
+        schedule: '08:00',
+        channels: ['邮件', 'Slack']
+      },
+      {
+        type: 'weekly_technical',
+        title: '技术周报',
+        enabled: true,
+        frequency: '每周一',
+        schedule: '09:00',
+        channels: ['邮件']
+      },
+      {
+        type: 'monthly_strategic',
+        title: '战略月报',
+        enabled: false,
+        frequency: '每月1日',
+        schedule: '10:00',
+        channels: ['邮件']
+      }
+    ])
+
+    const handleTabClick = (tab) => {
+      console.log('切换到:', tab.name)
+    }
+
+    const exportReport = () => {
+      console.log('导出报告')
+    }
+
+    const createCustomReport = () => {
+      console.log('创建自定义报告')
+    }
+
+    const viewReport = (report) => {
+      console.log('查看报告:', report)
+    }
+
+    const updateSubscription = (subscription) => {
+      console.log('更新订阅:', subscription)
+    }
+
+    onMounted(() => {
+      // 初始化数据
+    })
+    </script>
+
+  # 通用数据卡片组件
+  "src/components/common/DataCard.vue": |
+    <template>
+      <div class="card-hover">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">{{ icon }}</div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-600">{{ title }}</h3>
+              <p class="text-2xl font-bold" :class="getValueColor()">{{ formattedValue }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1">
+            <span class="text-sm" :class="getTrendColor()">
+              {{ getTrendIcon() }} {{ Math.abs(trend) }}%
+            </span>
+            <span class="text-xs text-gray-500">vs 昨日</span>
+          </div>
+          <div class="w-16 h-8">
+            <MiniChart :data="chartData" :color="getChartColor()" />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { computed } from 'vue'
+    import { formatNumber } from '@/utils/formatters'
+    import MiniChart from '@/components/charts/MiniChart.vue'
+
+    const props = defineProps({
+      title: String,
+      value: [Number, String],
+      trend: Number,
+      icon: String,
+      color: {
+        type: String,
+        default: 'primary'
+      },
+      chartData: Array
+    })
+
+    const formattedValue = computed(() => {
+      if (typeof props.value === 'string') return props.value
+      return formatNumber(props.value)
+    })
+
+    const getValueColor = () => {
+      const colors = {
+        primary: 'text-primary-600',
+        success: 'text-success-600',
+        warning: 'text-warning-600',
+        danger: 'text-danger-600'
+      }
+      return colors[props.color] || 'text-gray-900'
+    }
+
+    const getTrendColor = () => {
+      return props.trend >= 0 ? 'text-success-600' : 'text-danger-600'
+    }
+
+    const getTrendIcon = () => {
+      return props.trend >= 0 ? '↗' : '↘'
+    }
+
+    const getChartColor = () => {
+      const colors = {
+        primary: '#3b82f6',
+        success: '#22c55e',
+        warning: '#f59e0b',
+        danger: '#ef4444'
+      }
+      return colors[props.color] || '#3b82f6'
+    }
+    </script>
+
+  # 技术数据卡片组件
+  "src/components/common/TechDataCard.vue": |
+    <template>
+      <div class="card-hover">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">{{ data.icon }}</span>
+            <div>
+              <h3 class="font-semibold text-gray-900">{{ data.title }}</h3>
+              <div class="flex items-center space-x-2 mt-1">
+                <el-tag :type="getStatusType(data.status)" size="small">
+                  {{ getStatusText(data.status) }}
+                </el-tag>
+                <span class="text-xs text-gray-500">
+                  {{ formatRelativeTime(data.lastUpdate) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">今日采集</span>
+            <span class="font-semibold text-primary-600">{{ data.todayCount }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">总计</span>
+            <span class="font-medium">{{ formatNumber(data.totalCount) }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">成功率</span>
+            <span class="font-medium text-success-600">{{ data.successRate }}%</span>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">平均评分</span>
+            <el-rate v-model="data.avgScore" disabled show-score text-color="#99A9BF" />
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">7天趋势</span>
+            <el-button size="small" text @click="$emit('view-details', data)">
+              查看详情
+            </el-button>
+          </div>
+          <MiniChart :data="data.trendData" color="#3b82f6" height="40" />
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { formatNumber, formatRelativeTime } from '@/utils/formatters'
+    import MiniChart from '@/components/charts/MiniChart.vue'
+
+    defineProps({
+      data: Object
+    })
+
+    defineEmits(['view-details'])
+
+    const getStatusType = (status) => {
+      const types = { active: 'success', inactive: 'danger', pending: 'warning' }
+      return types[status] || 'info'
+    }
+
+    const getStatusText = (status) => {
+      const texts = { active: '正常', inactive: '异常', pending: '等待' }
+      return texts[status] || status
+    }
+    </script>
+
+  # 标杆数据卡片组件
+  "src/components/common/BenchmarkCard.vue": |
+    <template>
+      <div class="card-hover">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">{{ data.icon }}</span>
+            <div>
+              <h3 class="font-semibold text-gray-900">{{ data.title }}</h3>
+              <div class="flex items-center space-x-2 mt-1">
+                <el-tag :type="getStatusType(data.status)" size="small">
+                  {{ getStatusText(data.status) }}
+                </el-tag>
+                <span class="text-xs text-gray-500">
+                  {{ formatRelativeTime(data.lastUpdate) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">今日发现</span>
+            <span class="font-semibold text-primary-600">{{ data.todayCount }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">总计</span>
+            <span class="font-medium">{{ formatNumber(data.totalCount) }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center" v-if="data.criticalEvents">
+            <span class="text-sm text-gray-600">关键事件</span>
+            <span class="font-medium text-warning-600">{{ data.criticalEvents }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center" v-if="data.breakthroughCount">
+            <span class="text-sm text-gray-600">突破性发现</span>
+            <span class="font-medium text-success-600">{{ data.breakthroughCount }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center" v-if="data.majorLaunches">
+            <span class="text-sm text-gray-600">重要发布</span>
+            <span class="font-medium text-primary-600">{{ data.majorLaunches }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center" v-if="data.executiveChanges">
+            <span class="text-sm text-gray-600">高管变动</span>
+            <span class="font-medium text-danger-600">{{ data.executiveChanges }}</span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">7天趋势</span>
+            <el-button size="small" text @click="$emit('view-details', data)">
+              查看详情
+            </el-button>
+          </div>
+          <MiniChart :data="data.trendData" color="#8b5cf6" height="40" />
+        </div>
+      </div>
+    </template>
+
+    <script setup>
+    import { formatNumber, formatRelativeTime } from '@/utils/formatters'
+    import MiniChart from '@/components/charts/MiniChart.vue'
+
+    defineProps({
+      data: Object
+    })
+
+    defineEmits(['view-details'])
+
+    const getStatusType = (status) => {
+      const types = { active: 'success', inactive: 'danger', pending: 'warning' }
+      return types[status] || 'info'
+    }
+
+    const getStatusText = (status) => {
+      const texts = { active: '正常', inactive: '异常', pending: '等待' }
+      return texts[status] || status
+    }
+    </script>
+
+  # 基础图表组件
+  "src/components/charts/LineChart.vue": |
+    <template>
+      <div :style="{ height }" ref="chartRef"></div>
+    </template>
+
+    <script setup>
+    import { ref, onMounted, watch, nextTick } from 'vue'
+    import * as echarts from 'echarts'
+    import { CHART_COLORS } from '@/utils/constants'
+
+    const props = defineProps({
+      data: Object,
+      height: {
+        type: String,
+        default: '400px'
+      }
+    })
+
+    const chartRef = ref(null)
+    let chartInstance = null
+
+    const initChart = () => {
+      if (!chartRef.value || !props.data) return
+
+      chartInstance = echarts.init(chartRef.value)
+      
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        legend: {
+          data: props.data.series?.map(s => s.name) || []
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: props.data.xAxis || []
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: props.data.series?.map((series, index) => ({
+          name: series.name,
+          type: 'line',
+          data: series.data,
+          smooth: true,
+          lineStyle: {
+            color: CHART_COLORS.GRADIENT[index % CHART_COLORS.GRADIENT.length]
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
+        })) || []
+      }
+
+      chartInstance.setOption(option)
+    }
+
+    const resizeChart = () => {
+      if (chartInstance) {
+        chartInstance.resize()
+      }
+    }
+
+    onMounted(() => {
+      nextTick(() => {
+        initChart()
+        window.addEventListener('resize', resizeChart)
+      })
+    })
+
+    watch(() => props.data, () => {
+      initChart()
+    }, { deep: true })
+    </script>
+
+  # 数据文件示例
+  "data/overview/kpi-metrics.json": |
+    {
+      "lastUpdated": "2025-06-23T10:00:00Z",
+      "metrics": {
+        "todayIntelligence": {
+          "value": 23,
+          "trend": 12.5,
+          "target": 25,
+          "status": "normal"
+        },
+        "highValueSignals": {
+          "value": 8,
+          "trend": 8.3,
+          "target": 10,
+          "status": "good"
+        },
+        "pendingDecisions": {
+          "value": 5,
+          "trend": -15.2,
+          "target": 3,
+          "status": "warning"
+        },
+        "systemHealth": {
+          "value": 98.5,
+          "trend": 2.1,
+          "target": 95,
+          "status": "excellent"
+        }
+      }
+    }
+
+  "data/collection/tech-data-status.json": |
+    {
+      "lastUpdated": "2025-06-23T10:00:00Z",
+      "techData": {
+        "academicPapers": {
+          "title": "学术论文",
+          "icon": "📚",
+          "status": "active",
+          "todayCount": 45,
+          "totalCount": 1250,
+          "successRate": 98.5,
+          "avgQualityScore": 8.2,
+          "topKeywords": ["AI", "5G", "量子计算"],
+          "trendData": [30, 35, 42, 38, 45],
+          "lastUpdate": "2025-06-23T09:30:00Z",
+          "sources": ["arXiv", "Google Scholar", "IEEE Xplore"],
+          "qualityDistribution": {
+            "excellent": 25,
+            "good": 15,
+            "average": 5
+          }
+        },
+        "patentData": {
+          "title": "专利数据",
+          "icon": "🔬",
+          "status": "active",
+          "todayCount": 78,
+          "totalCount": 3420,
+          "successRate": 96.8,
+          "avgQualityScore": 7.9,
+          "topFields": ["通信技术", "人工智能", "半导体"],
+          "trendData": [65, 70, 75, 72, 78],
+          "lastUpdate": "2025-06-23T09:30:00Z",
+          "sources": ["USPTO", "EPO", "Google Patents"],
+          "statusDistribution": {
+            "granted": 45,
+            "pending": 28,
+            "abandoned": 5
+          }
+        },
+        "openSourceProjects": {
+          "title": "开源项目",
+          "icon": "💻",
+          "status": "active",
+          "todayCount": 23,
+          "totalCount": 890,
+          "successRate": 94.2,
+          "avgStarRating": 1250,
+          "topLanguages": ["Python", "JavaScript", "Go"],
+          "trendData": [18, 20, 25, 21, 23],
+          "lastUpdate": "2025-06-23T09:30:00Z",
+          "sources": ["GitHub", "GitLab"],
+          "activityLevel": {
+            "high": 12,
+            "medium": 8,
+            "low": 3
+          }
+        },
+        "techNews": {
+          "title": "技术新闻",
+          "icon": "📰",
+          "status": "active",
+          "todayCount": 156,
+          "totalCount": 5670,
+          "successRate": 99.1,
+          "avgImpactScore": 7.5,
+          "topSources": ["TechCrunch", "MIT Tech Review", "IEEE"],
+          "trendData": [120, 135, 148, 142, 156],
+          "lastUpdate": "2025-06-23T09:30:00Z",
+          "categories": ["AI/ML", "5G/6G", "量子计算", "区块链"],
+          "sentimentAnalysis": {
+            "positive": 89,
+            "neutral": 52,
+            "negative": 15
+          }
+        }
+      }
+    }
+
+  # 部署脚本
+  "deploy.sh": |
+    #!/bin/bash
+    # ICT Tech Insight 快速部署脚本
+
+    echo "🚀 开始部署 ICT Tech Insight..."
+
+    # 检查Node.js环境
+    if ! command -v node &> /dev/null; then
+        echo "❌ Node.js 未安装，请先安装 Node.js 18+"
+        exit 1
+    fi
+
+    # 检查当前目录
+    if [ ! -f "package.json" ]; then
+        echo "❌ 请在项目根目录执行此脚本"
+        exit 1
+    fi
+
+    # 安装依赖
+    echo "📦 安装项目依赖..."
+    npm install
+
+    if [ $? -ne 0 ]; then
+        echo "❌ 依赖安装失败"
+        exit 1
+    fi
+
+    # 构建项目
+    echo "🔨 构建项目..."
+    npm run build
+
+    if [ $? -ne 0 ]; then
+        echo "❌ 项目构建失败"
+        exit 1
+    fi
+
+    # 检查构建结果
+    if [ -d "dist" ]; then
+        echo "✅ 构建成功！"
+        echo "📊 构建统计："
+        du -sh dist/
+        echo "📁 构建文件："
+        ls -la dist/
+    else
+        echo "❌ 构建目录不存在"
+        exit 1
+    fi
+
+    # Git 操作
+    echo "📤 提交到GitHub..."
+    git add .
+    git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')" || echo "⚠️  没有新的更改需要提交"
+    git push origin main
+
+    if [ $? -eq 0 ]; then
+        echo "🎉 部署完成！"
+        echo "🌐 访问地址: https://yourusername.github.io/ict-tech-insight/"
+        echo "⏱️  GitHub Pages 可能需要几分钟时间更新"
+        echo ""
+        echo "📋 后续步骤："
+        echo "1. 在 GitHub 仓库设置中启用 GitHub Pages"
+        echo "2. 配置 Make.com webhook URL 到 GitHub Secrets"
+        echo "3. 测试数据更新流程"
+    else
+        echo "❌ Git 推送失败，请检查网络连接和权限"
+        exit 1
+    fi
+
+  # README 文档
+  "README.md": |
+    # ICT Tech Insight - 技术信息决策引擎
+
+    ## 🎯 项目概述
+
+    ICT Tech Insight 是一个基于 GitHub Pages + Google Sheets + Make.com 的技术信息决策引擎，专门用于监控和分析ICT领域的技术发展趋势、竞争动态和投资机会。
+
+    ## ✨ 核心功能
+
+    - 📊 **概览仪表板**: 实时KPI监控和趋势分析
+    - 📥 **数据采集监控**: 技术数据和业界标杆双重监控
+    - 🧠 **智能分析中心**: 商业价值、竞争情报、技术深度三维分析
+    - 🎯 **行动决策中心**: 投资建议和执行跟踪
+    - 📑 **报告中心**: 日报、周报、月报自动生成
+    - ⚙️ **系统管理**: 性能监控、配置管理、日志查看
+
+    ## 🏗️ 技术架构
+
+    ```
+    Frontend: Vue.js 3 + Element Plus + Tailwind CSS
+    Backend: Google Sheets (数据库) + Make.com (自动化工作流)
+    Deployment: GitHub Pages + GitHub Actions
+    Charts: ECharts + Vue-ECharts
+    ```
+
+    ## 🚀 快速开始
+
+    ### 1. 克隆项目
+
+    ```bash
+    git clone https://github.com/yourusername/ict-tech-insight.git
+    cd ict-tech-insight
+    ```
+
+    ### 2. 安装依赖
+
+    ```bash
+    npm install
+    ```
+
+    ### 3. 本地开发
+
+    ```bash
+    npm run dev
+    ```
+
+    ### 4. 构建部署
+
+    ```bash
+    npm run build
+    # 或使用快速部署脚本
+    ./deploy.sh
+    ```
+
+    ## 📁 项目结构
+
+    ```
+    ict-tech-insight/
+    ├── src/                    # 源代码
+    │   ├── views/             # 页面组件
+    │   ├── components/        # 通用组件
+    │   ├── utils/            # 工具函数
+    │   └── store/            # 状态管理
+    ├── data/                  # 静态JSON数据
+    ├── public/               # 静态资源
+    └── .github/workflows/    # GitHub Actions
+    ```
+
+    ## 🔧 配置说明
+
+    ### GitHub Pages 配置
+
+    1. 在仓库设置中启用 GitHub Pages
+    2. 选择 GitHub Actions 作为部署源
+    3. 配置自定义域名（可选）
+
+    ### Make.com 集成
+
+    1. 创建 GitHub Personal Access Token
+    2. 在 GitHub Secrets 中添加 `MAKE_WEBHOOK_URL`
+    3. 配置 Make.com 工作流 webhook
+
+    ### Google Sheets 数据库
+
+    1. 创建 Google Sheets 数据库
+    2. 配置 Google Sheets API 访问权限
+    3. 在 Make.com 中配置 Google Sheets 连接
+
+    ## 📊 数据流架构
+
+    ```
+    Google Sheets → Make.com → GitHub JSON → Vue.js 前端
+    ```
+
+    ## 🎨 页面功能
+
+    ### Overview - 概览仪表板
+    - 核心KPI指标展示
+    - 技术热度分布
+    - 最新高价值信息流
+
+    ### Collection - 数据采集监控
+    - 技术数据监控（学术论文、专利、开源项目、技术新闻）
+    - 业界标杆监控（标杆动态、技术创新、产品发布、人才流动）
+    - 数据质量监控和执行日志
+
+    ### Analysis - 智能分析中心
+    - 商业价值分析（TAM/SAM/ROI）
+    - 竞争情报分析（威胁评估、合作机会）
+    - 技术深度分析（TRL评估、应用场景）
+
+    ### Action - 行动决策中心
+    - 优先级分类的行动建议
+    - 投资决策支持工具
+    - 实施进度跟踪
+
+    ### Reports - 报告中心
+    - 自动生成日报、周报、月报
+    - 自定义报告模板
+    - 多格式导出和订阅
+
+    ### System - 系统管理
+    - 性能监控和资源使用统计
+    - 配置管理和参数调整
+    - 日志查看和用户管理
+
+    ## 🔄 自动化工作流
+
+    系统包含13个自动化工作流：
+
+    - **数据采集层** (WF1-WF6): 并行采集各类数据源
+    - **信号识别层** (WF7-WF8): 串行处理信号识别和验证
+    - **深度分析层** (WF9-WF11): 并行执行三维分析
+    - **决策支撑层** (WF12-WF13): 串行生成决策建议和报告
+
+    ## 📈 性能优化
+
+    - 懒加载和代码分割
+    - CDN加速和Gzip压缩
+    - 本地缓存和数据预加载
+    - 响应式设计和移动端适配
+
+    ## 🛡️ 安全考虑
+
+    - GitHub Token 权限最小化
+    - API 调用频率限制
+    - 数据传输加密
+    - 访问日志记录
+
+    ## 📝 开发指南
+
+    ### 添加新页面
+
+    1. 在 `src/views/` 创建页面组件
+    2. 在 `src/router/index.js` 添加路由
+    3. 在 `data/` 目录添加对应JSON数据文件
+    4. 更新导航菜单
+
+    ### 添加新图表
+
+    1. 在 `src/components/charts/` 创建图表组件
+    2. 基于 ECharts 封装
+    3. 支持响应式和主题切换
+    4. 添加加载状态和错误处理
+
+    ### 数据格式规范
+
+    ```json
+    {
+      "lastUpdated": "2025-06-23T10:00:00Z",
+      "data": {
+        // 具体数据结构
+      },
+      "metadata": {
+        "version": "1.0.0",
+        "source": "make-workflow"
+      }
+    }
+    ```
+
+    ## 🔧 故障排除
+
+    ### 常见问题
+
+    1. **GitHub Pages 部署失败**
+       - 检查 GitHub Actions 日志
+       - 确认 package.json 配置正确
+       - 验证构建命令和输出目录
+
+    2. **数据加载失败**
+       - 检查 JSON 文件格式
+       - 确认文件路径正确
+       - 查看浏览器网络请求
+
+    3. **Make.com 集成问题**
+       - 验证 Webhook URL 配置
+       - 检查 API 权限和配额
+       - 查看 Make.com 执行日志
+
+    ## 📊 监控指标
+
+    - 页面加载时间 < 3秒
+    - 数据更新频率: 每日自动更新
+    - 系统可用性 > 99%
+    - 用户体验评分 > 4.5/5
+
+    ## 🔮 未来规划
+
+    - [ ] 添加实时数据推送
+    - [ ] 集成更多数据源
+    - [ ] 增强AI分析能力
+    - [ ] 支持多语言界面
+    - [ ] 移动端APP开发
+
+    ## 🤝 贡献指南
+
+    1. Fork 项目
+    2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+    3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+    4. 推送到分支 (`git push origin feature/AmazingFeature`)
+    5. 创建 Pull Request
+
+    ## 📄 许可证
+
+    本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+
+    ## 📞 联系方式
+
+    - 项目维护者: Jason
+    - 邮箱: your.email@example.com
+    - 项目地址: https://github.com/yourusername/ict-tech-insight
+
+    ## 🙏 致谢
+
+    感谢以下开源项目和服务：
+    - Vue.js 生态系统
+    - Element Plus UI 组件库
+    - ECharts 数据可视化
+    - GitHub Pages 免费托管
+    - Make.com 自动化平台
+
+  # 生成脚本
+  "generate-project.js": |
+    #!/usr/bin/env node
+    const fs = require('fs');
+    const path = require('path');
+    const yaml = require('js-yaml');
+
+    // 读取配置文件
+    const configPath = process.argv[2] || './ict-tech-insight-generator.yml';
+    
+    if (!fs.existsSync(configPath)) {
+      console.error('❌ 配置文件不存在:', configPath);
+      process.exit(1);
+    }
+
+    console.log('🚀 开始生成 ICT Tech Insight 项目...');
+
+    try {
+      const config = yaml.load(fs.readFileSync(configPath, 'utf8'));
+      
+      // 创建目录结构
+      console.log('📁 创建目录结构...');
+      config.structure.directories.forEach(dir => {
+        const dirPath = path.join(process.cwd(), dir);
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
+          console.log(`  ✅ 创建目录: ${dir}`);
+        }
+      });
+
+      // 生成文件
+      console.log('📄 生成项目文件...');
+      Object.entries(config.files).forEach(([filePath, content]) => {
+        const fullPath = path.join(process.cwd(), filePath);
+        const dir = path.dirname(fullPath);
+        
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        
+        fs.writeFileSync(fullPath, content.trim(), 'utf8');
+        console.log(`  ✅ 生成文件: ${filePath}`);
+      });
+
+      // 设置执行权限
+      const scriptFiles = ['deploy.sh', 'generate-project.js'];
+      scriptFiles.forEach(file => {
+        const filePath = path.join(process.cwd(), file);
+        if (fs.existsSync(filePath)) {
+          fs.chmodSync(filePath, '755');
+          console.log(`  ✅ 设置执行权限: ${file}`);
+        }
+      });
+
+      console.log('🎉 项目生成完成！');
+      console.log('');
+      console.log('📋 下一步操作：');
+      console.log('1. cd ict-tech-insight');
+      console.log('2. npm install');
+      console.log('3. npm run dev');
+      console.log('4. 配置 GitHub Pages 和 Make.com 集成');
+      console.log('');
+      console.log('🌐 本地开发地址: http://localhost:3000');
+      console.log('📚 详细文档请查看: README.md');
+
+    } catch (error) {
+      console.error('❌ 生成项目时出错:', error.message);
+      process.exit(1);
+    }
+
+# 使用说明
+usage:
+  description: "使用此 YAML 配置文件生成完整的 ICT Tech Insight 项目"
+  steps:
+    - "将此文件保存为 ict-tech-insight-generator.yml"
+    - "运行: node generate-project.js ict-tech-insight-generator.yml"
+    - "或者直接复制文件内容到对应目录"
+  
+  quick_start:
+    - "git clone 或创建新的 ict-tech-insight 仓库"
+    - "将配置文件放入仓库根目录"
+    - "运行生成脚本或手动创建文件结构"
+    - "npm install 安装依赖"
+    - "npm run dev 启动开发服务器"
+    - "配置 GitHub Pages 和 Make.com 集成"
+
+# 项目特性
+features:
+  frontend:
+    - "Vue.js 3 + Composition API"
+    - "Element Plus UI 组件库"
+    - "Tailwind CSS 样式框架"
+    - "ECharts 数据可视化"
+    - "响应式设计"
+    - "PWA 支持"
+  
+  backend:
+    - "Google Sheets 作为数据库"
+    - "Make.com 自动化工作流"
+    - "GitHub Actions CI/CD"
+    - "静态 JSON API"
+  
+  deployment:
+    - "GitHub Pages 免费托管"
+    - "自动化部署流程"
+    - "CDN 加速"
+    - "自定义域名支持"
+
+# 数据更新机制
+data_flow:
+  description: "完整的数据流处理链路"
+  steps:
+    1: "Google Sheets 存储原始数据和配置"
+    2: "Make.com 工作流定时执行数据处理"
+    3: "处理后的数据通过 GitHub API 更新 JSON 文件"
+    4: "GitHub Pages 自动重新部署"
+    5: "前端页面实时显示最新数据"
+  
+  frequency:
+    - "数据采集: 每日 00:30-01:30"
+    - "信号识别: 每日 02:00-05:00"  
+    - "深度分析: 每日 05:30-07:30"
+    - "决策生成: 每日 08:00-10:00"
+    - "页面更新: 实时响应数据变化"
+
+# 扩展配置
+extensions:
+  additional_components:
+    - "src/components/analysis/CommercialAnalysis.vue"
+    - "src/components/analysis/CompetitiveAnalysis.vue"
+    - "src/components/analysis/TechnicalAnalysis.vue"
+    - "src/components/reports/DailyReports.vue"
+    - "src/components/reports/WeeklyReports.vue"
+    - "src/components/reports/MonthlyReports.vue"
+    - "src/components/charts/MiniChart.vue"
+    - "src/components/charts/BarChart.vue"
+    - "src/components/charts/PieChart.vue"
+    - "src/components/charts/HeatMap.vue"
+    - "src/components/charts/ComparisonChart.vue"
+    - "src/components/common/PriorityCard.vue"
+    - "src/views/System/Performance.vue"
+    - "src/views/System/Configuration.vue"
+    - "src/views/System/Logs.vue"
+    - "src/views/System/Users.vue"
+
+  additional_data_files:
+    - "data/overview/trend-charts.json"
+    - "data/overview/latest-intelligence.json"
+    - "data/collection/benchmark-status.json"
+    - "data/collection/quality-metrics.json"
+    - "data/analysis/intelligence-list.json"
+    - "data/analysis/commercial-analysis.json"
+    - "data/analysis/competitive-analysis.json"
+    - "data/analysis/technical-analysis.json"
+    - "data/action/recommendations.json"
+    - "data/action/decision-support.json"
+    - "data/action/execution-tracking.json"
+    - "data/system/performance-metrics.json"
+    - "data/system/configuration.json"
+    - "data/system/logs.json"
+    - "data/system/users.json"
+    - "data/reports/daily-reports.json"
+    - "data/reports/weekly-reports.json"
+    - "data/reports/monthly-reports.json"
+    - "data/reports/custom-templates.json"
+
+# 部署检查清单
+deployment_checklist:
+  github_setup:
+    - "✅ 创建 GitHub 仓库 ict-tech-insight"
+    - "✅ 启用 GitHub Pages"
+    - "✅ 配置 GitHub Actions"
+    - "✅ 设置 Repository Secrets"
+  
+  make_integration:
+    - "✅ 创建 Make.com 账户"
+    - "✅ 配置 13 个工作流"
+    - "✅ 设置 GitHub API 集成"
+    - "✅ 测试 Webhook 连接"
+  
+  google_sheets:
+    - "✅ 创建 4 个数据库工作簿"
+    - "✅ 配置表结构和字段"
+    - "✅ 设置 API 访问权限"
+    - "✅ 测试数据读写"
+  
+  final_testing:
+    - "✅ 本地开发环境测试"
+    - "✅ 构建和部署测试"
+    - "✅ 数据更新流程测试"
+    - "✅ 页面功能完整性测试"
+    - "✅ 移动端适配测试"
+
+# 成功指标
+success_metrics:
+  performance:
+    - "首屏加载时间 < 3秒"
+    - "页面响应时间 < 1秒"
+    - "数据更新延迟 < 10分钟"
+  
+  functionality:
+    - "数据采集成功率 > 95%"
+    - "工作流执行成功率 > 98%"
+    - "页面可用性 > 99%"
+  
+  user_experience:
+    - "页面加载错误率 < 1%"
+    - "用户操作响应及时"
+    - "多设备兼容性良好"
