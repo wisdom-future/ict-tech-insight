@@ -1,4 +1,4 @@
-name: Generate Project Structure 
+name: Generate Project Structure TEST
 
 on:
   workflow_dispatch:  # 手动触发
