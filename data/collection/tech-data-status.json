@@ -1,0 +1,77 @@
+{
+  "lastUpdated": "2025-06-23T10:00:00Z",
+  "techData": {
+    "academicPapers": {
+      "title": "学术论文",
+      "icon": "📚",
+      "status": "active",
+      "todayCount": 45,
+      "totalCount": 1250,
+      "successRate": 98.5,
+      "avgQualityScore": 8.2,
+      "topKeywords": ["AI", "5G", "量子计算"],
+      "trendData": [30, 35, 42, 38, 45],
+      "lastUpdate": "2025-06-23T09:30:00Z",
+      "sources": ["arXiv", "Google Scholar", "IEEE Xplore"],
+      "qualityDistribution": {
+        "excellent": 25,
+        "good": 15,
+        "average": 5
+      }
+    },
+    "patentData": {
+      "title": "专利数据",
+      "icon": "🔬",
+      "status": "active",
+      "todayCount": 78,
+      "totalCount": 3420,
+      "successRate": 96.8,
+      "avgQualityScore": 7.9,
+      "topFields": ["通信技术", "人工智能", "半导体"],
+      "trendData": [65, 70, 75, 72, 78],
+      "lastUpdate": "2025-06-23T09:30:00Z",
+      "sources": ["USPTO", "EPO", "Google Patents"],
+      "statusDistribution": {
+        "granted": 45,
+        "pending": 28,
+        "abandoned": 5
+      }
+    },
+    "openSourceProjects": {
+      "title": "开源项目",
+      "icon": "💻",
+      "status": "active",
+      "todayCount": 23,
+      "totalCount": 890,
+      "successRate": 94.2,
+      "avgStarRating": 1250,
+      "topLanguages": ["Python", "JavaScript", "Go"],
+      "trendData": [18, 20, 25, 21, 23],
+      "lastUpdate": "2025-06-23T09:30:00Z",
+      "sources": ["GitHub", "GitLab"],
+      "activityLevel": {
+        "high": 12,
+        "medium": 8,
+        "low": 3
+      }
+    },
+    "techNews": {
+      "title": "技术新闻",
+      "icon": "📰",
+      "status": "active",
+      "todayCount": 156,
+      "totalCount": 5670,
+      "successRate": 99.1,
+      "avgImpactScore": 7.5,
+      "topSources": ["TechCrunch", "MIT Tech Review", "IEEE"],
+      "trendData": [120, 135, 148, 142, 156],
+      "lastUpdate": "2025-06-23T09:30:00Z",
+      "categories": ["AI/ML", "5G/6G", "量子计算", "区块链"],
+      "sentimentAnalysis": {
+        "positive": 89,
+        "neutral": 52,
+        "negative": 15
+      }
+    }
+  }
+}

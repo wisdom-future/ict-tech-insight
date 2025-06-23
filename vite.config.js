@@ -11,6 +11,20 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router', 'pinia'],
+          charts: ['echarts', 'vue-echarts'],
+          ui: ['element-plus']
+        }
+      }
+    }
+  },
+  server: {
+    port: 3000,
+    host: true
   }
 })

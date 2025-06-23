@@ -1,12 +1,24 @@
 <template>
-  <div id="app">
-    <h1>ICT Tech Insight</h1>
-    <p>技术信息决策引擎</p>
+  <div id="app" class="min-h-screen bg-gray-50">
+    <Header />
+    <div class="flex">
+      <Sidebar />
+      <main class="flex-1 p-6">
+        <router-view />
+      </main>
+    </div>
+    <Footer />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
+<script setup>
+import Header from '@/components/layout/Header.vue'
+import Sidebar from '@/components/layout/Sidebar.vue'
+import Footer from '@/components/layout/Footer.vue'
 </script>
+
+<style>
+#app {
+  font-family: 'Inter', sans-serif;
+}
+</style>

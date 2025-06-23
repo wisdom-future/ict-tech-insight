@@ -1,0 +1,29 @@
+{
+  "lastUpdated": "2025-06-23T10:00:00Z",
+  "metrics": {
+    "todayIntelligence": {
+      "value": 23,
+      "trend": 12.5,
+      "target": 25,
+      "status": "normal"
+    },
+    "highValueSignals": {
+      "value": 8,
+      "trend": 8.3,
+      "target": 10,
+      "status": "good"
+    },
+    "pendingDecisions": {
+      "value": 5,
+      "trend": -15.2,
+      "target": 3,
+      "status": "warning"
+    },
+    "systemHealth": {
+      "value": 98.5,
+      "trend": 2.1,
+      "target": 95,
+      "status": "excellent"
+    }
+  }
+}
